@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NovaHub - POS & Panel Ejecutivo (Bimoneda e IVA)</title>
+    <title>NovaHub - POS & Dashboard Ejecutivo Integrado</title>
     <style>
         /* Sistema de Temas: Claro y Oscuro */
         :root[data-theme="dark"] {
@@ -18,6 +18,7 @@
             --primary-glow: rgba(14, 165, 233, 0.4);
             --accent-blue: #0284c7;
             --accent-orange: #f97316;
+            --accent-green: #10b981;
             --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
         }
 
@@ -33,6 +34,7 @@
             --primary-glow: rgba(2, 132, 199, 0.2);
             --accent-blue: #0284c7;
             --accent-orange: #ea580c;
+            --accent-green: #059669;
             --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
         }
 
@@ -53,21 +55,16 @@
             font-size: 14px;
         }
 
-        /* Overlay para móvil */
         .sidebar-overlay {
             display: none;
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.5);
             z-index: 15;
         }
-
         .sidebar-overlay.active { display: block; }
 
-        /* Sidebar Estilo NovaHub */
+        /* Sidebar */
         .sidebar {
             width: 250px;
             background-color: var(--bg-sidebar);
@@ -85,10 +82,8 @@
         @media (max-width: 1024px) {
             .sidebar {
                 position: fixed;
-                top: 0;
-                left: -260px;
-                height: 100%;
-                z-index: 30;
+                top: 0; left: -260px;
+                height: 100%; z-index: 30;
             }
             .sidebar.mobile-open { transform: translateX(260px); }
         }
@@ -102,824 +97,225 @@
         }
 
         .brand-logo {
-            width: 32px;
-            height: 32px;
+            width: 32px; height: 32px;
             background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%);
             border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-            font-size: 1rem;
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-weight: bold; font-size: 1rem;
             box-shadow: 0 4px 10px rgba(14, 165, 233, 0.3);
         }
 
-        .brand-title {
-            font-size: 1rem;
-            font-weight: bold;
-            color: #ffffff;
-            letter-spacing: 0.5px;
-        }
-
-        .brand-sub {
-            font-size: 0.65rem;
-            color: #94a3b8;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
+        .brand-title { font-size: 1rem; font-weight: bold; color: #ffffff; letter-spacing: 0.5px; }
+        .brand-sub { font-size: 0.65rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; }
 
         .sidebar-menu {
-            flex: 1;
-            overflow-y: auto;
-            margin-top: 12px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            padding-right: 2px;
+            flex: 1; overflow-y: auto; margin-top: 12px;
+            display: flex; flex-direction: column; gap: 12px; padding-right: 2px;
         }
 
         .menu-section-title {
-            font-size: 0.65rem;
-            text-transform: uppercase;
-            color: #64748b;
-            font-weight: bold;
-            letter-spacing: 1px;
-            margin-bottom: 4px;
-            padding-left: 6px;
+            font-size: 0.65rem; text-transform: uppercase; color: #64748b;
+            font-weight: bold; letter-spacing: 1px; margin-bottom: 4px; padding-left: 6px;
         }
 
-        .menu-items {
-            display: flex;
-            flex-direction: column;
-            gap: 3px;
-        }
+        .menu-items { display: flex; flex-direction: column; gap: 3px; }
 
         .menu-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 8px 10px;
-            border-radius: 6px;
-            color: #94a3b8;
-            text-decoration: none;
-            font-size: 0.82rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-            border: 1px solid transparent;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 8px 10px; border-radius: 6px; color: #94a3b8;
+            text-decoration: none; font-size: 0.82rem; font-weight: 500;
+            cursor: pointer; transition: all 0.2s; border: 1px solid transparent;
         }
 
-        .menu-item:hover {
-            background: rgba(255, 255, 255, 0.05);
-            color: #ffffff;
-        }
+        .menu-item:hover { background: rgba(255, 255, 255, 0.05); color: #ffffff; }
 
         .menu-item.active {
-            background: #1e3a8a;
-            color: #ffffff;
-            font-weight: 600;
-            box-shadow: 0 4px 12px rgba(30, 58, 138, 0.4);
-            border-color: #3b82f6;
+            background: #1e3a8a; color: #ffffff; font-weight: 600;
+            box-shadow: 0 4px 12px rgba(30, 58, 138, 0.4); border-color: #3b82f6;
         }
 
-        .menu-item-left {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+        .menu-item-left { display: flex; align-items: center; gap: 8px; }
 
         .submenu-container {
-            display: none;
-            flex-direction: column;
-            gap: 2px;
-            padding-left: 24px;
-            margin-top: 3px;
+            display: none; flex-direction: column; gap: 2px;
+            padding-left: 24px; margin-top: 3px;
         }
-
         .submenu-container.open { display: flex; }
 
         .submenu-item {
-            padding: 6px 8px;
-            border-radius: 5px;
-            color: #94a3b8;
-            font-size: 0.78rem;
-            cursor: pointer;
-            text-decoration: none;
-            transition: all 0.2s;
+            padding: 6px 8px; border-radius: 5px; color: #94a3b8;
+            font-size: 0.78rem; cursor: pointer; text-decoration: none; transition: all 0.2s;
         }
-
-        .submenu-item:hover {
-            color: #ffffff;
-            background: rgba(255, 255, 255, 0.04);
-        }
-
-        .submenu-item.active {
-            color: #0ea5e9;
-            font-weight: 600;
-            background: rgba(14, 165, 233, 0.1);
-        }
+        .submenu-item:hover { color: #ffffff; background: rgba(255, 255, 255, 0.04); }
+        .submenu-item.active { color: #0ea5e9; font-weight: 600; background: rgba(14, 165, 233, 0.1); }
 
         .user-profile-box {
-            background: #1e293b;
-            border: 1px solid var(--border);
-            padding: 8px 10px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            background: #1e293b; border: 1px solid var(--border);
+            padding: 8px 10px; border-radius: 8px; display: flex; align-items: center; gap: 8px;
         }
-
         .user-avatar {
-            width: 28px;
-            height: 28px;
-            background: #0ea5e9;
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 0.78rem;
+            width: 28px; height: 28px; background: #0ea5e9; color: white;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-weight: bold; font-size: 0.78rem;
         }
 
-        /* Área Principal */
+        /* Area Principal */
         .main-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            width: 100%;
+            flex: 1; display: flex; flex-direction: column; overflow: hidden; width: 100%;
         }
 
-        /* Top Header */
         .top-header {
-            background: var(--surface);
-            border-bottom: 1px solid var(--border);
-            padding: 10px 16px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            min-height: 56px;
-            gap: 10px;
+            background: var(--surface); border-bottom: 1px solid var(--border);
+            padding: 10px 16px; display: flex; justify-content: space-between; align-items: center;
+            min-height: 56px; gap: 10px;
         }
 
-        .top-header-left {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex: 1;
-            overflow: hidden;
-        }
+        .top-header-left { display: flex; align-items: center; gap: 10px; flex: 1; overflow: hidden; }
 
         .mobile-menu-btn {
-            display: none;
-            background: var(--bg-main);
-            border: 1px solid var(--border);
-            color: var(--text-main);
-            padding: 6px 10px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 1rem;
+            display: none; background: var(--bg-main); border: 1px solid var(--border);
+            color: var(--text-main); padding: 6px 10px; border-radius: 6px; cursor: pointer;
         }
-
-        @media (max-width: 1024px) {
-            .mobile-menu-btn { display: block; }
-        }
+        @media (max-width: 1024px) { .mobile-menu-btn { display: block; } }
 
         .agency-badge-pill {
-            background: #1e293b;
-            border: 1px solid var(--border);
-            color: #ffffff;
-            padding: 5px 10px;
-            border-radius: 16px;
-            font-size: 0.78rem;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            white-space: nowrap;
+            background: #1e293b; border: 1px solid var(--border); color: #ffffff;
+            padding: 5px 10px; border-radius: 16px; font-size: 0.78rem; font-weight: 600;
+            display: flex; align-items: center; gap: 6px; white-space: nowrap;
         }
-
-        .agency-badge-pill span {
-            background: #0ea5e9;
-            color: white;
-            font-size: 0.62rem;
-            padding: 2px 4px;
-            border-radius: 3px;
-            text-transform: uppercase;
-        }
-
-        @media (max-width: 768px) {
-            .agency-badge-pill { display: none; }
-        }
-
-        .top-search-box {
-            position: relative;
-            max-width: 260px;
-            flex: 1;
-        }
-
-        .top-search-input {
-            width: 100%;
-            background: var(--bg-main);
-            border: 1px solid var(--border);
-            padding: 6px 10px 6px 30px;
-            border-radius: 6px;
-            color: var(--text-main);
-            outline: none;
-            font-size: 0.82rem;
-        }
-
-        .top-search-input:focus { border-color: var(--primary); }
-
-        .top-search-icon {
-            position: absolute;
-            left: 8px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-muted);
-            font-size: 0.82rem;
-        }
+        .agency-badge-pill span { background: #0ea5e9; color: white; font-size: 0.62rem; padding: 2px 4px; border-radius: 3px; }
 
         .theme-toggle-btn {
-            background: var(--bg-main);
-            border: 1px solid var(--border);
-            color: var(--text-main);
-            padding: 6px 10px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 0.78rem;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            white-space: nowrap;
+            background: var(--bg-main); border: 1px solid var(--border); color: var(--text-main);
+            padding: 6px 10px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.78rem;
         }
-
-        .theme-toggle-btn:hover { border-color: var(--primary); }
 
         /* Vistas de Trabajo */
         .workspace-scroll {
-            flex: 1;
-            padding: 16px;
-            overflow-y: auto;
-            display: none;
-            flex-direction: column;
-            gap: 16px;
+            flex: 1; padding: 16px; overflow-y: auto; display: none; flex-direction: column; gap: 16px;
         }
-
         .workspace-scroll.active-view { display: flex; }
 
-        @media(max-width: 768px) {
-            .workspace-scroll { padding: 12px; gap: 12px; }
+        /* HERO & DASHBOARD ESTILOS EXTENDIDOS */
+        .dashboard-header-flex {
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
         }
 
-        /* Hero Dashboard */
-        .hero-welcome-section {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
+        .hero-welcome-section { display: flex; flex-direction: column; gap: 6px; }
         .hero-title-row {
-            font-size: 1.5rem;
-            font-weight: 800;
-            color: var(--text-main);
-            display: flex;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 8px;
-            line-height: 1.3;
+            font-size: 1.4rem; font-weight: 800; color: var(--text-main);
+            display: flex; align-items: center; flex-wrap: wrap; gap: 8px; line-height: 1.3;
         }
-
         .highlight-escalar {
             background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%);
-            color: white;
-            padding: 2px 10px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px var(--primary-glow);
+            color: white; padding: 2px 10px; border-radius: 8px; box-shadow: 0 4px 12px var(--primary-glow);
         }
-
-        .highlight-necesita {
-            border-bottom: 2px solid var(--primary);
-            padding-bottom: 1px;
-        }
-
-        .hero-subtitle {
-            color: var(--text-muted);
-            font-size: 0.88rem;
-            max-width: 800px;
-            line-height: 1.4;
-        }
+        .highlight-necesita { border-bottom: 2px solid var(--primary); padding-bottom: 1px; }
 
         .dashboard-cards-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 14px;
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px;
         }
 
         .stat-card {
-            background: var(--surface-card);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 16px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            box-shadow: var(--shadow);
-            position: relative;
-            overflow: hidden;
-            cursor: pointer;
+            background: var(--surface-card); border: 1px solid var(--border);
+            border-radius: 12px; padding: 16px; display: flex; flex-direction: column;
+            justify-content: space-between; box-shadow: var(--shadow); cursor: pointer;
             transition: transform 0.2s, border-color 0.2s;
         }
-
-        .stat-card:hover {
-            transform: translateY(-2px);
-            border-color: var(--primary);
-        }
+        .stat-card:hover { transform: translateY(-2px); border-color: var(--primary); }
 
         .stat-card.featured-blue {
             background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
-            color: white;
-            border: none;
-            box-shadow: 0 8px 20px rgba(2, 132, 199, 0.3);
+            color: white; border: none; box-shadow: 0 8px 20px rgba(2, 132, 199, 0.3);
         }
-
-        .stat-card.featured-blue .stat-label,
-        .stat-card.featured-blue .stat-amount { color: white; }
+        .stat-card.featured-blue .stat-label, .stat-card.featured-blue .stat-amount { color: white; }
 
         .stat-icon-badge {
-            width: 36px;
-            height: 36px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1rem;
-            margin-bottom: 10px;
+            width: 36px; height: 36px; border-radius: 8px; display: flex;
+            align-items: center; justify-content: center; font-size: 1rem; margin-bottom: 10px;
         }
-
         .bg-icon-blue { background: rgba(255, 255, 255, 0.2); color: white; }
-        .bg-icon-dark { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
+        .bg-icon-red { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
         .bg-icon-orange { background: rgba(249, 115, 22, 0.15); color: #f97316; }
+        .bg-icon-green { background: rgba(16, 185, 129, 0.15); color: #10b981; }
 
-        .stat-label {
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: var(--text-muted);
-            font-weight: 700;
-            margin-bottom: 4px;
+        .stat-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); font-weight: 700; }
+        .stat-amount { font-size: 1.4rem; font-weight: 800; color: var(--text-main); margin-top: 4px; }
+        .stat-sub { font-size: 0.72rem; color: var(--text-muted); margin-top: 4px; }
+
+        /* Dashboard Secciones de Análitica Extendida */
+        .dashboard-main-layout {
+            display: grid; grid-template-columns: 2fr 1fr; gap: 16px;
+        }
+        @media (max-width: 1024px) { .dashboard-main-layout { grid-template-columns: 1fr; } }
+
+        .dash-card-box {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 12px; padding: 18px; box-shadow: var(--shadow);
+            display: flex; flex-direction: column; gap: 14px;
         }
 
-        .stat-amount {
-            font-size: 1.5rem;
-            font-weight: 800;
-            color: var(--text-main);
+        .chart-mock-container {
+            display: flex; align-items: flex-end; justify-content: space-between; gap: 8px;
+            height: 160px; padding-top: 20px; border-bottom: 1px dashed var(--border);
         }
+        .chart-bar-group { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; height: 100%; justify-content: flex-end; }
+        .chart-bar { width: 100%; max-width: 28px; background: var(--primary); border-radius: 4px 4px 0 0; transition: height 0.4s ease; }
+        .chart-label { font-size: 0.68rem; color: var(--text-muted); }
 
-        /* ---------------------------------------------------- */
-        /* MÓDULO FACTURAS CON BIMONEDA Y TRATAMIENTO DE IVA     */
-        /* ---------------------------------------------------- */
-        .module-header-flex {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
+        .progress-bar-track { width: 100%; height: 8px; background: var(--bg-main); border-radius: 4px; overflow: hidden; }
+        .progress-bar-fill { height: 100%; background: var(--primary); border-radius: 4px; }
 
-        .module-title-main {
-            font-size: 1.25rem;
-            font-weight: 800;
-            color: var(--text-main);
-        }
-
-        .module-actions-group {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-
-        .btn-action-primary {
-            background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%);
-            color: white;
-            border: none;
-            padding: 8px 14px;
-            border-radius: 6px;
-            font-weight: 600;
-            font-size: 0.82rem;
-            cursor: pointer;
-            box-shadow: 0 4px 10px var(--primary-glow);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .btn-action-secondary {
-            background: var(--surface-card);
-            color: var(--text-main);
-            border: 1px solid var(--border);
-            padding: 8px 12px;
-            border-radius: 6px;
-            font-weight: 600;
-            font-size: 0.82rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .btn-action-secondary:hover { border-color: var(--primary); }
-
-        .btn-start-tour {
-            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
-            color: white;
-            border: none;
-            padding: 8px 14px;
-            border-radius: 6px;
-            font-weight: 700;
-            font-size: 0.82rem;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(249, 115, 22, 0.4);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .btn-start-tour:hover { filter: brightness(1.1); }
-
-        .invoice-builder-layout {
-            display: grid;
-            grid-template-columns: 1fr 360px;
-            gap: 16px;
-        }
-
-        @media(max-width: 1024px) {
-            .invoice-builder-layout { grid-template-columns: 1fr; }
-        }
+        /* FACTURACIÓN COMPONENTES */
+        .invoice-builder-layout { display: grid; grid-template-columns: 1fr 360px; gap: 16px; }
+        @media(max-width: 1024px) { .invoice-builder-layout { grid-template-columns: 1fr; } }
 
         .invoice-card-box {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 16px;
-            box-shadow: var(--shadow);
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 12px; padding: 16px; box-shadow: var(--shadow);
+            display: flex; flex-direction: column; gap: 16px;
         }
 
-        .form-row-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 10px;
-        }
-
-        .form-group-item {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .form-label {
-            font-size: 0.72rem;
-            font-weight: 700;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
+        .form-row-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; }
+        .form-group-item { display: flex; flex-direction: column; gap: 4px; }
+        .form-label { font-size: 0.72rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
         .form-input, .form-select {
-            background: var(--bg-main);
-            border: 1px solid var(--border);
-            padding: 8px 10px;
-            border-radius: 6px;
-            color: var(--text-main);
-            font-size: 0.85rem;
-            outline: none;
-            width: 100%;
+            background: var(--bg-main); border: 1px solid var(--border);
+            padding: 8px 10px; border-radius: 6px; color: var(--text-main); font-size: 0.85rem; outline: none; width: 100%;
         }
 
-        .form-input:focus, .form-select:focus { border-color: var(--primary); }
+        .table-responsive-wrapper { width: 100%; overflow-x: auto; border: 1px solid var(--border); border-radius: 6px; background: var(--bg-main); }
+        .excel-catalog-table, .invoice-items-table { width: 100%; border-collapse: collapse; white-space: nowrap; }
+        .excel-catalog-table th, .invoice-items-table th { background: #1e293b; color: #94a3b8; font-size: 0.7rem; text-transform: uppercase; padding: 8px 10px; text-align: left; }
+        .excel-catalog-table td, .invoice-items-table td { padding: 8px 10px; border-bottom: 1px solid var(--border); font-size: 0.8rem; color: var(--text-main); }
 
-        .table-responsive-wrapper {
-            width: 100%;
-            overflow-x: auto;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            background: var(--bg-main);
-        }
-
-        .excel-catalog-table, .invoice-items-table {
-            width: 100%;
-            border-collapse: collapse;
-            white-space: nowrap;
-        }
-
-        .excel-catalog-table th, .invoice-items-table th {
-            background: #1e293b;
-            color: #94a3b8;
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            padding: 8px 10px;
-            text-align: left;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .excel-catalog-table td, .invoice-items-table td {
-            padding: 8px 10px;
-            border-bottom: 1px solid var(--border);
-            font-size: 0.8rem;
-            color: var(--text-main);
-        }
-
-        .excel-catalog-table tr:hover {
-            background: rgba(14, 165, 233, 0.05);
-            cursor: pointer;
-        }
-
-        /* Bloques de resumen bimoneda */
         .invoice-summary-card {
-            background: var(--surface-card);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            position: relative;
+            background: var(--surface-card); border: 1px solid var(--border);
+            border-radius: 10px; padding: 16px; display: flex; flex-direction: column; gap: 12px;
         }
 
         .currency-resumen-box {
-            background: var(--bg-main);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 10px;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
+            background: var(--bg-main); border: 1px solid var(--border);
+            border-radius: 8px; padding: 10px; display: flex; flex-direction: column; gap: 6px;
         }
+        .currency-title { font-size: 0.75rem; font-weight: 800; color: var(--primary); text-transform: uppercase; display: flex; justify-content: space-between; border-bottom: 1px dashed var(--border); padding-bottom: 4px; }
+        .summary-row-item { display: flex; justify-content: space-between; font-size: 0.82rem; color: var(--text-muted); }
+        .summary-row-item.total-final { font-size: 0.95rem; font-weight: bold; color: var(--text-main); border-top: 1px solid var(--border); padding-top: 4px; }
 
-        .currency-title {
-            font-size: 0.75rem;
-            font-weight: 800;
-            color: var(--primary);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            display: flex;
-            justify-content: space-between;
-            border-bottom: 1px dashed var(--border);
-            padding-bottom: 4px;
+        .btn-action-primary {
+            background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%); color: white; border: none;
+            padding: 8px 14px; border-radius: 6px; font-weight: 600; font-size: 0.82rem; cursor: pointer;
         }
-
-        .summary-row-item {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.82rem;
-            color: var(--text-muted);
-        }
-
-        .summary-row-item.total-final {
-            font-size: 0.95rem;
-            font-weight: bold;
-            color: var(--text-main);
-            border-top: 1px solid var(--border);
-            padding-top: 4px;
-        }
-
         .btn-checkout-emit {
-            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
-            color: white;
-            border: none;
-            padding: 12px;
-            border-radius: 8px;
-            font-weight: bold;
-            font-size: 0.9rem;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(249, 115, 22, 0.4);
-            text-align: center;
-            width: 100%;
-            position: relative;
+            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%); color: white; border: none;
+            padding: 12px; border-radius: 8px; font-weight: bold; font-size: 0.9rem; cursor: pointer; width: 100%;
         }
 
-        .btn-checkout-emit:hover { filter: brightness(1.1); }
-
-        .generic-module-content {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 24px;
-            box-shadow: var(--shadow);
-            text-align: center;
-        }
-
-        /* MODO CUADRÍCULA (GRID CARDS) */
-        .catalog-card {
-            background: var(--surface-card);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 10px 12px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            gap: 6px;
-            cursor: pointer;
-            transition: transform 0.2s, border-color 0.2s, background-color 0.2s;
-        }
-
-        .catalog-card:hover {
-            transform: translateY(-2px);
-            border-color: var(--primary);
-            background: rgba(14, 165, 233, 0.08);
-        }
-
-        .catalog-card-code {
-            font-size: 0.65rem;
-            font-weight: 700;
-            color: var(--primary);
-        }
-
-        .catalog-card-title {
-            font-size: 0.82rem;
-            font-weight: 600;
-            color: var(--text-main);
-            line-height: 1.25;
-        }
-
-        .catalog-card-price {
-            font-size: 0.88rem;
-            color: var(--text-main);
-            font-weight: 700;
-        }
-
-        /* TOUR GUIADO */
-        .tour-backdrop {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            z-index: 999;
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
-        }
-
-        .tour-backdrop.active { display: block; }
-
-        .tour-highlighted {
-            position: relative !important;
-            z-index: 1000 !important;
-            box-shadow: 0 0 0 4px var(--primary), 0 0 25px rgba(14, 165, 233, 0.6) !important;
-            background-color: var(--surface) !important;
-            border-radius: 8px;
-        }
-
-        .tour-popup-card {
-            display: none;
-            position: fixed;
-            width: 300px;
-            background: var(--surface-card);
-            border: 1px solid var(--primary);
-            border-radius: 12px;
-            padding: 16px;
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5);
-            z-index: 1001;
-            animation: fadeInPopup 0.3s ease;
-        }
-
-        .tour-popup-card.active { display: block; }
-
-        @keyframes fadeInPopup {
-            from { opacity: 0; transform: translateY(6px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .tour-popup-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 8px;
-        }
-
-        .tour-step-counter {
-            background: var(--primary);
-            color: white;
-            font-size: 0.68rem;
-            font-weight: 700;
-            padding: 2px 8px;
-            border-radius: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .tour-popup-title {
-            font-size: 0.9rem;
-            font-weight: 800;
-            color: var(--text-main);
-            margin-bottom: 4px;
-        }
-
-        .tour-popup-desc {
-            font-size: 0.78rem;
-            color: var(--text-muted);
-            line-height: 1.4;
-            margin-bottom: 12px;
-        }
-
-        .tour-popup-actions {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .tour-btn-nav {
-            background: var(--bg-main);
-            border: 1px solid var(--border);
-            color: var(--text-main);
-            padding: 5px 10px;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        .tour-btn-nav:hover { border-color: var(--primary); }
-
-        .tour-btn-next {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 5px 12px;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            cursor: pointer;
-        }
-
-        .tour-btn-next:hover { filter: brightness(1.1); }
-
-        .cart-empty-tooltip {
-            display: none;
-            position: absolute;
-            bottom: calc(100% + 10px);
-            left: 50%;
-            transform: translateX(-50%);
-            background: #ef4444;
-            color: white;
-            padding: 8px 12px;
-            border-radius: 8px;
-            font-size: 0.78rem;
-            font-weight: 700;
-            box-shadow: 0 6px 16px rgba(239, 68, 68, 0.4);
-            white-space: nowrap;
-            z-index: 30;
-            animation: bounceTooltip 0.4s ease;
-        }
-
-        .cart-empty-tooltip::after {
-            content: '';
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            border-width: 6px;
-            border-style: solid;
-            border-color: #ef4444 transparent transparent transparent;
-        }
-
-        .cart-empty-tooltip.active { display: block; }
-
-        @keyframes bounceTooltip {
-            0%, 100% { transform: translateX(-50%) translateY(0); }
-            50% { transform: translateX(-50%) translateY(-4px); }
-        }
+        .generic-module-content { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; text-align: center; }
     </style>
 </head>
 <body>
 
-    <!-- Backdrop del Tour -->
-    <div class="tour-backdrop" id="tour-backdrop" onclick="endTour()"></div>
-
-    <!-- Pop-up del Tour Interactivo -->
-    <div class="tour-popup-card" id="tour-popup">
-        <div class="tour-popup-header">
-            <span class="tour-step-counter" id="tour-counter">1 | 5</span>
-            <button onclick="endTour()" style="background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:0.9rem;">✕</button>
-        </div>
-        <div class="tour-popup-title" id="tour-title">Título del Tour</div>
-        <div class="tour-popup-desc" id="tour-desc">Descripción detallada del elemento seleccionado.</div>
-        <div class="tour-popup-actions">
-            <button class="tour-btn-nav" id="tour-prev-btn" onclick="prevTourStep()">Anterior</button>
-            <button class="tour-btn-next" id="tour-next-btn" onclick="nextTourStep()">Siguiente</button>
-        </div>
-    </div>
-
-    <!-- Overlay móvil -->
     <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleMobileSidebar()"></div>
 
     <!-- Sidebar NovaHub -->
@@ -937,7 +333,8 @@
                 <div>
                     <div class="menu-section-title">General</div>
                     <div class="menu-items">
-                        <div class="menu-item active" onclick="switchView('dashboard', this)">
+                        <!-- Pestaña Dashboard Activa por Defecto -->
+                        <div class="menu-item active" id="nav-dashboard" onclick="switchView('dashboard', this)">
                             <div class="menu-item-left"><span>📊</span> Dashboard</div>
                         </div>
                         <div class="menu-item" onclick="switchView('financiamiento', this)">
@@ -949,11 +346,9 @@
                 <div style="margin-top: 12px;">
                     <div class="menu-section-title">Comunicaciones</div>
                     <div class="menu-items">
-                        <a href="chat.html" class="menu-item" style="text-decoration: none; color: inherit; display: flex; justify-content: space-between; align-items: center;">
-                            <div class="menu-item-left">
-                                <span>💬</span> Chat
-                            </div>
-                            <span class="chat-badge" style="background:#0ea5e9; color:white; font-size:0.68rem; padding:1px 6px; border-radius:10px; font-weight:bold;">3</span>
+                        <a href="chat.html" class="menu-item" style="text-decoration: none; color: inherit; display: flex; justify-content: space-between;">
+                            <div class="menu-item-left"><span>💬</span> Chat</div>
+                            <span style="background:#0ea5e9; color:white; font-size:0.68rem; padding:1px 6px; border-radius:10px; font-weight:bold;">3</span>
                         </a>
                     </div>
                 </div>
@@ -963,13 +358,13 @@
                     <div class="menu-items">
                         <div class="menu-item" onclick="toggleSubmenu('submenu-ventas', event)">
                             <div class="menu-item-left"><span>🛒</span> Ventas</div>
-                            <span id="arrow-ventas">▾</span>
+                            <span>▾</span>
                         </div>
                         <div class="submenu-container open" id="submenu-ventas">
                             <div class="submenu-item" onclick="switchView('clientes', this)">👥 Clientes</div>
                             <div class="submenu-item" onclick="switchView('estimaciones', this)">📑 Estimaciones</div>
                             <div class="submenu-item" onclick="switchView('ordenes', this)">📦 Órdenes de venta</div>
-                            <div class="submenu-item active" onclick="switchView('facturas', this)">📄 Facturas</div>
+                            <div class="submenu-item" onclick="switchView('facturas', this)">📄 Facturas</div>
                             <div class="submenu-item" onclick="switchView('facturas-rec', this)">🔄 Facturas recurrentes</div>
                             <div class="submenu-item" onclick="switchView('pagos', this)">💳 Pagos recibidos</div>
                             <div class="submenu-item" onclick="switchView('devoluciones', this)">↩️ Devoluciones de venta</div>
@@ -978,7 +373,7 @@
 
                         <div class="menu-item" onclick="toggleSubmenu('submenu-compras', event)">
                             <div class="menu-item-left"><span>🛍️</span> Compras</div>
-                            <span id="arrow-compras">▾</span>
+                            <span>▾</span>
                         </div>
                         <div class="submenu-container" id="submenu-compras">
                             <div class="submenu-item" onclick="switchView('proveedores', this)">🚚 Proveedores</div>
@@ -992,7 +387,7 @@
         <div class="user-profile-box">
             <div class="user-avatar">J</div>
             <div style="overflow: hidden;">
-                <div style="font-size: 0.8rem; font-weight: bold; color: var(--text-main); white-space: nowrap; text-overflow: ellipsis;">Jair González</div>
+                <div style="font-size: 0.8rem; font-weight: bold; color: var(--text-main);">Jair González</div>
                 <div style="font-size: 0.7rem; color: var(--text-muted);">Administrador</div>
             </div>
         </div>
@@ -1000,88 +395,198 @@
 
     <!-- Main Content Panel -->
     <main class="main-content">
-        <!-- Top Header Bar -->
         <header class="top-header">
             <div class="top-header-left">
                 <button class="mobile-menu-btn" onclick="toggleMobileSidebar()">☰</button>
-                <div class="agency-badge-pill">
-                    🏢 Agency DevJair, S.A. <span>Admin</span>
-                </div>
-                <div class="top-search-box">
-                    <span class="top-search-icon">🔍</span>
-                    <input type="text" class="top-search-input" placeholder="Buscar...">
-                </div>
+                <div class="agency-badge-pill">🏢 Agency DevJair, S.A. <span>Admin</span></div>
             </div>
-
-            <div style="display: flex; gap: 8px; align-items: center;">
-                <button class="theme-toggle-btn" onclick="toggleTheme()" id="theme-btn">
-                    <span>🌙</span> Oscuro
-                </button>
-            </div>
+            <button class="theme-toggle-btn" onclick="toggleTheme()" id="theme-btn">🌙 Oscuro</button>
         </header>
 
-        <!-- ================= VISTA: DASHBOARD ================= -->
-        <div id="view-dashboard" class="workspace-scroll">
-            <section class="hero-welcome-section">
-                <h1 class="hero-title-row">
-                    Centraliza, optimiza y <span class="highlight-escalar">escala</span>, la solución integral que tu crecimiento <span class="highlight-necesita">necesita.</span>
-                </h1>
-                <p class="hero-subtitle">
-                    Supervisa el rendimiento en tiempo real y toma decisiones estratégicas con nuestra visión analítica de 360°.
-                </p>
-            </section>
+        <!-- ================= VISTA INTEGRADA: DASHBOARD EJECUTIVO COMPLETO ================= -->
+        <div id="view-dashboard" class="workspace-scroll active-view">
+            <div class="dashboard-header-flex">
+                <section class="hero-welcome-section">
+                    <h1 class="hero-title-row">
+                        Centraliza, optimiza y <span class="highlight-escalar">escala</span>, la solución integral que tu crecimiento <span class="highlight-necesita">necesita.</span>
+                    </h1>
+                    <p style="color: var(--text-muted); font-size: 0.85rem;">Panel interactivo de rendimiento financiero, métricas de ventas y operaciones de caja.</p>
+                </section>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                    <span style="font-size: 0.78rem; color: var(--text-muted); font-weight: 600;">Período:</span>
+                    <select class="form-select" id="dash-period-select" style="width: auto;" onchange="updateDashboardFullData()">
+                        <option value="today">Hoy</option>
+                        <option value="week">Esta Semana</option>
+                        <option value="month" selected>Este Mes (Julio 2026)</option>
+                    </select>
+                </div>
+            </div>
 
+            <!-- CARDS KPI INTERACTIVOS EXTENDIDOS -->
             <section class="dashboard-cards-grid">
-                <div class="stat-card featured-blue" onclick="switchView('facturas', document.querySelectorAll('.submenu-item')[3])">
+                <div class="stat-card featured-blue" onclick="switchView('facturas', null)">
                     <div>
                         <div class="stat-icon-badge bg-icon-blue">💵</div>
-                        <div class="stat-label">Ingresos Totales (Facturados)</div>
+                        <div class="stat-label">Ingresos Totales</div>
                     </div>
-                    <div class="stat-amount" id="dash-ingresos">C$ 0.00</div>
+                    <div>
+                        <div class="stat-amount" id="dash-total-ingresos">C$ 142,850.00</div>
+                        <div class="stat-sub" id="dash-usd-ingresos">≈ $ 3,903.00 USD</div>
+                    </div>
                 </div>
 
                 <div class="stat-card" onclick="switchView('gastos', null)">
                     <div>
-                        <div class="stat-icon-badge bg-icon-dark">📉</div>
+                        <div class="stat-icon-badge bg-icon-red">📉</div>
                         <div class="stat-label">Gastos Totales</div>
                     </div>
-                    <div class="stat-amount">C$ 0.00</div>
+                    <div>
+                        <div class="stat-amount" id="dash-total-gastos">C$ 38,400.00</div>
+                        <div class="stat-sub" style="color: #ef4444;">↑ 4.2% vs periodo anterior</div>
+                    </div>
                 </div>
 
                 <div class="stat-card" onclick="switchView('ordenes', null)">
                     <div>
-                        <div class="stat-icon-badge bg-icon-orange">🛒</div>
-                        <div class="stat-label">Órdenes Activas</div>
+                        <div class="stat-icon-badge bg-icon-orange">📦</div>
+                        <div class="stat-label">Órdenes de Venta</div>
                     </div>
-                    <div class="stat-amount" id="dash-ordenes">0</div>
+                    <div>
+                        <div class="stat-amount" id="dash-total-ordenes">64</div>
+                        <div class="stat-sub" style="color: var(--accent-orange);">12 pendientes por despacho</div>
+                    </div>
+                </div>
+
+                <div class="stat-card" onclick="switchView('facturas', null)">
+                    <div>
+                        <div class="stat-icon-badge bg-icon-green">📈</div>
+                        <div class="stat-label">Margen Utilidad Net.</div>
+                    </div>
+                    <div>
+                        <div class="stat-amount" id="dash-total-margen">73.1%</div>
+                        <div class="stat-sub" style="color: var(--accent-green);">Rentabilidad Óptima</div>
+                    </div>
                 </div>
             </section>
+
+            <!-- LAYOUT SECUNDARIO DE ANÁLISIS: GRÁFICOS Y DETALLES -->
+            <div class="dashboard-main-layout">
+                <!-- Columna Izquierda: Tendencia e Historial de Ventas -->
+                <div class="dash-card-box">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <h3 style="font-size: 0.95rem; font-weight: 700; color: var(--text-main);">📈 Rendimiento de Ventas por Caja</h3>
+                        <span style="font-size: 0.7rem; color: var(--primary); font-weight: 600;">Actualizado en Tiempo Real</span>
+                    </div>
+
+                    <!-- Gráfico Representativo Interactivos -->
+                    <div class="chart-mock-container" id="dash-chart-bars">
+                        <div class="chart-bar-group"><div class="chart-bar" style="height: 60%;"></div><span class="chart-label">Lun</span></div>
+                        <div class="chart-bar-group"><div class="chart-bar" style="height: 80%;"></div><span class="chart-label">Mar</span></div>
+                        <div class="chart-bar-group"><div class="chart-bar" style="height: 45%;"></div><span class="chart-label">Mié</span></div>
+                        <div class="chart-bar-group"><div class="chart-bar" style="height: 95%;"></div><span class="chart-label">Jue</span></div>
+                        <div class="chart-bar-group"><div class="chart-bar" style="height: 75%;"></div><span class="chart-label">Vie</span></div>
+                        <div class="chart-bar-group"><div class="chart-bar" style="height: 100%; background: var(--accent-orange);"></div><span class="chart-label">Sáb</span></div>
+                        <div class="chart-bar-group"><div class="chart-bar" style="height: 30%;"></div><span class="chart-label">Dom</span></div>
+                    </div>
+
+                    <div style="border-top: 1px solid var(--border); padding-top: 10px;">
+                        <h4 style="font-size: 0.82rem; font-weight: 700; color: var(--text-main); margin-bottom: 8px;">Transacciones Recientes de Facturación</h4>
+                        <div class="table-responsive-wrapper">
+                            <table class="excel-catalog-table">
+                                <thead>
+                                    <tr>
+                                        <th>Factura</th>
+                                        <th>Caja</th>
+                                        <th>Cliente</th>
+                                        <th>Monto (C$)</th>
+                                        <th>Estado IVA</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="dash-recent-table-body">
+                                    <tr>
+                                        <td>FAC-2026-101</td>
+                                        <td>Caja 01 - Principal</td>
+                                        <td>Corporación del Norte S.A.</td>
+                                        <td style="font-weight:bold; color:var(--primary);">C$ 5,490.00</td>
+                                        <td><span style="color:#10b981; font-weight:bold;">15% IVA</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>FAC-2026-100</td>
+                                        <td>Caja 02 - Express</td>
+                                        <td>Inversiones San Carlos</td>
+                                        <td style="font-weight:bold; color:var(--primary);">C$ 3,660.00</td>
+                                        <td><span style="color:#ef4444; font-weight:bold;">EXONERADO</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Columna Derecha: Métricas por Categoría y Alertas -->
+                <div style="display: flex; flex-direction: column; gap: 14px;">
+                    <div class="dash-card-box">
+                        <h3 style="font-size: 0.9rem; font-weight: 700; color: var(--text-main);">📊 Ventas por Cajas</h3>
+                        
+                        <div style="display: flex; flex-direction: column; gap: 10px;">
+                            <div>
+                                <div style="display: flex; justify-content: space-between; font-size: 0.78rem; margin-bottom: 3px;">
+                                    <span>Caja 01 - Principal</span>
+                                    <span style="font-weight: bold;" id="dash-caja1-val">C$ 85,710.00</span>
+                                </div>
+                                <div class="progress-bar-track"><div class="progress-bar-fill" id="dash-caja1-bar" style="width: 60%;"></div></div>
+                            </div>
+
+                            <div>
+                                <div style="display: flex; justify-content: space-between; font-size: 0.78rem; margin-bottom: 3px;">
+                                    <span>Caja 02 - Express</span>
+                                    <span style="font-weight: bold;" id="dash-caja2-val">C$ 38,570.00</span>
+                                </div>
+                                <div class="progress-bar-track"><div class="progress-bar-fill" id="dash-caja2-bar" style="width: 27%; background: var(--accent-orange);"></div></div>
+                            </div>
+
+                            <div>
+                                <div style="display: flex; justify-content: space-between; font-size: 0.78rem; margin-bottom: 3px;">
+                                    <span>Caja 03 - Sucursal Norte</span>
+                                    <span style="font-weight: bold;" id="dash-caja3-val">C$ 18,570.00</span>
+                                </div>
+                                <div class="progress-bar-track"><div class="progress-bar-fill" id="dash-caja3-bar" style="width: 13%; background: var(--accent-green);"></div></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dash-card-box" style="background: var(--surface-card);">
+                        <h3 style="font-size: 0.9rem; font-weight: 700; color: var(--text-main);">⚠️ Alertas de Inventario POS</h3>
+                        <div style="display: flex; flex-direction: column; gap: 8px; font-size: 0.78rem;">
+                            <div style="display: flex; justify-content: space-between; padding: 6px; background: var(--bg-main); border-radius: 6px;">
+                                <span>Rollo Papel Térmico</span>
+                                <span style="color:#ef4444; font-weight:bold;">Stock Bajo (4)</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; padding: 6px; background: var(--bg-main); border-radius: 6px;">
+                                <span>Lector Láser Código</span>
+                                <span style="color:#f97316; font-weight:bold;">Reordenar (2)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <!-- ================= VISTA: MÓDULO FACTURAS (BIMONEDA E IVA INTEGRADOS) ================= -->
-        <div id="view-facturas" class="workspace-scroll active-view">
-            <div class="module-header-flex">
+        <!-- ================= VISTA: MÓDULO FACTURAS ================= -->
+        <div id="view-facturas" class="workspace-scroll">
+            <div class="dashboard-header-flex">
                 <div>
-                    <h2 class="module-title-main">📄 Facturación por Caja (Bimoneda)</h2>
-                    <p style="font-size: 0.78rem; color: var(--text-muted); margin-top: 2px;">Gestión multimoneda (C$/$), conversión dinámica en tiempo real y régimen fiscal de IVA.</p>
+                    <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--text-main);">📄 Facturación por Caja (Bimoneda)</h2>
+                    <p style="font-size: 0.78rem; color: var(--text-muted);">Gestión multimoneda (C$/$), conversión dinámica en tiempo real y IVA.</p>
                 </div>
-                <div class="module-actions-group">
-                    <button class="btn-start-tour" onclick="startTour()">
-                        🧭 Iniciar Guía Interactiva (1|5)
-                    </button>
-                    <button class="btn-action-secondary" onclick="resetInvoice()">🧹 Limpiar</button>
-                    <button class="btn-action-primary" onclick="printInvoicePDF()">🖨️ PDF</button>
-                </div>
+                <button class="btn-action-primary" onclick="resetInvoice()">🧹 Limpiar Caja</button>
             </div>
 
             <div class="invoice-builder-layout">
-                <!-- Columna Izquierda: Configuración e Ítems -->
                 <div class="invoice-card-box">
                     <h3 style="font-size: 0.95rem; font-weight: 700; color: var(--text-main);">Configuración de Emisión</h3>
-                    
                     <div class="form-row-grid">
-                        <!-- SELECCIÓN DE CAJA (PASO 1 DEL TOUR) -->
-                        <div class="form-group-item" id="tour-step-1-el">
+                        <div class="form-group-item">
                             <label class="form-label">Caja Operativa</label>
                             <select class="form-select" id="inv-caja" onchange="onCajaChange()">
                                 <option value="Caja 01 - Principal">Caja 01 - Principal</option>
@@ -1089,643 +594,244 @@
                                 <option value="Caja 03 - Sucursal Norte">Caja 03 - Sucursal Norte</option>
                             </select>
                         </div>
-
                         <div class="form-group-item">
-                            <label class="form-label">Cliente / Empresa</label>
+                            <label class="form-label">Cliente</label>
                             <select class="form-select" id="inv-client">
                                 <option value="Corporación del Norte S.A.">Corporación del Norte S.A.</option>
                                 <option value="Inversiones San Carlos">Inversiones San Carlos</option>
-                                <option value="Cliente General / Mostrador">Cliente General / Mostrador</option>
+                                <option value="Cliente General">Cliente General</option>
                             </select>
-                        </div>
-
-                        <div class="form-group-item">
-                            <label class="form-label">Fecha Emisión</label>
-                            <input type="date" class="form-input" id="inv-date">
                         </div>
                     </div>
 
-                    <!-- BIMONEDA Y TRATAMIENTO DE IVA (PASO 2 DEL TOUR) -->
-                    <div class="form-row-grid" id="tour-step-2-el" style="background: var(--surface-card); padding: 10px; border-radius: 8px; border: 1px solid var(--border);">
+                    <div class="form-row-grid" style="background: var(--surface-card); padding: 10px; border-radius: 8px;">
                         <div class="form-group-item">
-                            <label class="form-label">Moneda Base Input</label>
-                            <select class="form-select" id="inv-currency" onchange="onCurrencyChange()">
-                                <option value="USD">Dólares ($)</option>
+                            <label class="form-label">Moneda</label>
+                            <select class="form-select" id="inv-currency" onchange="renderExcelCatalog(); calculateTotals();">
                                 <option value="NIO" selected>Córdobas (C$)</option>
+                                <option value="USD">Dólares ($)</option>
                             </select>
                         </div>
-
                         <div class="form-group-item">
-                            <label class="form-label">Tasa Cambio (1 USD = C$)</label>
-                            <input type="number" class="form-input" id="inv-rate" value="36.60" step="0.01" oninput="calculateTotals()">
+                            <label class="form-label">Tasa Cambio</label>
+                            <input type="number" class="form-input" id="inv-rate" value="36.60" oninput="calculateTotals()">
                         </div>
-
                         <div class="form-group-item">
-                            <label class="form-label">Tratamiento IVA</label>
-                            <select class="form-select" id="inv-tax-status" onchange="toggleExemption(); calculateTotals();">
+                            <label class="form-label">IVA</label>
+                            <select class="form-select" id="inv-tax-status" onchange="calculateTotals()">
                                 <option value="APLICA">Aplicar IVA (15%)</option>
                                 <option value="EXONERADO">Exonerado (0%)</option>
                             </select>
                         </div>
-
-                        <div class="form-group-item" id="group-exemption" style="display: none;">
-                            <label class="form-label">N° Constancia Exención</label>
-                            <input type="text" class="form-input" id="inv-exemption-no" placeholder="Ej: EXO-2026-990">
-                        </div>
                     </div>
 
-                    <!-- Catálogo de Productos (PASO 3 DEL TOUR) -->
-                    <div style="border-top: 1px solid var(--border); padding-top: 12px;" id="tour-step-3-el">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                            <h3 style="font-size: 0.95rem; font-weight: 700; color: var(--text-main);">Catálogo de Productos</h3>
-                            <button onclick="toggleCatalogMode()" id="btn-toggle-catalog" style="background:var(--surface-card); color:var(--text-main); border:1px solid var(--border); padding:5px 10px; border-radius:6px; font-size:0.75rem; font-weight:600; cursor:pointer; display:flex; gap:5px; align-items:center;">
-                                🖼️ Modo Catálogo
-                            </button>
-                        </div>
-
-                        <!-- VISTA 1: LISTA EXCEL -->
-                        <div class="table-responsive-wrapper" id="catalog-list-view" style="max-height: 160px; overflow-y: auto;">
+                    <div>
+                        <h3 style="font-size: 0.95rem; font-weight: 700; color: var(--text-main); margin-bottom: 8px;">Catálogo</h3>
+                        <div class="table-responsive-wrapper" style="max-height: 150px; overflow-y: auto;">
                             <table class="excel-catalog-table">
                                 <thead>
-                                    <tr>
-                                        <th>Código</th>
-                                        <th>Descripción del Producto</th>
-                                        <th>Precio Unit. (<span class="symbol-active-currency">C$</span>)</th>
-                                        <th>Acción</th>
-                                    </tr>
+                                    <tr><th>Código</th><th>Producto</th><th>Precio</th><th>Acción</th></tr>
                                 </thead>
-                                <tbody id="excel-catalog-body">
-                                    <!-- Dinámico -->
-                                </tbody>
+                                <tbody id="excel-catalog-body"></tbody>
                             </table>
-                        </div>
-
-                        <!-- VISTA 2: CUADRÍCULA -->
-                        <div id="catalog-grid-view" style="display: none; max-height: 160px; overflow-y: auto; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; padding: 2px;">
-                            <!-- Dinámico -->
                         </div>
                     </div>
 
-                    <!-- Detalle de Factura (PASO 4 DEL TOUR) -->
-                    <div style="border-top: 1px solid var(--border); padding-top: 12px;" id="tour-step-4-el">
+                    <div>
                         <h3 style="font-size: 0.95rem; font-weight: 700; color: var(--text-main); margin-bottom: 6px;">
                             Detalle Factura (<span id="label-active-caja" style="color:var(--primary);">Caja 01 - Principal</span>)
                         </h3>
                         <div class="table-responsive-wrapper">
                             <table class="invoice-items-table">
                                 <thead>
-                                    <tr>
-                                        <th>Descripción</th>
-                                        <th>Cant</th>
-                                        <th>Precio (<span class="symbol-active-currency">C$</span>)</th>
-                                        <th>Subtotal (<span class="symbol-active-currency">C$</span>)</th>
-                                        <th>Acción</th>
-                                    </tr>
+                                    <tr><th>Descripción</th><th>Cant</th><th>Subtotal</th><th>Acción</th></tr>
                                 </thead>
-                                <tbody id="invoice-items-body">
-                                    <tr>
-                                        <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 16px;">No hay ítems agregados en esta caja.</td>
-                                    </tr>
-                                </tbody>
+                                <tbody id="invoice-items-body"></tbody>
                             </table>
                         </div>
                     </div>
                 </div>
 
-                <!-- Columna Derecha: Totales Bimoneda & Emisión (PASO 5 DEL TOUR) -->
-                <div style="display: flex; flex-direction: column; gap: 14px;">
-                    <div class="invoice-summary-card" id="tour-step-5-el">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <h3 style="font-size: 0.95rem; font-weight: 700; color: var(--text-main);">Resumen Bimoneda</h3>
-                            <span id="badge-tax-status" style="font-size: 0.65rem; padding: 2px 6px; border-radius: 4px; background: rgba(14, 165, 233, 0.2); color: var(--primary); font-weight: bold;">IVA 15%</span>
-                        </div>
-
-                        <div class="form-group-item">
-                            <label class="form-label">Aplicar Descuento (%)</label>
-                            <input type="number" class="form-input" id="inv-discount" value="0" min="0" max="100" oninput="calculateTotals()">
-                        </div>
-
-                        <!-- TOTALES EN CÓRDOBAS (C$) -->
-                        <div class="currency-resumen-box">
-                            <div class="currency-title">
-                                <span>🇳🇮 Córdobas</span>
-                                <span>NIO (C$)</span>
-                            </div>
-                            <div class="summary-row-item">
-                                <span>Subtotal:</span>
-                                <span id="summary-subtotal-nio">C$ 0.00</span>
-                            </div>
-                            <div class="summary-row-item">
-                                <span>IVA:</span>
-                                <span id="summary-tax-nio">C$ 0.00</span>
-                            </div>
-                            <div class="summary-row-item total-final">
-                                <span>TOTAL:</span>
-                                <span id="summary-grandtotal-nio" style="color: var(--primary);">C$ 0.00</span>
-                            </div>
-                        </div>
-
-                        <!-- TOTALES EN DÓLARES ($) -->
-                        <div class="currency-resumen-box">
-                            <div class="currency-title">
-                                <span>🇺🇸 Dólares</span>
-                                <span>USD ($)</span>
-                            </div>
-                            <div class="summary-row-item">
-                                <span>Subtotal:</span>
-                                <span id="summary-subtotal-usd">$ 0.00</span>
-                            </div>
-                            <div class="summary-row-item">
-                                <span>IVA:</span>
-                                <span id="summary-tax-usd">$ 0.00</span>
-                            </div>
-                            <div class="summary-row-item total-final">
-                                <span>TOTAL:</span>
-                                <span id="summary-grandtotal-usd" style="color: var(--accent-orange);">$ 0.00</span>
-                            </div>
-                        </div>
-
-                        <div style="position: relative;">
-                            <div class="cart-empty-tooltip" id="cart-empty-msg">
-                                ⚠️ No hay artículo en el carrito
-                            </div>
-                            <button class="btn-checkout-emit" onclick="emitInvoice()">
-                                💳 Pagar y Emitir Factura
-                            </button>
-                        </div>
+                <div class="invoice-summary-card">
+                    <h3 style="font-size: 0.95rem; font-weight: 700;">Resumen Bimoneda</h3>
+                    <div class="currency-resumen-box">
+                        <div class="currency-title"><span>NIO (C$)</span></div>
+                        <div class="summary-row-item"><span>Total C$:</span><span id="summary-grandtotal-nio" style="font-weight:bold; color:var(--primary);">C$ 0.00</span></div>
                     </div>
-
-                    <div class="invoice-summary-card" style="background: var(--surface);">
-                        <h4 style="font-size: 0.85rem; font-weight: 700; color: var(--text-main); margin-bottom: 4px;">📋 Historial Reciente por Caja</h4>
-                        <div id="recent-invoices-list" style="font-size: 0.78rem; color: var(--text-muted); display: flex; flex-direction: column; gap: 5px;">
-                            <div>No hay facturas emitidas en esta sesión.</div>
-                        </div>
+                    <div class="currency-resumen-box">
+                        <div class="currency-title"><span>USD ($)</span></div>
+                        <div class="summary-row-item"><span>Total USD:</span><span id="summary-grandtotal-usd" style="font-weight:bold; color:var(--accent-orange);">$ 0.00</span></div>
                     </div>
+                    <button class="btn-checkout-emit" onclick="emitInvoice()">💳 Pagar y Emitir Factura</button>
                 </div>
             </div>
         </div>
 
-        <!-- VISTAS RESTANTES -->
-        <div id="view-clientes" class="workspace-scroll"><div class="generic-module-content"><h2 class="module-title-main">👥 Clientes</h2></div></div>
-        <div id="view-estimaciones" class="workspace-scroll"><div class="generic-module-content"><h2 class="module-title-main">📑 Estimaciones</h2></div></div>
-        <div id="view-ordenes" class="workspace-scroll"><div class="generic-module-content"><h2 class="module-title-main">📦 Órdenes de Venta</h2></div></div>
-        <div id="view-facturas-rec" class="workspace-scroll"><div class="generic-module-content"><h2 class="module-title-main">🔄 Facturas Recurrentes</h2></div></div>
-        <div id="view-pagos" class="workspace-scroll"><div class="generic-module-content"><h2 class="module-title-main">💳 Pagos Recibidos</h2></div></div>
-        <div id="view-devoluciones" class="workspace-scroll"><div class="generic-module-content"><h2 class="module-title-main">↩️ Devoluciones de Venta</h2></div></div>
-        <div id="view-notas" class="workspace-scroll"><div class="generic-module-content"><h2 class="module-title-main">📝 Notas de Crédito</h2></div></div>
-        <div id="view-proveedores" class="workspace-scroll"><div class="generic-module-content"><h2 class="module-title-main">🚚 Proveedores</h2></div></div>
-        <div id="view-gastos" class="workspace-scroll"><div class="generic-module-content"><h2 class="module-title-main">💸 Gastos y Costos</h2></div></div>
-        <div id="view-financiamiento" class="workspace-scroll"><div class="generic-module-content"><h2 class="module-title-main">🏛️ Financiamiento PYME</h2></div></div>
+        <!-- MÓDULOS SECUNDARIOS -->
+        <div id="view-clientes" class="workspace-scroll"><div class="generic-module-content"><h2>👥 Clientes</h2></div></div>
+        <div id="view-estimaciones" class="workspace-scroll"><div class="generic-module-content"><h2>📑 Estimaciones</h2></div></div>
+        <div id="view-ordenes" class="workspace-scroll"><div class="generic-module-content"><h2>📦 Órdenes de Venta</h2></div></div>
+        <div id="view-facturas-rec" class="workspace-scroll"><div class="generic-module-content"><h2>🔄 Facturas Recurrentes</h2></div></div>
+        <div id="view-pagos" class="workspace-scroll"><div class="generic-module-content"><h2>💳 Pagos Recibidos</h2></div></div>
+        <div id="view-devoluciones" class="workspace-scroll"><div class="generic-module-content"><h2>↩️ Devoluciones de Venta</h2></div></div>
+        <div id="view-notas" class="workspace-scroll"><div class="generic-module-content"><h2>📝 Notas de Crédito</h2></div></div>
+        <div id="view-proveedores" class="workspace-scroll"><div class="generic-module-content"><h2>🚚 Proveedores</h2></div></div>
+        <div id="view-gastos" class="workspace-scroll"><div class="generic-module-content"><h2>💸 Gastos y Costos</h2></div></div>
+        <div id="view-financiamiento" class="workspace-scroll"><div class="generic-module-content"><h2>🏛️ Financiamiento PYME</h2></div></div>
     </main>
 
-    <!-- SCRIPT DE INTEGRACIÓN BIMONEDA, IVA Y TOUR GUIADO -->
     <script>
-        document.getElementById('inv-date').valueAsDate = new Date();
-
-        // Catálogo base con precio en Córdobas (NIO)
         const catalogProducts = [
             { code: "PRD-001", name: "Caja Registradora Pro", priceNIO: 5490.00 },
             { code: "PRD-002", name: "Caja Registradora Mini", priceNIO: 3660.00 },
             { code: "PRD-003", name: "Lector Láser Código", priceNIO: 1464.00 },
-            { code: "PRD-004", name: "Licencia Sistema POS", priceNIO: 3660.00 },
-            { code: "PRD-005", name: "Soporte Técnico Anual", priceNIO: 7320.00 },
-            { code: "PRD-006", name: "Rollo de Papel Térmico (Caja)", priceNIO: 450.00 }
+            { code: "PRD-004", name: "Licencia Sistema POS", priceNIO: 3660.00 }
         ];
 
         let cashRegistersData = {
-            "Caja 01 - Principal": { items: [], discount: 0 },
-            "Caja 02 - Express": { items: [], discount: 0 },
-            "Caja 03 - Sucursal Norte": { items: [], discount: 0 }
+            "Caja 01 - Principal": { items: [] },
+            "Caja 02 - Express": { items: [] },
+            "Caja 03 - Sucursal Norte": { items: [] }
         };
 
         let currentCaja = "Caja 01 - Principal";
         let emittedInvoicesLog = [];
-        let isCatalogGridMode = false;
 
-        // --- LÓGICA DE TRATAMIENTO DE IVA ---
-        function toggleExemption() {
-            const status = document.getElementById('inv-tax-status').value;
-            const exemptionGroup = document.getElementById('group-exemption');
-            const badge = document.getElementById('badge-tax-status');
+        // LÓGICA DE DASHBOARD COMPLETO E INTERACTIVO
+        function updateDashboardFullData() {
+            const period = document.getElementById('dash-period-select').value;
+            let baseNIO = 142850.00;
+            let baseOrdenes = 64;
+            let multiplier = period === 'today' ? 0.2 : (period === 'week' ? 0.6 : 1.0);
 
-            if (status === 'EXONERADO') {
-                exemptionGroup.style.display = 'flex';
-                badge.textContent = 'EXONERADO (0%)';
-                badge.style.background = 'rgba(239, 68, 68, 0.2)';
-                badge.style.color = '#ef4444';
-            } else {
-                exemptionGroup.style.display = 'none';
-                badge.textContent = 'IVA 15%';
-                badge.style.background = 'rgba(14, 165, 233, 0.2)';
-                badge.style.color = 'var(--primary)';
-            }
+            let currentIngresos = baseNIO * multiplier;
+            let currentGastos = currentIngresos * 0.26;
+            let currentOrdenes = Math.round(baseOrdenes * multiplier);
+            let rate = 36.60;
+
+            document.getElementById('dash-total-ingresos').textContent = `C$ ${currentIngresos.toLocaleString('es-NI', {minimumFractionDigits: 2})}`;
+            document.getElementById('dash-usd-ingresos').textContent = `≈ $ ${(currentIngresos / rate).toLocaleString('en-US', {minimumFractionDigits: 2})} USD`;
+            document.getElementById('dash-total-gastos').textContent = `C$ ${currentGastos.toLocaleString('es-NI', {minimumFractionDigits: 2})}`;
+            document.getElementById('dash-total-ordenes').textContent = currentOrdenes;
+
+            // Actualizar barras dinámicas por caja
+            document.getElementById('dash-caja1-val').textContent = `C$ ${(currentIngresos * 0.6).toFixed(2)}`;
+            document.getElementById('dash-caja2-val').textContent = `C$ ${(currentIngresos * 0.27).toFixed(2)}`;
+            document.getElementById('dash-caja3-val').textContent = `C$ ${(currentIngresos * 0.13).toFixed(2)}`;
         }
 
-        // --- MODO CATÁLOGO Y CAMBIO DE MONEDA ---
-        function onCurrencyChange() {
-            const currency = document.getElementById('inv-currency').value;
-            const symbol = currency === 'USD' ? '$' : 'C$';
-            document.querySelectorAll('.symbol-active-currency').forEach(el => el.textContent = symbol);
-            renderExcelCatalog();
-            renderInvoiceTable();
-        }
-
-        function getConvertedPrice(priceNIO) {
-            const currency = document.getElementById('inv-currency').value;
-            const rate = parseFloat(document.getElementById('inv-rate').value) || 36.60;
-            return currency === 'USD' ? (priceNIO / rate) : priceNIO;
-        }
-
-        function toggleCatalogMode() {
-            isCatalogGridMode = !isCatalogGridMode;
-            const listView = document.getElementById('catalog-list-view');
-            const gridView = document.getElementById('catalog-grid-view');
-            const btn = document.getElementById('btn-toggle-catalog');
-
-            if (isCatalogGridMode) {
-                listView.style.display = 'none';
-                gridView.style.display = 'grid';
-                btn.innerHTML = '📄 Modo Lista';
-                renderGridCatalog();
-            } else {
-                listView.style.display = 'block';
-                gridView.style.display = 'none';
-                btn.innerHTML = '🖼️ Modo Catálogo';
-            }
-        }
-
-        function renderGridCatalog() {
-            const grid = document.getElementById('catalog-grid-view');
-            grid.innerHTML = '';
-            const currency = document.getElementById('inv-currency').value;
-            const symbol = currency === 'USD' ? '$' : 'C$';
-
-            catalogProducts.forEach(prod => {
-                const price = getConvertedPrice(prod.priceNIO);
-                const card = document.createElement('div');
-                card.className = 'catalog-card';
-                card.onclick = () => addCatalogItem(prod);
-                
-                card.innerHTML = `
-                    <div>
-                        <div class="catalog-card-code">${prod.code}</div>
-                        <div class="catalog-card-title">${prod.name}</div>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px;">
-                        <div class="catalog-card-price">${symbol} ${price.toFixed(2)}</div>
-                        <button style="background:var(--primary); color:white; border:none; width: 26px; height: 26px; border-radius:6px; font-size:1.1rem; cursor:pointer; display:flex; align-items:center; justify-content:center; font-weight:bold;">
-                            +
-                        </button>
-                    </div>
-                `;
-                grid.appendChild(card);
-            });
-        }
-
+        // CONTROL DE FACTURACIÓN
         function renderExcelCatalog() {
             const tbody = document.getElementById('excel-catalog-body');
             tbody.innerHTML = '';
             const currency = document.getElementById('inv-currency').value;
-            const symbol = currency === 'USD' ? '$' : 'C$';
+            const rate = parseFloat(document.getElementById('inv-rate').value) || 36.60;
 
             catalogProducts.forEach(prod => {
-                const price = getConvertedPrice(prod.priceNIO);
+                const price = currency === 'USD' ? (prod.priceNIO / rate) : prod.priceNIO;
+                const symbol = currency === 'USD' ? '$' : 'C$';
                 const tr = document.createElement('tr');
-                tr.onclick = () => addCatalogItem(prod);
                 tr.innerHTML = `
-                    <td style="font-weight: 600; color: var(--primary);">${prod.code}</td>
+                    <td style="font-weight:600; color:var(--primary);">${prod.code}</td>
                     <td>${prod.name}</td>
                     <td>${symbol} ${price.toFixed(2)}</td>
-                    <td><button style="background:var(--primary); color:white; border:none; padding:3px 6px; border-radius:4px; font-size:0.7rem; cursor:pointer;">+ Agregar</button></td>
+                    <td><button onclick="addCatalogItem('${prod.code}')" style="background:var(--primary); color:white; border:none; padding:3px 6px; border-radius:4px; cursor:pointer;">+</button></td>
                 `;
                 tbody.appendChild(tr);
             });
-            renderGridCatalog();
         }
 
-        function addCatalogItem(product) {
+        function addCatalogItem(code) {
+            const prod = catalogProducts.find(p => p.code === code);
             let activeItems = cashRegistersData[currentCaja].items;
-            const existing = activeItems.find(i => i.code === product.code);
-            if (existing) {
-                existing.qty += 1;
-            } else {
-                activeItems.push({ ...product, qty: 1 });
-            }
-            renderInvoiceTable();
-        }
-
-        function updateItemQty(code, delta) {
-            let activeItems = cashRegistersData[currentCaja].items;
-            const item = activeItems.find(i => i.code === code);
-            if (item) {
-                item.qty += delta;
-                if (item.qty <= 0) {
-                    cashRegistersData[currentCaja].items = activeItems.filter(i => i.code !== code);
-                }
-            }
-            renderInvoiceTable();
-        }
-
-        function removeInvoiceItem(code) {
-            cashRegistersData[currentCaja].items = cashRegistersData[currentCaja].items.filter(i => i.code !== code);
-            renderInvoiceTable();
-        }
-
-        function onCajaChange() {
-            currentCaja = document.getElementById('inv-caja').value;
-            document.getElementById('label-active-caja').textContent = currentCaja;
-            document.getElementById('inv-discount').value = cashRegistersData[currentCaja].discount;
+            const existing = activeItems.find(i => i.code === code);
+            if (existing) { existing.qty += 1; } else { activeItems.push({ ...prod, qty: 1 }); }
             renderInvoiceTable();
         }
 
         function renderInvoiceTable() {
             const tbody = document.getElementById('invoice-items-body');
             tbody.innerHTML = '';
+            let activeItems = cashRegistersData[currentCaja].items;
             const currency = document.getElementById('inv-currency').value;
+            const rate = parseFloat(document.getElementById('inv-rate').value) || 36.60;
             const symbol = currency === 'USD' ? '$' : 'C$';
 
-            let activeItems = cashRegistersData[currentCaja].items;
-
             if (activeItems.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 16px;">No hay ítems agregados en esta caja (${currentCaja}).</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:var(--text-muted);">Caja vacía.</td></tr>`;
                 calculateTotals();
                 return;
             }
 
             activeItems.forEach(item => {
-                const unitPrice = getConvertedPrice(item.priceNIO);
-                const subtotal = unitPrice * item.qty;
+                const unitPrice = currency === 'USD' ? (item.priceNIO / rate) : item.priceNIO;
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td style="font-weight: 600; color: var(--text-main);">${item.name}</td>
-                    <td>
-                        <div style="display: flex; align-items: center; gap: 4px;">
-                            <button onclick="updateItemQty('${item.code}', -1)" style="background:var(--bg-main); border:1px solid var(--border); color:var(--text-main); width:20px; height:20px; border-radius:3px; cursor:pointer;">-</button>
-                            <span>${item.qty}</span>
-                            <button onclick="updateItemQty('${item.code}', 1)" style="background:var(--bg-main); border:1px solid var(--border); color:var(--text-main); width:20px; height:20px; border-radius:3px; cursor:pointer;">+</button>
-                        </div>
-                    </td>
-                    <td>${symbol} ${unitPrice.toFixed(2)}</td>
-                    <td style="font-weight: bold; color: var(--primary);">${symbol} ${subtotal.toFixed(2)}</td>
-                    <td><button onclick="removeInvoiceItem('${item.code}')" style="background: rgba(239, 68, 68, 0.15); color: #ef4444; border: none; padding: 3px 6px; border-radius: 3px; cursor: pointer; font-size: 0.7rem;">Eliminar</button></td>
+                    <td>${item.name}</td>
+                    <td>${item.qty}</td>
+                    <td>${symbol} ${(unitPrice * item.qty).toFixed(2)}</td>
+                    <td><button onclick="removeItem('${item.code}')" style="color:#ef4444; border:none; background:none; cursor:pointer;">✕</button></td>
                 `;
                 tbody.appendChild(tr);
             });
-
             calculateTotals();
         }
 
-        // --- CÁLCULO DE TOTALES BIMONEDA E IVA ---
+        function removeItem(code) {
+            cashRegistersData[currentCaja].items = cashRegistersData[currentCaja].items.filter(i => i.code !== code);
+            renderInvoiceTable();
+        }
+
         function calculateTotals() {
-            const currencyBase = document.getElementById('inv-currency').value;
+            let activeItems = cashRegistersData[currentCaja].items;
             const rate = parseFloat(document.getElementById('inv-rate').value) || 36.60;
             const taxStatus = document.getElementById('inv-tax-status').value;
-            const discountPercent = parseFloat(document.getElementById('inv-discount').value) || 0;
 
-            cashRegistersData[currentCaja].discount = discountPercent;
+            let totalNIO = activeItems.reduce((acc, i) => acc + (i.priceNIO * i.qty), 0);
+            if (taxStatus === 'APLICA') totalNIO *= 1.15;
+            let totalUSD = totalNIO / rate;
 
-            let activeItems = cashRegistersData[currentCaja].items;
-
-            // Calcular Subtotal Base según moneda actual seleccionada
-            let subtotalInput = activeItems.reduce((acc, item) => {
-                return acc + (getConvertedPrice(item.priceNIO) * item.qty);
-            }, 0);
-
-            let discountAmount = subtotalInput * (discountPercent / 100);
-            let taxableBase = subtotalInput - discountAmount;
-
-            let taxAmount = 0;
-            if (taxStatus === 'APLICA') {
-                taxAmount = taxableBase * 0.15;
-            }
-
-            let totalInput = taxableBase + taxAmount;
-
-            // Variables para conversión paralela en C$ y $
-            let subtotalNIO, taxNIO, totalNIO;
-            let subtotalUSD, taxUSD, totalUSD;
-
-            if (currencyBase === 'USD') {
-                subtotalUSD = subtotalInput;
-                taxUSD = taxAmount;
-                totalUSD = totalInput;
-
-                subtotalNIO = subtotalInput * rate;
-                taxNIO = taxAmount * rate;
-                totalNIO = totalInput * rate;
-            } else {
-                subtotalNIO = subtotalInput;
-                taxNIO = taxAmount;
-                totalNIO = totalInput;
-
-                subtotalUSD = subtotalInput / rate;
-                taxUSD = taxAmount / rate;
-                totalUSD = totalInput / rate;
-            }
-
-            // Renderizar resumen en ambas monedas
-            document.getElementById('summary-subtotal-nio').textContent = `C$ ${subtotalNIO.toFixed(2)}`;
-            document.getElementById('summary-tax-nio').textContent = `C$ ${taxNIO.toFixed(2)}`;
             document.getElementById('summary-grandtotal-nio').textContent = `C$ ${totalNIO.toFixed(2)}`;
-
-            document.getElementById('summary-subtotal-usd').textContent = `$ ${subtotalUSD.toFixed(2)}`;
-            document.getElementById('summary-tax-usd').textContent = `$ ${taxUSD.toFixed(2)}`;
             document.getElementById('summary-grandtotal-usd').textContent = `$ ${totalUSD.toFixed(2)}`;
+            return { totalNIO, totalUSD };
+        }
 
-            return { totalNIO, totalUSD, taxStatus };
+        function onCajaChange() {
+            currentCaja = document.getElementById('inv-caja').value;
+            document.getElementById('label-active-caja').textContent = currentCaja;
+            renderInvoiceTable();
         }
 
         function resetInvoice() {
             cashRegistersData[currentCaja].items = [];
-            cashRegistersData[currentCaja].discount = 0;
-            document.getElementById('inv-discount').value = 0;
             renderInvoiceTable();
         }
 
         function emitInvoice() {
             let activeItems = cashRegistersData[currentCaja].items;
-            const tooltip = document.getElementById('cart-empty-msg');
-
-            if (activeItems.length === 0) {
-                tooltip.classList.add('active');
-                setTimeout(() => tooltip.classList.remove('active'), 3000);
-                return;
-            }
-
+            if (activeItems.length === 0) return alert("⚠️ Agrega ítems a la caja.");
             const totals = calculateTotals();
-            const clientName = document.getElementById('inv-client').value;
-            const invoiceCode = 'FAC-2026-' + (emittedInvoicesLog.length + 101);
-            const exNo = document.getElementById('inv-exemption-no').value;
-
-            emittedInvoicesLog.push({
-                code: invoiceCode,
-                caja: currentCaja,
-                client: clientName,
-                totalNIO: totals.totalNIO,
-                totalUSD: totals.totalUSD,
-                status: totals.taxStatus
-            });
-
-            let totalGeneralIngresosNIO = emittedInvoicesLog.reduce((acc, curr) => acc + curr.totalNIO, 0);
-            document.getElementById('dash-ingresos').textContent = `C$ ${totalGeneralIngresosNIO.toFixed(2)}`;
-            document.getElementById('dash-ordenes').textContent = emittedInvoicesLog.length;
-
-            const historyBox = document.getElementById('recent-invoices-list');
-            historyBox.innerHTML = '';
-            emittedInvoicesLog.slice(-3).reverse().forEach(inv => {
-                const div = document.createElement('div');
-                div.style.cssText = "display: flex; justify-content: space-between; background: var(--bg-main); padding: 5px 8px; border-radius: 5px; border: 1px solid var(--border); font-size: 0.75rem;";
-                div.innerHTML = `<span style="font-weight:600; color:var(--text-main);">${inv.code} (${inv.caja})</span> <span style="color:var(--primary); font-weight:bold;">C$ ${inv.totalNIO.toFixed(2)} | $ ${inv.totalUSD.toFixed(2)}</span>`;
-                historyBox.appendChild(div);
-            });
-
-            let msg = `✅ Factura Emitida con Éxito!\nFactura: ${invoiceCode}\nCaja: ${currentCaja}\nTratamiento IVA: ${totals.taxStatus}`;
-            if(totals.taxStatus === 'EXONERADO' && exNo) msg += `\nN° Constancia: ${exNo}`;
-            msg += `\nTotal C$: C$ ${totals.totalNIO.toFixed(2)}\nTotal USD: $ ${totals.totalUSD.toFixed(2)}`;
-
-            alert(msg);
+            alert(`✅ Factura Emitida con éxito!\nTotal: C$ ${totals.totalNIO.toFixed(2)}`);
             resetInvoice();
         }
 
-        function printInvoicePDF() {
-            let activeItems = cashRegistersData[currentCaja].items;
-            if (activeItems.length === 0) {
-                alert(`⚠️ No hay datos en la caja actual (${currentCaja}) para exportar.`);
-                return;
-            }
-            window.print();
-        }
-
-        // --- TOUR GUIADO AJUSTADO (5 PASOS) ---
-        const tourSteps = [
-            {
-                elementId: 'tour-step-1-el',
-                title: '1. Seleccionar Caja',
-                desc: 'Selecciona la caja operativa donde estás facturando. Las cajas son totalmente independientes.'
-            },
-            {
-                elementId: 'tour-step-2-el',
-                title: '2. Moneda e IVA',
-                desc: 'Define si emites en Córdobas o Dólares, ingresa la Tasa de Cambio y elige si Aplica el 15% de IVA o si la factura es Exonerada.'
-            },
-            {
-                elementId: 'tour-step-3-el',
-                title: '3. Catálogo de Artículos',
-                desc: 'Haz clic en cualquier producto del catálogo para agregarlo al carrito. Puedes alternar entre lista Excel y tarjetas.'
-            },
-            {
-                elementId: 'tour-step-4-el',
-                title: '4. Detalle de Factura',
-                desc: 'Ajusta cantidades o remueve ítems directamente en la tabla de facturación.'
-            },
-            {
-                elementId: 'tour-step-5-el',
-                title: '5. Totales Bimoneda y Cobro',
-                desc: 'Revisa los totales convertidos automáticamente en Córdobas (C$) y Dólares ($) y presiona "Pagar y Emitir Factura".'
-            }
-        ];
-
-        let currentTourStepIndex = 0;
-
-        function startTour() {
-            switchView('facturas', document.querySelectorAll('.submenu-item')[3]);
-            currentTourStepIndex = 0;
-            document.getElementById('tour-backdrop').classList.add('active');
-            document.getElementById('tour-popup').classList.add('active');
-            renderTourStep();
-        }
-
-        function endTour() {
-            document.getElementById('tour-backdrop').classList.remove('active');
-            document.getElementById('tour-popup').classList.remove('active');
-            removeTourHighlights();
-        }
-
-        function removeTourHighlights() {
-            tourSteps.forEach(step => {
-                const el = document.getElementById(step.elementId);
-                if (el) el.classList.remove('tour-highlighted');
-            });
-        }
-
-        function renderTourStep() {
-            removeTourHighlights();
-            const step = tourSteps[currentTourStepIndex];
-            const targetEl = document.getElementById(step.elementId);
-
-            if (!targetEl) return;
-
-            targetEl.classList.add('tour-highlighted');
-            targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-
-            document.getElementById('tour-counter').textContent = `${currentTourStepIndex + 1} | ${tourSteps.length}`;
-            document.getElementById('tour-title').textContent = step.title;
-            document.getElementById('tour-desc').textContent = step.desc;
-
-            const prevBtn = document.getElementById('tour-prev-btn');
-            const nextBtn = document.getElementById('tour-next-btn');
-
-            prevBtn.style.display = currentTourStepIndex === 0 ? 'none' : 'block';
-            nextBtn.textContent = currentTourStepIndex === tourSteps.length - 1 ? 'Finalizar' : 'Siguiente';
-
-            positionTourPopup(targetEl);
-        }
-
-        function positionTourPopup(targetEl) {
-            const popup = document.getElementById('tour-popup');
-            const rect = targetEl.getBoundingClientRect();
-            const popupWidth = 300;
-            const popupHeight = 200;
-
-            let left = rect.right + 16;
-            let top = rect.top;
-
-            if (left + popupWidth > window.innerWidth) left = rect.left - popupWidth - 16;
-            if (left < 10) left = 10;
-            if (top + popupHeight > window.innerHeight) top = window.innerHeight - popupHeight - 20;
-            if (top < 10) top = 10;
-
-            popup.style.left = `${left}px`;
-            popup.style.top = `${top}px`;
-        }
-
-        function nextTourStep() {
-            if (currentTourStepIndex < tourSteps.length - 1) {
-                currentTourStepIndex++;
-                renderTourStep();
-            } else {
-                endTour();
-            }
-        }
-
-        function prevTourStep() {
-            if (currentTourStepIndex > 0) {
-                currentTourStepIndex--;
-                renderTourStep();
-            }
-        }
-
-        // --- NAVEGACIÓN Y TEMA ---
+        // CAMBIO DE VISTAS (Navegación)
         function switchView(viewName, element) {
             document.querySelectorAll('.workspace-scroll').forEach(el => el.classList.remove('active-view'));
             const target = document.getElementById('view-' + viewName);
             if (target) target.classList.add('active-view');
 
-            if (element && element.classList.contains('submenu-item')) {
-                document.querySelectorAll('.submenu-item').forEach(el => el.classList.remove('active'));
-                element.classList.add('active');
-            } else if (element && element.classList.contains('menu-item')) {
-                document.querySelectorAll('.sidebar-menu .menu-item').forEach(el => el.classList.remove('active'));
+            if (element) {
+                document.querySelectorAll('.menu-item, .submenu-item').forEach(el => el.classList.remove('active'));
                 element.classList.add('active');
             }
 
             if (window.innerWidth <= 1024) toggleMobileSidebar();
         }
 
-        function toggleSubmenu(submenuId, event) {
-            event.stopPropagation();
-            const submenu = document.getElementById(submenuId);
-            if (submenu) submenu.classList.toggle('open');
+        function toggleSubmenu(id, e) {
+            e.stopPropagation();
+            document.getElementById(id).classList.toggle('open');
         }
 
         function toggleMobileSidebar() {
@@ -1734,20 +840,12 @@
         }
 
         function toggleTheme() {
-            const htmlEl = document.documentElement;
-            const themeBtn = document.getElementById('theme-btn');
-            const currentTheme = htmlEl.getAttribute('data-theme');
-            
-            if (currentTheme === 'dark') {
-                htmlEl.setAttribute('data-theme', 'light');
-                themeBtn.innerHTML = '<span>☀️</span> Claro';
-            } else {
-                htmlEl.setAttribute('data-theme', 'dark');
-                themeBtn.innerHTML = '<span>🌙</span> Oscuro';
-            }
+            const html = document.documentElement;
+            const current = html.getAttribute('data-theme');
+            html.setAttribute('data-theme', current === 'dark' ? 'light' : 'dark');
         }
 
-        // Inicialización
+        // Inicializar
         renderExcelCatalog();
         renderInvoiceTable();
     </script>
