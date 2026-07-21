@@ -717,6 +717,47 @@
         }
 
         /* ---------------------------------------------------- */
+        /* VISTA DE CATÁLOGO EN MODO CUADRÍCULA (GRID CARDS)    */
+        /* ---------------------------------------------------- */
+        .catalog-card {
+            background: var(--surface-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px 12px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 6px;
+            cursor: pointer;
+            transition: transform 0.2s, border-color 0.2s, background-color 0.2s;
+        }
+
+        .catalog-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--primary);
+            background: rgba(14, 165, 233, 0.08);
+        }
+
+        .catalog-card-code {
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .catalog-card-title {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--text-main);
+            line-height: 1.25;
+        }
+
+        .catalog-card-price {
+            font-size: 0.88rem;
+            color: var(--text-main);
+            font-weight: 700;
+        }
+
+        /* ---------------------------------------------------- */
         /* SISTEMA DE TOUR GUIADO (MODO ENFOQUE / SPOTLIGHT) */
         /* ---------------------------------------------------- */
         .tour-backdrop {
@@ -919,17 +960,16 @@
                 </div>
 
                 <div style="margin-top: 12px;">
-        <div class="menu-section-title">Comunicaciones</div>
-        <div class="menu-items">
-            <!-- Usamos la etiqueta <a> para redirigir a chat.html -->
-            <a href="chat.html" class="menu-item" style="text-decoration: none; color: inherit; display: flex; justify-content: space-between; align-items: center;">
-                <div class="menu-item-left">
-                    <span>💬</span> Chat
+                    <div class="menu-section-title">Comunicaciones</div>
+                    <div class="menu-items">
+                        <a href="chat.html" class="menu-item" style="text-decoration: none; color: inherit; display: flex; justify-content: space-between; align-items: center;">
+                            <div class="menu-item-left">
+                                <span>💬</span> Chat
+                            </div>
+                            <span class="chat-badge" style="background:#0ea5e9; color:white; font-size:0.68rem; padding:1px 6px; border-radius:10px; font-weight:bold;">3</span>
+                        </a>
+                    </div>
                 </div>
-                <span class="chat-badge">3</span>
-            </a>
-        </div>
-    </div>
 
                 <div>
                     <div class="menu-section-title">Operaciones</div>
@@ -1037,7 +1077,7 @@
             <div class="module-header-flex">
                 <div>
                     <h2 class="module-title-main">📄 Facturación por Caja</h2>
-                    <p style="font-size: 0.78rem; color: var(--text-muted); margin-top: 2px;">Facturación individual independiente por caja con formato tabular Excel.</p>
+                    <p style="font-size: 0.78rem; color: var(--text-muted); margin-top: 2px;">Facturación individual independiente por caja con formato tabular Excel o Catálogo.</p>
                 </div>
                 <div class="module-actions-group">
                     <!-- BOTÓN DE GUÍA / TOUR INTERACTIVO DE 5 PASOS -->
@@ -1051,7 +1091,7 @@
 
             <!-- Estructura Principal del Editor y Resumen -->
             <div class="invoice-builder-layout">
-                <!-- Columna Izquierda: Selección de Caja Independiente, Catálogo Estilo Excel y Detalle -->
+                <!-- Columna Izquierda: Selección de Caja Independiente, Catálogo Estilo Excel/Cuadrícula y Detalle -->
                 <div class="invoice-card-box">
                     <h3 style="font-size: 0.95rem; font-weight: 700; color: var(--text-main);">Configuración de Emisión</h3>
                     <div class="form-row-grid">
@@ -1078,13 +1118,22 @@
                         </div>
                     </div>
 
-                    <!-- Catálogo Estilo Excel para Seleccionar Artículos (PASO 2) -->
+                    <!-- Catálogo Estilo Excel / Cuadrícula (PASO 2) -->
                     <div style="border-top: 1px solid var(--border); padding-top: 12px;" id="tour-step-2-el">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                            <h3 style="font-size: 0.95rem; font-weight: 700; color: var(--text-main);">Catálogo (Estilo Excel)</h3>
-                            <span style="font-size: 0.72rem; color: var(--primary);">Haz clic para agregar</span>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <h3 style="font-size: 0.95rem; font-weight: 700; color: var(--text-main);">Catálogo de Productos</h3>
+                            
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <span style="font-size: 0.72rem; color: var(--text-muted);">Haz clic para agregar</span>
+                                <!-- Botón para cambiar del modo lista a modo catálogo -->
+                                <button onclick="toggleCatalogMode()" id="btn-toggle-catalog" style="background:var(--surface-card); color:var(--text-main); border:1px solid var(--border); padding:5px 10px; border-radius:6px; font-size:0.75rem; font-weight:600; cursor:pointer; display:flex; gap:5px; align-items:center;">
+                                    🖼️ Modo Catálogo
+                                </button>
+                            </div>
                         </div>
-                        <div class="table-responsive-wrapper" style="max-height: 160px; overflow-y: auto;">
+
+                        <!-- VISTA 1: LISTA (EXCEL) -->
+                        <div class="table-responsive-wrapper" id="catalog-list-view" style="max-height: 160px; overflow-y: auto;">
                             <table class="excel-catalog-table">
                                 <thead>
                                     <tr>
@@ -1098,6 +1147,11 @@
                                     <!-- Generado dinámicamente -->
                                 </tbody>
                             </table>
+                        </div>
+
+                        <!-- VISTA 2: CUADRÍCULA (CATÁLOGO) -->
+                        <div id="catalog-grid-view" style="display: none; max-height: 160px; overflow-y: auto; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; padding: 2px;">
+                            <!-- Generado dinámicamente -->
                         </div>
                     </div>
 
@@ -1155,9 +1209,8 @@
                             </div>
                         </div>
 
-                        <!-- PASO 5: BOTÓN PAGAR Y EMITIR FACTURA (CON MENSAJE EMERGENTE ARRIBA SI NO HAY ARTÍCULOS) -->
+                        <!-- PASO 5: BOTÓN PAGAR Y EMITIR FACTURA -->
                         <div style="position: relative;" id="tour-step-5-el">
-                            <!-- Tooltip emergente que sale ARRIBA del botón cuando está vacío -->
                             <div class="cart-empty-tooltip" id="cart-empty-msg">
                                 ⚠️ No hay artículo en el carrito
                             </div>
@@ -1190,7 +1243,7 @@
         <div id="view-financiamiento" class="workspace-scroll"><div class="generic-module-content"><h2 class="module-title-main">🏛️ Financiamiento PYME</h2></div></div>
     </main>
 
-    <!-- Script de Funcionalidad Integral, Tour Interactivo y Validaciones -->
+    <!-- Script de Funcionalidad Integral, Cambio de Vista, Tour e Impresión -->
     <script>
         document.getElementById('inv-date').valueAsDate = new Date();
 
@@ -1211,6 +1264,51 @@
 
         let currentCaja = "Caja 01 - Principal";
         let emittedInvoicesLog = [];
+        let isCatalogGridMode = false;
+
+        /* ================= CAMBIO DE MODO LISTA / CATÁLOGO ================= */
+        function toggleCatalogMode() {
+            isCatalogGridMode = !isCatalogGridMode;
+            const listView = document.getElementById('catalog-list-view');
+            const gridView = document.getElementById('catalog-grid-view');
+            const btn = document.getElementById('btn-toggle-catalog');
+
+            if (isCatalogGridMode) {
+                listView.style.display = 'none';
+                gridView.style.display = 'grid';
+                btn.innerHTML = '📄 Modo Lista';
+                renderGridCatalog();
+            } else {
+                listView.style.display = 'block';
+                gridView.style.display = 'none';
+                btn.innerHTML = '🖼️ Modo Catálogo';
+            }
+        }
+
+        function renderGridCatalog() {
+            const grid = document.getElementById('catalog-grid-view');
+            grid.innerHTML = '';
+            
+            catalogProducts.forEach(prod => {
+                const card = document.createElement('div');
+                card.className = 'catalog-card';
+                card.onclick = () => addCatalogItem(prod);
+                
+                card.innerHTML = `
+                    <div>
+                        <div class="catalog-card-code">${prod.code}</div>
+                        <div class="catalog-card-title">${prod.name}</div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px;">
+                        <div class="catalog-card-price">C$ ${prod.price.toFixed(2)}</div>
+                        <button style="background:var(--primary); color:white; border:none; width: 26px; height: 26px; border-radius:6px; font-size:1.1rem; cursor:pointer; display:flex; align-items:center; justify-content:center; font-weight:bold;">
+                            +
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
 
         /* ================= CONFIGURACIÓN DEL TOUR GUIADO DE 5 PASOS ================= */
         const tourSteps = [
@@ -1222,7 +1320,7 @@
             {
                 elementId: 'tour-step-2-el',
                 title: 'Catálogo de Artículos',
-                desc: 'Esta tabla interactiva estilo Excel permite hacer clic en cualquier producto para agregarlo instantáneamente al carrito.'
+                desc: 'Puedes alternar entre la vista de lista Excel y la vista de catálogo (tarjetas). Al hacer clic en cualquier producto, se agregará a la factura.'
             },
             {
                 elementId: 'tour-step-3-el',
@@ -1244,7 +1342,6 @@
         let currentTourStepIndex = 0;
 
         function startTour() {
-            // Asegurarse de estar en la vista de facturas
             switchView('facturas', document.querySelectorAll('.submenu-item')[3]);
             currentTourStepIndex = 0;
             document.getElementById('tour-backdrop').classList.add('active');
@@ -1275,19 +1372,16 @@
             targetEl.classList.add('tour-highlighted');
             targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
-            // Actualizar contenidos del Pop-up
             document.getElementById('tour-counter').textContent = `${currentTourStepIndex + 1} | ${tourSteps.length}`;
             document.getElementById('tour-title').textContent = step.title;
             document.getElementById('tour-desc').textContent = step.desc;
 
-            // Control de botones Anterior / Siguiente
             const prevBtn = document.getElementById('tour-prev-btn');
             const nextBtn = document.getElementById('tour-next-btn');
 
             prevBtn.style.display = currentTourStepIndex === 0 ? 'none' : 'block';
             nextBtn.textContent = currentTourStepIndex === tourSteps.length - 1 ? 'Finalizar' : 'Siguiente';
 
-            // Posicionar el Pop-up flotante al lado del elemento destacado
             positionTourPopup(targetEl);
         }
 
@@ -1300,13 +1394,11 @@
             let left = rect.right + 16;
             let top = rect.top;
 
-            // Si se sale por la derecha de la pantalla, colocarlo a la izquierda
             if (left + popupWidth > window.innerWidth) {
                 left = rect.left - popupWidth - 16;
             }
             if (left < 10) left = 10;
 
-            // Si se sale por abajo, ajustar hacia arriba
             if (top + popupHeight > window.innerHeight) {
                 top = window.innerHeight - popupHeight - 20;
             }
@@ -1347,6 +1439,7 @@
                 `;
                 tbody.appendChild(tr);
             });
+            renderGridCatalog();
         }
 
         function addCatalogItem(product) {
@@ -1448,7 +1541,6 @@
             const tooltip = document.getElementById('cart-empty-msg');
 
             if (activeItems.length === 0) {
-                // Mostrar mensaje flotante ARRIBA del botón de pago
                 tooltip.classList.add('active');
                 setTimeout(() => {
                     tooltip.classList.remove('active');
