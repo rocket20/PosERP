@@ -268,24 +268,81 @@
         }
         .delete-item-btn:hover { filter: brightness(1.1); transform: scale(1.05); }
 
-        /* Summary Bar */
+        /* Summary Bar Actualizada con Botones de Info y Edición */
         .cart-summary-bar {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             background: #f8fafc;
             border-top: 1px solid var(--border);
             border-bottom: 1px solid var(--border);
-            padding: 10px;
+            padding: 8px 10px;
             text-align: center;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: var(--text-muted);
+            gap: 4px;
         }
 
-        .cart-summary-bar div span {
+        .summary-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 4px;
+        }
+
+        .summary-card.interactive {
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+        }
+
+        .summary-header-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 700;
+            color: var(--text-muted);
+            margin-bottom: 2px;
+        }
+
+        .summary-actions-inline {
+            display: flex;
+            gap: 4px;
+            align-items: center;
+        }
+
+        .sum-action-btn {
+            background: #e0f2fe;
+            border: none;
+            color: #0284c7;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .sum-action-btn.edit {
+            background: #e0f2fe;
+            color: #0284c7;
+        }
+
+        .sum-action-btn:hover {
+            transform: scale(1.1);
+            filter: brightness(0.95);
+        }
+
+        .summary-card span.val-display {
             display: block;
-            font-size: 1rem;
+            font-size: 0.95rem;
             font-weight: bold;
             color: var(--text-main);
+            margin-top: 2px;
         }
 
         .cart-bottom-actions {
@@ -477,7 +534,7 @@
             line-height: 1.4;
         }
 
-        /* Modal de Pago / Checkout */
+        /* Modal genérico o de Modificación (Descuento / Delivery) */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -491,7 +548,7 @@
 
         .modal-container {
             background: white;
-            width: 550px;
+            width: 420px;
             border-radius: 16px;
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
             overflow: hidden;
@@ -504,7 +561,7 @@
         }
 
         .modal-header {
-            background: #ea580c;
+            background: #0284c7;
             color: white;
             padding: 16px 20px;
             display: flex;
@@ -655,7 +712,7 @@
             <button class="tool-btn tb-blue" title="Pantalla Principal">🏠</button>
         </div>
         <div class="system-info-group">
-            <span class="badge-pill" id="live-clock">20/07/2026 08:09 PM</span>
+            <span class="badge-pill" id="live-clock">20/07/2026 09:06 PM</span>
             <span class="badge-bank">Ficohsa</span>
             <span class="badge-status">🟢 Online</span>
         </div>
@@ -695,12 +752,38 @@
                 <div id="cart-items-body"></div>
             </div>
 
-            <!-- Summary Bar -->
+            <!-- Summary Bar Actualizada con Diseño Exacto Solicitado -->
             <div class="cart-summary-bar">
-                <div>ARTÍCULOS: <span id="summary-art">0.00</span></div>
-                <div>SUBTOTAL: <span id="summary-sub">0.00</span></div>
-                <div>DESCUENTO: <span style="color:#dc2626;" id="summary-desc">0.00</span></div>
-                <div>DELIVERY: <span id="summary-del">0.00</span></div>
+                <div class="summary-card">
+                    ARTÍCULOS: <span class="val-display" id="summary-art">0.00</span>
+                </div>
+                <div class="summary-card">
+                    SUBTOTAL: <span class="val-display" id="summary-sub">0.00</span>
+                </div>
+                
+                <!-- Descuento Interactivo con Botones de Info y Edición -->
+                <div class="summary-card interactive">
+                    <div class="summary-header-row">
+                        <span>DESCUENTO</span>
+                        <div class="summary-actions-inline">
+                            <button class="sum-action-btn" onclick="showInfoModal('Descuento', 'Aplica reducciones porcentuales o montos fijos directos al total de la factura actual.')" title="Información">ℹ️</button>
+                            <button class="sum-action-btn edit" onclick="openAdjustmentModal('discount')" title="Editar Descuento">✏️</button>
+                        </div>
+                    </div>
+                    <span class="val-display" style="color: #dc2626;" id="summary-desc">(-): 0.00</span>
+                </div>
+
+                <!-- Delivery Interactivo con Botones de Info y Edición -->
+                <div class="summary-card interactive">
+                    <div class="summary-header-row">
+                        <span>DELIVERY</span>
+                        <div class="summary-actions-inline">
+                            <button class="sum-action-btn" onclick="showInfoModal('Delivery', 'Agrega cargos adicionales por servicio de envío a domicilio o transporte de carga.')" title="Información">ℹ️</button>
+                            <button class="sum-action-btn edit" onclick="openAdjustmentModal('delivery')" title="Editar Delivery">✏️</button>
+                        </div>
+                    </div>
+                    <span class="val-display" id="summary-del">(+): 0.00</span>
+                </div>
             </div>
 
             <!-- Bottom Actions & Checkout Totals -->
@@ -757,10 +840,46 @@
         </section>
     </div>
 
+    <!-- Modal de Ajuste (Descuento o Delivery) -->
+    <div class="modal-overlay" id="adjustment-modal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <span id="modal-adj-title">Modificar Valor</span>
+                <button class="modal-close" onclick="closeAdjustmentModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="cash-input-group">
+                    <label style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted);" id="modal-adj-label">NUEVO MONTO (USD)</label>
+                    <input type="number" id="adjustment-input-val" class="cash-input" placeholder="0.00">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-modal btn-cancel" onclick="closeAdjustmentModal()">Cancelar</button>
+                <button class="btn-modal btn-confirm" onclick="saveAdjustmentVal()">Guardar Cambios</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Información Rápida (Info Descuento / Delivery) -->
+    <div class="modal-overlay" id="info-modal">
+        <div class="modal-container">
+            <div class="modal-header" style="background: #0284c7;">
+                <span id="info-modal-title">Información</span>
+                <button class="modal-close" onclick="closeInfoModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="info-modal-text" style="font-size: 1rem; color: var(--text-main); line-height: 1.5;"></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-modal btn-confirm" onclick="closeInfoModal()">Entendido</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal de Procesamiento de Pago y Facturación -->
     <div class="modal-overlay" id="checkout-modal">
         <div class="modal-container">
-            <div class="modal-header">
+            <div class="modal-header" style="background: #ea580c;">
                 <span id="modal-title-register">Procesar Factura - Caja Principal #01</span>
                 <button class="modal-close" onclick="closeCheckoutModal()">&times;</button>
             </div>
@@ -823,6 +942,14 @@
             'caja-03': []
         };
 
+        // Valores globales para Descuento y Delivery por caja
+        let adjustmentsByRegister = {
+            'caja-01': { discount: 0.00, delivery: 0.00 },
+            'caja-02': { discount: 0.00, delivery: 0.00 },
+            'caja-03': { discount: 0.00, delivery: 0.00 }
+        };
+
+        let currentEditingType = '';
         let selectedPaymentMethod = 'Efectivo';
         let alertTimeout = null;
 
@@ -851,6 +978,8 @@
         const cartItemsBody = document.getElementById('cart-items-body');
         const summaryArt = document.getElementById('summary-art');
         const summarySub = document.getElementById('summary-sub');
+        const summaryDesc = document.getElementById('summary-desc');
+        const summaryDel = document.getElementById('summary-del');
         const grandTotalUsd = document.getElementById('grand-total-usd');
         const grandTotalNio = document.getElementById('grand-total-nio');
         const cartAlertPopup = document.getElementById('cart-alert-popup');
@@ -922,8 +1051,52 @@
             if (alertTimeout) clearTimeout(alertTimeout);
         }
 
+        // Lógica de Modales de Descuento y Delivery
+        window.openAdjustmentModal = function(type) {
+            currentEditingType = type;
+            const titleEl = document.getElementById('modal-adj-title');
+            const labelEl = document.getElementById('modal-adj-label');
+            const inputEl = document.getElementById('adjustment-input-val');
+
+            const currentVal = adjustmentsByRegister[activeRegister][type];
+            inputEl.value = currentVal.toFixed(2);
+
+            if (type === 'discount') {
+                titleEl.textContent = 'Modificar Descuento';
+                labelEl.textContent = 'MONTO DE DESCUENTO (USD)';
+            } else {
+                titleEl.textContent = 'Modificar Delivery';
+                labelEl.textContent = 'MONTO DE DELIVERY (USD)';
+            }
+
+            document.getElementById('adjustment-modal').style.display = 'flex';
+        }
+
+        window.closeAdjustmentModal = function() {
+            document.getElementById('adjustment-modal').style.display = 'none';
+        }
+
+        window.saveAdjustmentVal = function() {
+            const inputVal = parseFloat(document.getElementById('adjustment-input-val').value) || 0;
+            adjustmentsByRegister[activeRegister][currentEditingType] = Math.max(0, inputVal);
+            closeAdjustmentModal();
+            updateCartUI();
+        }
+
+        window.showInfoModal = function(title, text) {
+            document.getElementById('info-modal-title').textContent = title;
+            document.getElementById('info-modal-text').textContent = text;
+            document.getElementById('info-modal').style.display = 'flex';
+        }
+
+        window.closeInfoModal = function() {
+            document.getElementById('info-modal').style.display = 'none';
+        }
+
         function updateCartUI() {
             let currentCart = cartsByRegister[activeRegister];
+            let adj = adjustmentsByRegister[activeRegister];
+            
             cartItemsBody.innerHTML = '';
             let totalArt = 0;
             let subtotal = 0;
@@ -968,10 +1141,17 @@
                 cartItemsBody.appendChild(row);
             });
 
+            // Cálculo final incluyendo descuento (-) y delivery (+)
+            let finalTotalUsd = subtotal - adj.discount + adj.delivery;
+            if (finalTotalUsd < 0) finalTotalUsd = 0;
+
             summaryArt.textContent = totalArt.toFixed(2);
             summarySub.textContent = subtotal.toFixed(2);
-            grandTotalUsd.textContent = `$ ${subtotal.toFixed(2)}`;
-            grandTotalNio.textContent = `C$ ${(subtotal * tasaCambio).toFixed(2)}`;
+            summaryDesc.textContent = `(-): ${adj.discount.toFixed(2)}`;
+            summaryDel.textContent = `(+): ${adj.delivery.toFixed(2)}`;
+
+            grandTotalUsd.textContent = `$ ${finalTotalUsd.toFixed(2)}`;
+            grandTotalNio.textContent = `C$ ${(finalTotalUsd * tasaCambio).toFixed(2)}`;
         }
 
         // Lógica del Tutorial con Destacado (Spotlight) y Animación Fluida
@@ -982,7 +1162,6 @@
         }
 
         function nextTutorialStep() {
-            // Limpiar la clase de resaltado anterior
             const prevStep = tutorialSteps[currentTutorialStep];
             if (prevStep) {
                 const prevEl = document.getElementById(prevStep.elementId);
@@ -1003,41 +1182,35 @@
             
             if (!targetEl) return;
 
-            // Añadir clase de resaltado nítido al botón/elemento actual
             targetEl.classList.add('tutorial-highlight');
             targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
-            // Actualizar contador y texto del tooltip (ej: 1 | 4)
             document.getElementById('tooltip-counter-badge').textContent = `${currentTutorialStep + 1} | ${tutorialSteps.length}`;
             document.getElementById('tooltip-text-content').textContent = step.text;
 
-            // Calcular posición del tooltip sobre el elemento enfocado
             const rect = targetEl.getBoundingClientRect();
             tutorialTooltip.style.display = 'block';
             
             let topPos = rect.top - tutorialTooltip.offsetHeight - 14;
             let leftPos = rect.left + (rect.width / 2) - (tutorialTooltip.offsetWidth / 2);
 
-            // Ajustes de límites para que no rebase la pantalla
             if (leftPos < 12) leftPos = 12;
             if (leftPos + tutorialTooltip.offsetWidth > window.innerWidth - 12) {
                 leftPos = window.innerWidth - tutorialTooltip.offsetWidth - 12;
             }
             if (topPos < 12) {
-                topPos = rect.bottom + 14; // Si arriba no cabe, mostrar abajo
+                topPos = rect.bottom + 14;
             }
 
             tutorialTooltip.style.top = `${topPos}px`;
             tutorialTooltip.style.left = `${leftPos}px`;
 
-            // Activar animación de aparición del tooltip
             setTimeout(() => {
                 tutorialTooltip.classList.add('show');
             }, 50);
         }
 
         function stopTutorial() {
-            // Remover resaltados de todos los pasos posibles
             tutorialSteps.forEach(step => {
                 const el = document.getElementById(step.elementId);
                 if (el) el.classList.remove('tutorial-highlight');
@@ -1066,9 +1239,12 @@
 
             hideAlertPopup();
             let subtotal = currentCart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+            let adj = adjustmentsByRegister[activeRegister];
+            let finalTotalUsd = subtotal - adj.discount + adj.delivery;
+            if (finalTotalUsd < 0) finalTotalUsd = 0;
             
-            document.getElementById('modal-pay-usd').textContent = `$ ${subtotal.toFixed(2)}`;
-            document.getElementById('modal-pay-nio').textContent = `C$ ${(subtotal * tasaCambio).toFixed(2)}`;
+            document.getElementById('modal-pay-usd').textContent = `$ ${finalTotalUsd.toFixed(2)}`;
+            document.getElementById('modal-pay-nio').textContent = `C$ ${(finalTotalUsd * tasaCambio).toFixed(2)}`;
             
             const registerName = document.getElementById('step-register').selectedOptions[0].text;
             document.getElementById('modal-title-register').textContent = `Procesar Factura - ${registerName}`;
@@ -1076,7 +1252,7 @@
             const clientName = document.getElementById('step-client').selectedOptions[0].text;
             document.getElementById('modal-client-label').textContent = clientName;
 
-            document.getElementById('cash-received-input').value = subtotal.toFixed(2);
+            document.getElementById('cash-received-input').value = finalTotalUsd.toFixed(2);
             calculateChange();
 
             document.getElementById('checkout-modal').style.display = 'flex';
@@ -1102,8 +1278,12 @@
         function calculateChange() {
             let currentCart = cartsByRegister[activeRegister];
             let subtotal = currentCart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+            let adj = adjustmentsByRegister[activeRegister];
+            let finalTotalUsd = subtotal - adj.discount + adj.delivery;
+            if (finalTotalUsd < 0) finalTotalUsd = 0;
+
             let received = parseFloat(document.getElementById('cash-received-input').value) || 0;
-            let change = received - subtotal;
+            let change = received - finalTotalUsd;
 
             const changeOutput = document.getElementById('change-due-output');
             if (change >= 0) {
@@ -1120,6 +1300,7 @@
             alert(`¡Factura emitida exitosamente desde la ${registerName}!\nMétodo: ${selectedPaymentMethod}\nLa venta ha sido registrada e integrada con el sistema de inventario.`);
             
             cartsByRegister[activeRegister] = [];
+            adjustmentsByRegister[activeRegister] = { discount: 0.00, delivery: 0.00 };
             updateCartUI();
             closeCheckoutModal();
         }
