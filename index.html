@@ -19,6 +19,8 @@
             --accent-blue: #0284c7;
             --accent-orange: #f97316;
             --accent-green: #10b981;
+            --accent-red: #ef4444;
+            --accent-purple: #a855f7;
             --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
         }
 
@@ -35,6 +37,8 @@
             --accent-blue: #0284c7;
             --accent-orange: #ea580c;
             --accent-green: #059669;
+            --accent-red: #dc2626;
+            --accent-purple: #9333ea;
             --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
         }
 
@@ -196,7 +200,7 @@
         }
         .workspace-scroll.active-view { display: flex; }
 
-        /* HERO & DASHBOARD ESTILOS EXTENDIDOS */
+        /* HERO & DASHBOARD ESTILOS */
         .dashboard-header-flex {
             display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
         }
@@ -243,11 +247,11 @@
         .stat-amount { font-size: 1.4rem; font-weight: 800; color: var(--text-main); margin-top: 4px; }
         .stat-sub { font-size: 0.72rem; color: var(--text-muted); margin-top: 4px; }
 
-        /* Dashboard Secciones de Análitica Extendida */
+        /* Dashboard Secciones de Análitica */
         .dashboard-main-layout {
-            display: grid; grid-template-columns: 2fr 1fr; gap: 16px;
+            display: grid; grid-template-columns: 2.2fr 1fr; gap: 16px;
         }
-        @media (max-width: 1024px) { .dashboard-main-layout { grid-template-columns: 1fr; } }
+        @media (max-width: 1200px) { .dashboard-main-layout { grid-template-columns: 1fr; } }
 
         .dash-card-box {
             background: var(--surface); border: 1px solid var(--border);
@@ -255,13 +259,44 @@
             display: flex; flex-direction: column; gap: 14px;
         }
 
-        .chart-mock-container {
-            display: flex; align-items: flex-end; justify-content: space-between; gap: 8px;
-            height: 160px; padding-top: 20px; border-bottom: 1px dashed var(--border);
+        /* MÓDULO DE 3 COLUMNAS: MÁS VENDIDOS | MÁS RENTABLES | NO VENDIDOS */
+        .product-performance-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
         }
-        .chart-bar-group { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; height: 100%; justify-content: flex-end; }
-        .chart-bar { width: 100%; max-width: 28px; background: var(--primary); border-radius: 4px 4px 0 0; transition: height 0.4s ease; }
-        .chart-label { font-size: 0.68rem; color: var(--text-muted); }
+        @media (max-width: 900px) { .product-performance-grid { grid-template-columns: 1fr; } }
+
+        .perf-column-box {
+            background: var(--surface-card); border: 1px solid var(--border);
+            border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 10px;
+        }
+
+        .perf-title-top {
+            font-size: 0.78rem; font-weight: 800; text-transform: uppercase;
+            display: flex; justify-content: space-between; align-items: center;
+            padding-bottom: 6px; border-bottom: 1px dashed var(--border);
+        }
+
+        .perf-list { display: flex; flex-direction: column; gap: 8px; }
+        
+        .perf-item-row {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 8px; background: var(--bg-main); border-radius: 6px;
+            border-left: 3px solid transparent; font-size: 0.78rem;
+        }
+        .perf-item-row.top-seller { border-left-color: var(--accent-green); }
+        .perf-item-row.top-profit { border-left-color: var(--accent-purple); }
+        .perf-item-row.low-seller { border-left-color: var(--accent-red); }
+
+        .perf-item-info { display: flex; flex-direction: column; gap: 2px; }
+        .perf-item-title { font-weight: 700; color: var(--text-main); }
+        .perf-item-meta { font-size: 0.68rem; color: var(--text-muted); }
+
+        .badge-sales-count {
+            padding: 3px 8px; border-radius: 12px; font-weight: bold; font-size: 0.72rem; white-space: nowrap;
+        }
+        .badge-green { background: rgba(16, 185, 129, 0.15); color: var(--accent-green); }
+        .badge-purple { background: rgba(168, 85, 247, 0.15); color: var(--accent-purple); }
+        .badge-red { background: rgba(239, 68, 68, 0.15); color: var(--accent-red); }
 
         .progress-bar-track { width: 100%; height: 8px; background: var(--bg-main); border-radius: 4px; overflow: hidden; }
         .progress-bar-fill { height: 100%; background: var(--primary); border-radius: 4px; }
@@ -300,7 +335,6 @@
         }
         .currency-title { font-size: 0.75rem; font-weight: 800; color: var(--primary); text-transform: uppercase; display: flex; justify-content: space-between; border-bottom: 1px dashed var(--border); padding-bottom: 4px; }
         .summary-row-item { display: flex; justify-content: space-between; font-size: 0.82rem; color: var(--text-muted); }
-        .summary-row-item.total-final { font-size: 0.95rem; font-weight: bold; color: var(--text-main); border-top: 1px solid var(--border); padding-top: 4px; }
 
         .btn-action-primary {
             background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%); color: white; border: none;
@@ -333,7 +367,6 @@
                 <div>
                     <div class="menu-section-title">General</div>
                     <div class="menu-items">
-                        <!-- Pestaña Dashboard Activa por Defecto -->
                         <div class="menu-item active" id="nav-dashboard" onclick="switchView('dashboard', this)">
                             <div class="menu-item-left"><span>📊</span> Dashboard</div>
                         </div>
@@ -410,10 +443,10 @@
                     <h1 class="hero-title-row">
                         Centraliza, optimiza y <span class="highlight-escalar">escala</span>, la solución integral que tu crecimiento <span class="highlight-necesita">necesita.</span>
                     </h1>
-                    <p style="color: var(--text-muted); font-size: 0.85rem;">Panel interactivo de rendimiento financiero, métricas de ventas y operaciones de caja.</p>
+                    <p style="color: var(--text-muted); font-size: 0.85rem;">Panel interactivo de rendimiento financiero, rotación de productos y operaciones de caja.</p>
                 </section>
                 <div style="display: flex; gap: 8px; align-items: center;">
-                    <span style="font-size: 0.78rem; color: var(--text-muted); font-weight: 600;">Período:</span>
+                    <span style="font-size: 0.78rem; color: var(--text-muted); font-weight: 600;">Filtrar Caja / Período:</span>
                     <select class="form-select" id="dash-period-select" style="width: auto;" onchange="updateDashboardFullData()">
                         <option value="today">Hoy</option>
                         <option value="week">Esta Semana</option>
@@ -469,24 +502,46 @@
                 </div>
             </section>
 
-            <!-- LAYOUT SECUNDARIO DE ANÁLISIS: GRÁFICOS Y DETALLES -->
+            <!-- LAYOUT DE ANÁLISIS: RENDIMIENTO DE PRODUCTOS EN CAJA -->
             <div class="dashboard-main-layout">
-                <!-- Columna Izquierda: Tendencia e Historial de Ventas -->
+                <!-- Columna Izquierda: Rendimiento de Caja (Más Vendidos vs Más Rentables vs No Vendidos) -->
                 <div class="dash-card-box">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <h3 style="font-size: 0.95rem; font-weight: 700; color: var(--text-main);">📈 Rendimiento de Ventas por Caja</h3>
-                        <span style="font-size: 0.7rem; color: var(--primary); font-weight: 600;">Actualizado en Tiempo Real</span>
+                        <div>
+                            <h3 style="font-size: 0.95rem; font-weight: 700; color: var(--text-main);">📊 Rendimiento de Productos en Caja</h3>
+                            <p style="font-size: 0.72rem; color: var(--text-muted);">Monitoreo por volumen de ventas, margen de utilidad ganada e inventario sin salida.</p>
+                        </div>
+                        <span style="font-size: 0.7rem; color: var(--primary); font-weight: 600;">Análisis en Tiempo Real</span>
                     </div>
 
-                    <!-- Gráfico Representativo Interactivos -->
-                    <div class="chart-mock-container" id="dash-chart-bars">
-                        <div class="chart-bar-group"><div class="chart-bar" style="height: 60%;"></div><span class="chart-label">Lun</span></div>
-                        <div class="chart-bar-group"><div class="chart-bar" style="height: 80%;"></div><span class="chart-label">Mar</span></div>
-                        <div class="chart-bar-group"><div class="chart-bar" style="height: 45%;"></div><span class="chart-label">Mié</span></div>
-                        <div class="chart-bar-group"><div class="chart-bar" style="height: 95%;"></div><span class="chart-label">Jue</span></div>
-                        <div class="chart-bar-group"><div class="chart-bar" style="height: 75%;"></div><span class="chart-label">Vie</span></div>
-                        <div class="chart-bar-group"><div class="chart-bar" style="height: 100%; background: var(--accent-orange);"></div><span class="chart-label">Sáb</span></div>
-                        <div class="chart-bar-group"><div class="chart-bar" style="height: 30%;"></div><span class="chart-label">Dom</span></div>
+                    <!-- MÓDULO TRIPLE: MÁS VENDIDOS, MÁS RENTABLES, SIN VENTA -->
+                    <div class="product-performance-grid">
+                        <!-- Más Vendidos -->
+                        <div class="perf-column-box">
+                            <div class="perf-title-top" style="color: var(--accent-green);">
+                                <span>🔥 Más Vendidos</span>
+                                <span>Unid.</span>
+                            </div>
+                            <div class="perf-list" id="top-products-container"></div>
+                        </div>
+
+                        <!-- Mayor Utilidad (NUEVO MÓDULO) -->
+                        <div class="perf-column-box">
+                            <div class="perf-title-top" style="color: var(--accent-purple);">
+                                <span>💎 Mayor Utilidad</span>
+                                <span>Ganancia</span>
+                            </div>
+                            <div class="perf-list" id="profit-products-container"></div>
+                        </div>
+
+                        <!-- No Vendidos / Sin Salida -->
+                        <div class="perf-column-box">
+                            <div class="perf-title-top" style="color: var(--accent-red);">
+                                <span>🧊 Sin Venta</span>
+                                <span>Stock Parado</span>
+                            </div>
+                            <div class="perf-list" id="low-products-container"></div>
+                        </div>
                     </div>
 
                     <div style="border-top: 1px solid var(--border); padding-top: 10px;">
@@ -502,7 +557,7 @@
                                         <th>Estado IVA</th>
                                     </tr>
                                 </thead>
-                                <tbody id="dash-recent-table-body">
+                                <tbody>
                                     <tr>
                                         <td>FAC-2026-101</td>
                                         <td>Caja 01 - Principal</td>
@@ -523,7 +578,7 @@
                     </div>
                 </div>
 
-                <!-- Columna Derecha: Métricas por Categoría y Alertas -->
+                <!-- Columna Derecha: Métricas por Cajas y Alertas -->
                 <div style="display: flex; flex-direction: column; gap: 14px;">
                     <div class="dash-card-box">
                         <h3 style="font-size: 0.9rem; font-weight: 700; color: var(--text-main);">📊 Ventas por Cajas</h3>
@@ -577,7 +632,7 @@
             <div class="dashboard-header-flex">
                 <div>
                     <h2 style="font-size: 1.25rem; font-weight: 800; color: var(--text-main);">📄 Facturación por Caja (Bimoneda)</h2>
-                    <p style="font-size: 0.78rem; color: var(--text-muted);">Gestión multimoneda (C$/$), conversión dinámica en tiempo real y IVA.</p>
+                    <p style="font-size: 0.78rem; color: var(--text-muted);">Gestión multimoneda (C$/$), conversión dinámica en tiempo real e IVA.</p>
                 </div>
                 <button class="btn-action-primary" onclick="resetInvoice()">🧹 Limpiar Caja</button>
             </div>
@@ -695,9 +750,63 @@
         };
 
         let currentCaja = "Caja 01 - Principal";
-        let emittedInvoicesLog = [];
 
-        // LÓGICA DE DASHBOARD COMPLETO E INTERACTIVO
+        // DATOS DE RENDIMIENTO COMPLETO (MÁS VENDIDOS, MAYOR UTILIDAD Y SIN VENTA)
+        const performanceDataByPeriod = {
+            today: {
+                top: [
+                    { name: "Caja Registradora Pro", total: "C$ 16,470.00", qty: "3 unid" },
+                    { name: "Licencia Sistema POS", total: "C$ 7,320.00", qty: "2 unid" },
+                    { name: "Lector Láser Código", total: "C$ 2,928.00", qty: "2 unid" }
+                ],
+                profit: [
+                    { name: "Licencia Sistema POS", profit: "+C$ 6,588.00", margin: "90% Margen" },
+                    { name: "Caja Registradora Pro", profit: "+C$ 5,764.50", margin: "35% Margen" },
+                    { name: "Lector Láser Código", profit: "+C$ 1,171.20", margin: "40% Margen" }
+                ],
+                low: [
+                    { name: "Caja Registradora Mini", days: "Sin ventas hoy", stock: "8 en stock" },
+                    { name: "Impresora Térmica 80mm", days: "Sin ventas hoy", stock: "14 en stock" },
+                    { name: "Gaveta de Dinero Heavy Duty", days: "Sin ventas hoy", stock: "5 en stock" }
+                ]
+            },
+            week: {
+                top: [
+                    { name: "Caja Registradora Pro", total: "C$ 43,920.00", qty: "8 unid" },
+                    { name: "Licencia Sistema POS", total: "C$ 21,960.00", qty: "6 unid" },
+                    { name: "Lector Láser Código", total: "C$ 7,320.00", qty: "5 unid" }
+                ],
+                profit: [
+                    { name: "Licencia Sistema POS", profit: "+C$ 19,764.00", margin: "90% Margen" },
+                    { name: "Caja Registradora Pro", profit: "+C$ 15,372.00", margin: "35% Margen" },
+                    { name: "Lector Láser Código", profit: "+C$ 2,928.00", margin: "40% Margen" }
+                ],
+                low: [
+                    { name: "Caja Registradora Mini", days: "Sin ventas hace 7 días", stock: "8 en stock" },
+                    { name: "Impresora Térmica 80mm", days: "Sin ventas hace 10 días", stock: "14 en stock" },
+                    { name: "Gaveta de Dinero Heavy Duty", days: "Sin ventas hace 12 días", stock: "5 en stock" }
+                ]
+            },
+            month: {
+                top: [
+                    { name: "Caja Registradora Pro", total: "C$ 82,350.00", qty: "15 unid" },
+                    { name: "Licencia Sistema POS", total: "C$ 43,920.00", qty: "12 unid" },
+                    { name: "Lector Láser Código", total: "C$ 11,712.00", qty: "8 unid" }
+                ],
+                profit: [
+                    { name: "Licencia Sistema POS", profit: "+C$ 39,528.00", margin: "90% Margen" },
+                    { name: "Caja Registradora Pro", profit: "+C$ 28,822.50", margin: "35% Margen" },
+                    { name: "Lector Láser Código", profit: "+C$ 4,684.80", margin: "40% Margen" }
+                ],
+                low: [
+                    { name: "Caja Registradora Mini", days: "Sin salidas hace 18 días", stock: "8 en stock" },
+                    { name: "Impresora Térmica 80mm", days: "Sin salidas hace 25 días", stock: "14 en stock" },
+                    { name: "Gaveta de Dinero Heavy Duty", days: "Sin salidas hace 30 días", stock: "5 en stock" }
+                ]
+            }
+        };
+
+        // LÓGICA DE DASHBOARD
         function updateDashboardFullData() {
             const period = document.getElementById('dash-period-select').value;
             let baseNIO = 142850.00;
@@ -718,6 +827,57 @@
             document.getElementById('dash-caja1-val').textContent = `C$ ${(currentIngresos * 0.6).toFixed(2)}`;
             document.getElementById('dash-caja2-val').textContent = `C$ ${(currentIngresos * 0.27).toFixed(2)}`;
             document.getElementById('dash-caja3-val').textContent = `C$ ${(currentIngresos * 0.13).toFixed(2)}`;
+
+            renderProductPerformance(period);
+        }
+
+        function renderProductPerformance(period) {
+            const data = performanceDataByPeriod[period] || performanceDataByPeriod.month;
+            
+            // 1. Top Vendidos
+            const topContainer = document.getElementById('top-products-container');
+            topContainer.innerHTML = '';
+            data.top.forEach(item => {
+                topContainer.innerHTML += `
+                    <div class="perf-item-row top-seller">
+                        <div class="perf-item-info">
+                            <span class="perf-item-title">${item.name}</span>
+                            <span class="perf-item-meta">Total: ${item.total}</span>
+                        </div>
+                        <span class="badge-sales-count badge-green">${item.qty}</span>
+                    </div>
+                `;
+            });
+
+            // 2. Mayor Utilidad
+            const profitContainer = document.getElementById('profit-products-container');
+            profitContainer.innerHTML = '';
+            data.profit.forEach(item => {
+                profitContainer.innerHTML += `
+                    <div class="perf-item-row top-profit">
+                        <div class="perf-item-info">
+                            <span class="perf-item-title">${item.name}</span>
+                            <span class="perf-item-meta">${item.margin}</span>
+                        </div>
+                        <span class="badge-sales-count badge-purple">${item.profit}</span>
+                    </div>
+                `;
+            });
+
+            // 3. No Vendidos
+            const lowContainer = document.getElementById('low-products-container');
+            lowContainer.innerHTML = '';
+            data.low.forEach(item => {
+                lowContainer.innerHTML += `
+                    <div class="perf-item-row low-seller">
+                        <div class="perf-item-info">
+                            <span class="perf-item-title">${item.name}</span>
+                            <span class="perf-item-meta">${item.days}</span>
+                        </div>
+                        <span class="badge-sales-count badge-red">0 unid (${item.stock})</span>
+                    </div>
+                `;
+            });
         }
 
         // CONTROL DE FACTURACIÓN
@@ -815,7 +975,7 @@
             resetInvoice();
         }
 
-        // CAMBIO DE VISTAS (Navegación)
+        // NAVEGACIÓN Y CONTROLES
         function switchView(viewName, element) {
             document.querySelectorAll('.workspace-scroll').forEach(el => el.classList.remove('active-view'));
             const target = document.getElementById('view-' + viewName);
@@ -845,9 +1005,10 @@
             html.setAttribute('data-theme', current === 'dark' ? 'light' : 'dark');
         }
 
-        // Inicializar
+        // Inicialización
         renderExcelCatalog();
         renderInvoiceTable();
+        updateDashboardFullData();
     </script>
 </body>
 </html>
