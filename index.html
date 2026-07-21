@@ -295,7 +295,7 @@
             align-items: center;
             background: #ffffff;
             gap: 10px;
-            position: relative; /* Contenedor para posicionar la alerta flotante */
+            position: relative;
         }
 
         .action-tool-row { display: flex; gap: 6px; }
@@ -405,6 +405,52 @@
 
         .product-image-container { height: 110px; background: #f1f5f9; display: flex; align-items: center; justify-content: center; font-size: 2rem; }
         .product-title { padding: 10px; font-size: 0.85rem; text-align: center; font-weight: 500; color: var(--text-main); flex: 1; display: flex; align-items: center; justify-content: center; }
+
+        /* Tutorial Tooltip Flotante sobre elementos */
+        .tutorial-tooltip {
+            position: absolute;
+            background: #0f172a;
+            color: #ffffff;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+            z-index: 9999;
+            display: none;
+            max-width: 280px;
+            border: 2px solid #3b82f6;
+            animation: popTooltip 0.2s ease-out;
+        }
+
+        .tutorial-tooltip .tooltip-counter {
+            font-size: 0.75rem;
+            background: #3b82f6;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 4px;
+        }
+
+        .tutorial-tooltip .tooltip-text {
+            line-height: 1.3;
+        }
+
+        @keyframes popTooltip {
+            0% { transform: scale(0.9); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Overlay semi-transparente para el tutorial guiado */
+        .tutorial-backdrop {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(2px);
+            z-index: 9000;
+            display: none;
+        }
 
         /* Modal de Pago / Checkout */
         .modal-overlay {
@@ -543,12 +589,23 @@
 </head>
 <body>
 
+    <!-- Backdrop y Tooltip del Tutorial Guiado -->
+    <div class="tutorial-backdrop" id="tutorial-backdrop" onclick="nextTutorialStep()"></div>
+    <div class="tutorial-tooltip" id="tutorial-tooltip">
+        <div class="tooltip-counter" id="tooltip-counter-badge">1 | 5</div>
+        <div class="tooltip-text" id="tooltip-text-content">Mensaje de guía...</div>
+        <div style="margin-top: 8px; display: flex; justify-content: space-between; font-size: 0.75rem; color: #94a3b8;">
+            <span>Haz clic en cualquier parte para continuar</span>
+            <span style="color: #60a5fa; cursor: pointer;" onclick="stopTutorial()">Salir [X]</span>
+        </div>
+    </div>
+
     <!-- Top Advanced Toolbar -->
     <header class="top-bar">
         <div class="location-group">
             <div class="location-badge">IncoEx Logistics</div>
             <!-- Módulo Selector de Caja -->
-            <select class="register-selector" id="register-select" onchange="switchRegister(this.value)">
+            <select class="register-selector" id="step-register" onchange="switchRegister(this.value)">
                 <option value="caja-01">🖩 Caja Principal #01</option>
                 <option value="caja-02">⚡ Caja Rápida #02</option>
                 <option value="caja-03">🏢 Caja Sucursal Corporativa #03</option>
@@ -556,6 +613,8 @@
         </div>
 
         <div class="top-toolbar-actions">
+            <!-- Botón de Tutorial Esencial -->
+            <button class="tool-btn tb-pink" onclick="startTutorial()" title="Guía / Tutorial Interactivo" style="font-weight: bold;">❓ Guía</button>
             <button class="tool-btn tb-orange" title="Pausar Venta">⏸</button>
             <button class="tool-btn tb-red" title="Caja Registradora">🖩</button>
             <button class="tool-btn tb-blue" title="Facturas Pendientes">📑</button>
@@ -584,7 +643,7 @@
         <section class="panel">
             <div class="cart-header-actions">
                 <div class="client-row">
-                    <select class="select-custom" id="client-select">
+                    <select class="select-custom" id="step-client">
                         <option value="1">Cliente Eventual</option>
                         <option value="2">Corporativo IncoEx S.A.</option>
                         <option value="3">Mayorista VIP</option>
@@ -636,7 +695,7 @@
                 </div>
 
                 <!-- Botón de Estado / Ir a Pagar Factura -->
-                <div class="checkout-totals" onclick="openCheckoutModal()" title="Hacer clic para procesar pago y facturar">
+                <div class="checkout-totals" id="step-checkout" onclick="openCheckoutModal()" title="Hacer clic para procesar pago y facturar">
                     <div class="total-box">
                         <span>Total a pagar</span>
                         <span id="grand-total-usd">$ 0.00</span>
@@ -666,7 +725,7 @@
                         <option>Todos</option>
                     </select>
                 </div>
-                <input type="text" class="search-product-input" placeholder="Introduzca el nombre del producto / SKU">
+                <input type="text" class="search-product-input" id="step-catalog" placeholder="Introduzca el nombre del producto / SKU">
             </div>
 
             <div class="products-grid" id="catalog-grid"></div>
@@ -742,6 +801,27 @@
         let selectedPaymentMethod = 'Efectivo';
         let alertTimeout = null;
 
+        // Pasos del Tutorial Guiado
+        let currentTutorialStep = 0;
+        const tutorialSteps = [
+            {
+                elementId: 'step-register',
+                text: 'Aquí puedes alternar entre distintas cajas registradoras físicas. Cada caja mantiene su propia sesión e historial de facturación independiente.'
+            },
+            {
+                elementId: 'step-client',
+                text: 'Selecciona el cliente al que se le emitirá la factura fiscal (Cliente eventual, corporativos o mayoristas VIP).'
+            },
+            {
+                elementId: 'step-catalog',
+                text: 'Explora y haz clic en los productos del catálogo de la derecha para agregarlos de forma inmediata al carrito de compras.'
+            },
+            {
+                elementId: 'step-checkout',
+                text: 'Haz clic en el total a pagar para abrir la terminal de cobro (Efectivo con cálculo de vuelto o tarjetas/transferencias bancarias).'
+            }
+        ];
+
         const catalogGrid = document.getElementById('catalog-grid');
         const cartItemsBody = document.getElementById('cart-items-body');
         const summaryArt = document.getElementById('summary-art');
@@ -749,6 +829,8 @@
         const grandTotalUsd = document.getElementById('grand-total-usd');
         const grandTotalNio = document.getElementById('grand-total-nio');
         const cartAlertPopup = document.getElementById('cart-alert-popup');
+        const tutorialBackdrop = document.getElementById('tutorial-backdrop');
+        const tutorialTooltip = document.getElementById('tutorial-tooltip');
 
         function renderCatalog() {
             catalogGrid.innerHTML = '';
@@ -867,11 +949,61 @@
             grandTotalNio.textContent = `C$ ${(subtotal * tasaCambio).toFixed(2)}`;
         }
 
+        // Lógica del Tutorial Guiado
+        function startTutorial() {
+            currentTutorialStep = 0;
+            tutorialBackdrop.style.display = 'block';
+            showTutorialStep();
+        }
+
+        function nextTutorialStep() {
+            currentTutorialStep++;
+            if (currentTutorialStep >= tutorialSteps.length) {
+                stopTutorial();
+            } else {
+                showTutorialStep();
+            }
+        }
+
+        function showTutorialStep() {
+            const step = tutorialSteps[currentTutorialStep];
+            const targetEl = document.getElementById(step.elementId);
+            
+            if (!targetEl) return;
+
+            // Actualizar textos y contador exacto solicitados (ej: 1 | 4)
+            document.getElementById('tooltip-counter-badge').textContent = `${currentTutorialStep + 1} | ${tutorialSteps.length}`;
+            document.getElementById('tooltip-text-content').textContent = step.text;
+
+            // Posicionar el tooltip justo arriba del elemento objetivo
+            const rect = targetEl.getBoundingClientRect();
+            tutorialTooltip.style.display = 'block';
+            
+            let topPos = rect.top - tutorialTooltip.offsetHeight - 12;
+            let leftPos = rect.left + (rect.width / 2) - (tutorialTooltip.offsetWidth / 2);
+
+            // Asegurar que no se salga de la pantalla por la izquierda o derecha
+            if (leftPos < 10) leftPos = 10;
+            if (leftPos + tutorialTooltip.offsetWidth > window.innerWidth - 10) {
+                leftPos = window.innerWidth - tutorialTooltip.offsetWidth - 10;
+            }
+            if (topPos < 10) {
+                topPos = rect.bottom + 12; // Mostrar abajo si arriba no hay espacio
+            }
+
+            tutorialTooltip.style.top = `${topPos}px`;
+            tutorialTooltip.style.left = `${leftPos}px`;
+        }
+
+        function stopTutorial() {
+            tutorialBackdrop.style.display = 'none';
+            tutorialTooltip.style.display = 'none';
+        }
+
         // Funciones del Modal de Pago
         function openCheckoutModal() {
             let currentCart = cartsByRegister[activeRegister];
             if (currentCart.length === 0) {
-                // Mostrar alerta emergente flotante sobre el botón de pagar
                 cartAlertPopup.style.display = 'flex';
                 if (alertTimeout) clearTimeout(alertTimeout);
                 alertTimeout = setTimeout(() => {
@@ -886,10 +1018,10 @@
             document.getElementById('modal-pay-usd').textContent = `$ ${subtotal.toFixed(2)}`;
             document.getElementById('modal-pay-nio').textContent = `C$ ${(subtotal * tasaCambio).toFixed(2)}`;
             
-            const registerName = document.getElementById('register-select').selectedOptions[0].text;
+            const registerName = document.getElementById('step-register').selectedOptions[0].text;
             document.getElementById('modal-title-register').textContent = `Procesar Factura - ${registerName}`;
             
-            const clientName = document.getElementById('client-select').selectedOptions[0].text;
+            const clientName = document.getElementById('step-client').selectedOptions[0].text;
             document.getElementById('modal-client-label').textContent = clientName;
 
             document.getElementById('cash-received-input').value = subtotal.toFixed(2);
@@ -932,7 +1064,7 @@
         }
 
         function confirmAndPrintInvoice() {
-            const registerName = document.getElementById('register-select').selectedOptions[0].text;
+            const registerName = document.getElementById('step-register').selectedOptions[0].text;
             alert(`¡Factura emitida exitosamente desde la ${registerName}!\nMétodo: ${selectedPaymentMethod}\nLa venta ha sido registrada e integrada con el sistema de inventario.`);
             
             cartsByRegister[activeRegister] = [];
