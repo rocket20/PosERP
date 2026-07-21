@@ -3,13 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>POS NOVA - Terminal de Venta Avanzada</title>
+    <title>POS IncoEx - Terminal de Venta Avanzada</title>
     <style>
         :root {
             --bg-main: #f0f4f8;
             --surface: #ffffff;
             --primary: #2563eb;
-            --primary-hover: #1d4ed8;
             --text-main: #1e293b;
             --text-muted: #64748b;
             --border: #e2e8f0;
@@ -41,7 +40,6 @@
             justify-content: space-between;
             align-items: center;
             border-bottom: 1px solid var(--border);
-            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
             min-height: 56px;
         }
 
@@ -55,7 +53,6 @@
             display: flex;
             gap: 6px;
             align-items: center;
-            flex-wrap: wrap;
         }
 
         .tool-btn {
@@ -72,12 +69,8 @@
             transition: filter 0.2s, transform 0.1s;
         }
 
-        .tool-btn:hover {
-            filter: brightness(1.1);
-            transform: translateY(-1px);
-        }
+        .tool-btn:hover { filter: brightness(1.1); transform: translateY(-1px); }
 
-        /* Colores específicos de los botones superiores */
         .tb-orange { background-color: #ea580c; }
         .tb-red { background-color: #dc2626; }
         .tb-blue { background-color: #0284c7; }
@@ -119,12 +112,9 @@
             border-radius: 20px;
             font-size: 0.85rem;
             font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 4px;
         }
 
-        /* Main Workspace Layout */
+        /* Workspace Layout */
         .workspace {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -144,7 +134,6 @@
             border: 1px solid var(--border);
         }
 
-        /* Left Panel - Cart & Controls */
         .cart-header-actions {
             padding: 12px;
             border-bottom: 1px solid var(--border);
@@ -180,38 +169,139 @@
             font-size: 0.95rem;
         }
 
+        /* Cart Table Area */
         .cart-table-container {
             flex: 1;
             overflow-y: auto;
         }
 
-        .cart-table {
-            width: 100%;
-            border-collapse: collapse;
-            text-align: left;
-            font-size: 0.9rem;
-        }
-
-        .cart-table th {
+        .cart-table-header {
+            display: grid;
+            grid-template-columns: 1fr 140px 100px;
             background: #3b82f6;
             color: white;
             padding: 10px 16px;
             font-weight: 600;
+            font-size: 0.9rem;
             position: sticky;
             top: 0;
             z-index: 10;
         }
 
-        .cart-table td {
-            padding: 12px 16px;
+        .cart-item-row {
+            padding: 16px;
             border-bottom: 1px solid var(--border);
-            color: var(--text-main);
+            display: grid;
+            grid-template-columns: 1fr 180px 100px 50px;
+            gap: 16px;
+            align-items: center;
+            background: #ffffff;
+            transition: background 0.15s;
         }
 
-        .cart-table tr:hover {
+        .cart-item-row:hover {
             background-color: #f8fafc;
         }
 
+        .item-details .item-number {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .item-details .item-name {
+            font-size: 0.95rem;
+            color: #0284c7;
+            font-weight: bold;
+            margin: 2px 0;
+        }
+
+        .item-details .item-sku {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .item-price-select {
+            margin-top: 8px;
+        }
+
+        /* Controles de Cantidad Avanzados */
+        .quantity-control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .qty-input-wrapper {
+            display: flex;
+            align-items: center;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            overflow: hidden;
+            background: white;
+        }
+
+        .qty-btn {
+            background: #334155;
+            color: white;
+            border: none;
+            width: 32px;
+            height: 36px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .qty-btn.plus { background: #16a34a; }
+        .qty-btn.minus { background: #dc2626; }
+        .qty-btn:hover { filter: brightness(1.1); }
+
+        .qty-field {
+            flex: 1;
+            border: none;
+            text-align: center;
+            font-weight: bold;
+            font-size: 0.95rem;
+            outline: none;
+            padding: 4px;
+        }
+
+        .stock-info {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .item-subtotal {
+            font-size: 1.05rem;
+            font-weight: bold;
+            color: var(--text-main);
+            text-align: right;
+        }
+
+        .delete-item-btn {
+            background: #dc2626;
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: transform 0.1s, filter 0.2s;
+        }
+
+        .delete-item-btn:hover {
+            filter: brightness(1.1);
+            transform: scale(1.05);
+        }
+
+        /* Summary Bar */
         .cart-summary-bar {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -278,7 +368,7 @@
             font-weight: bold;
         }
 
-        /* Right Panel - Product Catalog */
+        /* Right Panel: Catalog Explorer */
         .catalog-filters {
             padding: 12px;
             border-bottom: 1px solid var(--border);
@@ -313,7 +403,6 @@
             transition: transform 0.2s, box-shadow 0.2s;
             display: flex;
             flex-direction: column;
-            position: relative;
         }
 
         .product-card:hover {
@@ -332,19 +421,8 @@
             font-weight: bold;
         }
 
-        .price-badge {
-            background: #22c55e;
-            color: white;
-            padding: 2px 6px;
-            border-radius: 4px;
-        }
-
-        .stock-badge {
-            background: #0284c7;
-            color: white;
-            padding: 2px 6px;
-            border-radius: 4px;
-        }
+        .price-badge { background: #22c55e; color: white; padding: 2px 6px; border-radius: 4px; }
+        .stock-badge { background: #0284c7; color: white; padding: 2px 6px; border-radius: 4px; }
 
         .product-image-container {
             height: 110px;
@@ -352,14 +430,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--text-muted);
             font-size: 2rem;
-        }
-
-        .product-image-container img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
         }
 
         .product-title {
@@ -379,7 +450,7 @@
 
     <!-- Top Advanced Toolbar -->
     <header class="top-bar">
-        <div class="location-badge">Ubicación: Software Nicaragua</div>
+        <div class="location-badge">Ubicación: IncoEx Logistics</div>
         <div class="top-toolbar-actions">
             <button class="tool-btn tb-orange" title="Pausar Venta">⏸</button>
             <button class="tool-btn tb-red" title="Caja Registradora">🖩</button>
@@ -399,7 +470,7 @@
         </div>
         <div class="system-info-group">
             <span class="badge-pill" id="live-clock">20/07/2026 07:07 PM</span>
-            <span class="badge-bank">Lafise</span>
+            <span class="badge-bank">Ficohsa</span>
             <span class="badge-status">🟢 Online</span>
         </div>
     </header>
@@ -430,24 +501,20 @@
 
             <!-- Cart Table Items -->
             <div class="cart-table-container">
-                <table class="cart-table">
-                    <thead>
-                        <tr>
-                            <th>Producto</th>
-                            <th style="width: 100px; text-align: center;">Cantidad</th>
-                            <th style="width: 110px; text-align: right;">Subtotal</th>
-                        </tr>
-                    </thead>
-                    <tbody id="cart-items-body">
-                        <!-- Inyección dinámica de filas de carrito -->
-                    </tbody>
-                </table>
+                <div class="cart-table-header">
+                    <div>Producto</div>
+                    <div style="text-align: center;">Cantidad</div>
+                    <div style="text-align: right;">Subtotal</div>
+                </div>
+                <div id="cart-items-body">
+                    <!-- Dinámico -->
+                </div>
             </div>
 
             <!-- Summary Bar -->
             <div class="cart-summary-bar">
-                <div>ARTÍCULOS: <span id="summary-art">0.00</span></div>
-                <div>SUBTOTAL: <span id="summary-sub">0.00</span></div>
+                <div>ARTÍCULOS: <span id="summary-art">1.00</span></div>
+                <div>SUBTOTAL: <span id="summary-sub">150.00</span></div>
                 <div>DESCUENTO: <span style="color:#dc2626;" id="summary-desc">0.00</span></div>
                 <div>DELIVERY: <span id="summary-del">0.00</span></div>
             </div>
@@ -467,11 +534,11 @@
                 <div class="checkout-totals">
                     <div class="total-box">
                         <span>Total a pagar</span>
-                        <span id="grand-total-usd">$ 0.00</span>
+                        <span id="grand-total-usd">$ 150.00</span>
                     </div>
                     <div class="total-box">
                         <span>Total Córdobas</span>
-                        <span id="grand-total-nio">C$ 0.00</span>
+                        <span id="grand-total-nio">C$ 5,493.00</span>
                     </div>
                 </div>
             </div>
@@ -484,12 +551,10 @@
                     <select class="select-custom">
                         <option>Todas las categorías</option>
                         <option>Cajas Registradoras</option>
-                        <option>Accesorios POS</option>
                     </select>
                     <select class="select-custom">
                         <option>Todas las marcas</option>
                         <option>Royal</option>
-                        <option>Casio</option>
                     </select>
                     <select class="select-custom">
                         <option>Con stock</option>
@@ -499,26 +564,24 @@
                 <input type="text" class="search-product-input" placeholder="Introduzca el nombre del producto / SKU">
             </div>
 
-            <!-- Product Cards Catalog Grid -->
-            <div class="products-grid" id="catalog-grid">
-                <!-- Tarjetas generadas dinámicamente -->
-            </div>
+            <div class="products-grid" id="catalog-grid"></div>
         </section>
     </div>
 
-    <!-- Application Script Logic -->
+    <!-- Script Logic -->
     <script>
-        // Catálogo de Productos Base
         const products = [
-            { id: 101, name: "Caja Registradora Grande CRGD", price: 150.00, stock: -1.00, icon: "🗄️" },
-            { id: 102, name: "Caja Registradora Pequeña CRPQ", price: 100.00, stock: 2.00, icon: "📦" },
-            { id: 103, name: "Capacitación Sub Agencias CSAG", price: 100.00, stock: 0.00, icon: "🖥️" },
-            { id: 104, name: "Lector de Código Láser Pro", price: 39.99, stock: 0.00, icon: "📷" },
-            { id: 105, name: "Impresora Térmica 80mm", price: 100.00, stock: 5.00, icon: "🖨️" }
+            { id: 101, name: "Caja Registradora Grande", sku: "CRGD", price: 150.00, stock: -1.00, icon: "🗄️" },
+            { id: 102, name: "Caja Registradora Pequeña", sku: "CRPQ", price: 100.00, stock: 2.00, icon: "📦" },
+            { id: 103, name: "Capacitación Sub Agencias", sku: "CSAG", price: 100.00, stock: 0.00, icon: "🖥️" },
+            { id: 104, name: "Lector de Código Láser Pro", sku: "LCLP", price: 39.99, stock: 0.00, icon: "📷" }
         ];
 
-        let cart = [];
-        const tasaCambio = 36.62; // Tasa de cambio Córdoba / Dólar estimada
+        // Estado inicial del carrito con el producto de ejemplo precargado como en la captura
+        let cart = [
+            { ...products[0], quantity: 1, index: 1 }
+        ];
+        const tasaCambio = 36.62;
 
         const catalogGrid = document.getElementById('catalog-grid');
         const cartItemsBody = document.getElementById('cart-items-body');
@@ -527,7 +590,6 @@
         const grandTotalUsd = document.getElementById('grand-total-usd');
         const grandTotalNio = document.getElementById('grand-total-nio');
 
-        // Renderizar Catálogo
         function renderCatalog() {
             catalogGrid.innerHTML = '';
             products.forEach(prod => {
@@ -539,49 +601,91 @@
                         <span class="price-badge">$ ${prod.price.toFixed(2)}</span>
                         <span class="stock-badge">${prod.stock.toFixed(2)} UND</span>
                     </div>
-                    <div class="product-image-container">
-                        ${prod.icon}
-                    </div>
+                    <div class="product-image-container">${prod.icon}</div>
                     <div class="product-title">${prod.name}</div>
                 `;
                 catalogGrid.appendChild(card);
             });
         }
 
-        // Agregar al Carrito
         function addToCart(product) {
             const existingItem = cart.find(item => item.id === product.id);
             if (existingItem) {
                 existingItem.quantity += 1;
             } else {
-                cart.push({ ...product, quantity: 1 });
+                cart.push({ ...product, quantity: 1, index: cart.length + 1 });
             }
             updateCartUI();
         }
 
-        // Actualizar Interfaz del Carrito
+        window.changeQty = function(id, delta) {
+            const item = cart.find(i => i.id === id);
+            if (item) {
+                item.quantity += delta;
+                if (item.quantity < 1) item.quantity = 1;
+                updateCartUI();
+            }
+        }
+
+        window.setQty = function(id, val) {
+            const item = cart.find(i => i.id === id);
+            if (item) {
+                item.quantity = Math.max(1, parseInt(val) || 1);
+                updateCartUI();
+            }
+        }
+
+        window.removeItem = function(id) {
+            cart = cart.filter(i => i.id !== id);
+            updateCartUI();
+        }
+
         function updateCartUI() {
             cartItemsBody.innerHTML = '';
             let totalArt = 0;
             let subtotal = 0;
 
             if (cart.length === 0) {
-                cartItemsBody.innerHTML = `<tr><td colspan="3" style="text-align: center; color: var(--text-muted); padding: 30px;">El carrito está vacío. Seleccione un producto del catálogo.</td></tr>`;
+                cartItemsBody.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 40px;">No hay artículos en la venta actual.</div>`;
             }
 
-            cart.forEach(item => {
+            cart.forEach((item, idx) => {
                 totalArt += item.quantity;
                 subtotal += item.price * item.quantity;
 
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${item.name}</td>
-                    <td style="text-align: center;">
-                        <input type="number" value="${item.quantity}" min="1" style="width: 60px; text-align: center; border: 1px solid var(--border); border-radius: 4px; padding: 4px;" onchange="updateQuantity(${item.id}, this.value)">
-                    </td>
-                    <td style="text-align: right; font-weight: 600;">$ ${(item.price * item.quantity).toFixed(2)}</td>
+                const row = document.createElement('div');
+                row.className = 'cart-item-row';
+                row.innerHTML = `
+                    <div class="item-details">
+                        <div class="item-number">#${idx + 1}</div>
+                        <div class="item-name">${item.name}</div>
+                        <div class="item-sku">· ${item.sku}</div>
+                        <div class="item-price-select">
+                            <select class="select-custom" style="padding: 4px 8px; font-size: 0.8rem; width: 100%;">
+                                <option>Precio de venta predeterminado</option>
+                                <option>Precio Mayorista</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="quantity-control-group">
+                        <div class="qty-input-wrapper">
+                            <button class="qty-btn minus" onclick="changeQty(${item.id}, -1)">−</button>
+                            <input type="number" class="qty-field" value="${item.quantity}" onchange="setQty(${item.id}, this.value)">
+                            <button class="qty-btn plus" onclick="changeQty(${item.id}, 1)">+</button>
+                        </div>
+                        <select class="select-custom" style="padding: 4px; font-size: 0.75rem;">
+                            <option>UND</option>
+                        </select>
+                        <div class="stock-info">Stock: ${item.stock.toFixed(2)} UND</div>
+                    </div>
+                    <div class="item-subtotal">
+                        $ ${(item.price * item.quantity).toFixed(2)}
+                    </div>
+                    <div>
+                        <button class="delete-item-btn" onclick="removeItem(${item.id})" title="Eliminar artículo">×</button>
+                    </div>
                 `;
-                cartItemsBody.appendChild(tr);
+                cartItemsBody.appendChild(row);
             });
 
             summaryArt.textContent = totalArt.toFixed(2);
@@ -590,25 +694,11 @@
             grandTotalNio.textContent = `C$ ${(subtotal * tasaCambio).toFixed(2)}`;
         }
 
-        // Modificar Cantidad
-        window.updateQuantity = function(id, qty) {
-            const item = cart.find(i => i.id === id);
-            if (item) {
-                item.quantity = parseInt(qty) || 1;
-                if (item.quantity <= 0) item.quantity = 1;
-                updateCartUI();
-            }
-        }
-
-        // Reloj en tiempo real
         setInterval(() => {
             const now = new Date();
-            const dateStr = now.toLocaleDateString('es-ES');
-            const timeStr = now.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
-            document.getElementById('live-clock').textContent = `${dateStr} ${timeStr}`;
+            document.getElementById('live-clock').textContent = now.toLocaleDateString('es-ES') + ' ' + now.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
         }, 1000);
 
-        // Inicializar
         renderCatalog();
         updateCartUI();
     </script>
