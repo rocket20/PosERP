@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NovaHub - POS & Panel Ejecutivo (Responsive & Tour Interactivo)</title>
+    <title>NovaHub - POS & Panel Ejecutivo (Bimoneda e IVA)</title>
     <style>
         /* Sistema de Temas: Claro y Oscuro */
         :root[data-theme="dark"] {
@@ -53,7 +53,7 @@
             font-size: 14px;
         }
 
-        /* Overlay para móvil cuando el sidebar está abierto */
+        /* Overlay para móvil */
         .sidebar-overlay {
             display: none;
             position: fixed;
@@ -65,9 +65,7 @@
             z-index: 15;
         }
 
-        .sidebar-overlay.active {
-            display: block;
-        }
+        .sidebar-overlay.active { display: block; }
 
         /* Sidebar Estilo NovaHub */
         .sidebar {
@@ -92,9 +90,7 @@
                 height: 100%;
                 z-index: 30;
             }
-            .sidebar.mobile-open {
-                transform: translateX(260px);
-            }
+            .sidebar.mobile-open { transform: translateX(260px); }
         }
 
         .brand-header {
@@ -201,9 +197,7 @@
             margin-top: 3px;
         }
 
-        .submenu-container.open {
-            display: flex;
-        }
+        .submenu-container.open { display: flex; }
 
         .submenu-item {
             padding: 6px 8px;
@@ -249,7 +243,7 @@
             font-size: 0.78rem;
         }
 
-        /* Main App Area */
+        /* Área Principal */
         .main-content {
             flex: 1;
             display: flex;
@@ -258,7 +252,7 @@
             width: 100%;
         }
 
-        /* Top Header Bar */
+        /* Top Header */
         .top-header {
             background: var(--surface);
             border-bottom: 1px solid var(--border);
@@ -365,7 +359,7 @@
 
         .theme-toggle-btn:hover { border-color: var(--primary); }
 
-        /* Workspace Scrollable Views */
+        /* Vistas de Trabajo */
         .workspace-scroll {
             flex: 1;
             padding: 16px;
@@ -375,15 +369,13 @@
             gap: 16px;
         }
 
-        .workspace-scroll.active-view {
-            display: flex;
-        }
+        .workspace-scroll.active-view { display: flex; }
 
         @media(max-width: 768px) {
             .workspace-scroll { padding: 12px; gap: 12px; }
         }
 
-        /* Hero Welcome Section */
+        /* Hero Dashboard */
         .hero-welcome-section {
             display: flex;
             flex-direction: column;
@@ -455,9 +447,7 @@
         }
 
         .stat-card.featured-blue .stat-label,
-        .stat-card.featured-blue .stat-amount {
-            color: white;
-        }
+        .stat-card.featured-blue .stat-amount { color: white; }
 
         .stat-icon-badge {
             width: 36px;
@@ -490,7 +480,7 @@
         }
 
         /* ---------------------------------------------------- */
-        /* MÓDULO FACTURAS */
+        /* MÓDULO FACTURAS CON BIMONEDA Y TRATAMIENTO DE IVA     */
         /* ---------------------------------------------------- */
         .module-header-flex {
             display: flex;
@@ -544,7 +534,6 @@
 
         .btn-action-secondary:hover { border-color: var(--primary); }
 
-        /* Botón de Tour Interactivo */
         .btn-start-tour {
             background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
             color: white;
@@ -562,10 +551,9 @@
 
         .btn-start-tour:hover { filter: brightness(1.1); }
 
-        /* Contenedor del Editor de Facturas */
         .invoice-builder-layout {
             display: grid;
-            grid-template-columns: 1fr 340px;
+            grid-template-columns: 1fr 360px;
             gap: 16px;
         }
 
@@ -586,22 +574,14 @@
 
         .form-row-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
             gap: 10px;
-        }
-
-        @media(max-width: 768px) {
-            .form-row-grid { grid-template-columns: 1fr; }
         }
 
         .form-group-item {
             display: flex;
             flex-direction: column;
             gap: 4px;
-        }
-
-        .form-group-item.full {
-            grid-column: span 3;
         }
 
         .form-label {
@@ -625,7 +605,6 @@
 
         .form-input:focus, .form-select:focus { border-color: var(--primary); }
 
-        /* Tablas responsivas */
         .table-responsive-wrapper {
             width: 100%;
             overflow-x: auto;
@@ -662,7 +641,7 @@
             cursor: pointer;
         }
 
-        /* Resumen de Totales y Panel */
+        /* Bloques de resumen bimoneda */
         .invoice-summary-card {
             background: var(--surface-card);
             border: 1px solid var(--border);
@@ -674,19 +653,41 @@
             position: relative;
         }
 
+        .currency-resumen-box {
+            background: var(--bg-main);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .currency-title {
+            font-size: 0.75rem;
+            font-weight: 800;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px dashed var(--border);
+            padding-bottom: 4px;
+        }
+
         .summary-row-item {
             display: flex;
             justify-content: space-between;
-            font-size: 0.85rem;
+            font-size: 0.82rem;
             color: var(--text-muted);
         }
 
         .summary-row-item.total-final {
-            font-size: 1.05rem;
+            font-size: 0.95rem;
             font-weight: bold;
             color: var(--text-main);
             border-top: 1px solid var(--border);
-            padding-top: 10px;
+            padding-top: 4px;
         }
 
         .btn-checkout-emit {
@@ -706,7 +707,6 @@
 
         .btn-checkout-emit:hover { filter: brightness(1.1); }
 
-        /* Estilos generales para otros módulos */
         .generic-module-content {
             background: var(--surface);
             border: 1px solid var(--border);
@@ -716,9 +716,7 @@
             text-align: center;
         }
 
-        /* ---------------------------------------------------- */
-        /* VISTA DE CATÁLOGO EN MODO CUADRÍCULA (GRID CARDS)    */
-        /* ---------------------------------------------------- */
+        /* MODO CUADRÍCULA (GRID CARDS) */
         .catalog-card {
             background: var(--surface-card);
             border: 1px solid var(--border);
@@ -757,9 +755,7 @@
             font-weight: 700;
         }
 
-        /* ---------------------------------------------------- */
-        /* SISTEMA DE TOUR GUIADO (MODO ENFOQUE / SPOTLIGHT) */
-        /* ---------------------------------------------------- */
+        /* TOUR GUIADO */
         .tour-backdrop {
             display: none;
             position: fixed;
@@ -773,11 +769,8 @@
             -webkit-backdrop-filter: blur(4px);
         }
 
-        .tour-backdrop.active {
-            display: block;
-        }
+        .tour-backdrop.active { display: block; }
 
-        /* Elemento iluminado durante el tour */
         .tour-highlighted {
             position: relative !important;
             z-index: 1000 !important;
@@ -786,7 +779,6 @@
             border-radius: 8px;
         }
 
-        /* Pop-up flotante de guía al lado del elemento */
         .tour-popup-card {
             display: none;
             position: fixed;
@@ -800,9 +792,7 @@
             animation: fadeInPopup 0.3s ease;
         }
 
-        .tour-popup-card.active {
-            display: block;
-        }
+        .tour-popup-card.active { display: block; }
 
         @keyframes fadeInPopup {
             from { opacity: 0; transform: translateY(6px); }
@@ -873,7 +863,6 @@
 
         .tour-btn-next:hover { filter: brightness(1.1); }
 
-        /* Mensaje emergente sobre el botón Pagar cuando está vacío */
         .cart-empty-tooltip {
             display: none;
             position: absolute;
@@ -903,9 +892,7 @@
             border-color: #ef4444 transparent transparent transparent;
         }
 
-        .cart-empty-tooltip.active {
-            display: block;
-        }
+        .cart-empty-tooltip.active { display: block; }
 
         @keyframes bounceTooltip {
             0%, 100% { transform: translateX(-50%) translateY(0); }
@@ -915,10 +902,10 @@
 </head>
 <body>
 
-    <!-- Backdrop con desenfoque para el Tour Interactivo -->
+    <!-- Backdrop del Tour -->
     <div class="tour-backdrop" id="tour-backdrop" onclick="endTour()"></div>
 
-    <!-- Pop-up Dinámico del Tour Interactivo -->
+    <!-- Pop-up del Tour Interactivo -->
     <div class="tour-popup-card" id="tour-popup">
         <div class="tour-popup-header">
             <span class="tour-step-counter" id="tour-counter">1 | 5</span>
@@ -932,10 +919,10 @@
         </div>
     </div>
 
-    <!-- Overlay para dispositivos móviles -->
+    <!-- Overlay móvil -->
     <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleMobileSidebar()"></div>
 
-    <!-- Sidebar Estilo NovaHub -->
+    <!-- Sidebar NovaHub -->
     <aside class="sidebar" id="sidebar-panel">
         <div>
             <div class="brand-header">
@@ -1071,16 +1058,14 @@
             </section>
         </div>
 
-        <!-- ================= VISTA: MÓDULO FACTURAS ================= -->
+        <!-- ================= VISTA: MÓDULO FACTURAS (BIMONEDA E IVA INTEGRADOS) ================= -->
         <div id="view-facturas" class="workspace-scroll active-view">
-            <!-- Cabecera del Módulo con el Botón de Guía (Tour Interactivo) -->
             <div class="module-header-flex">
                 <div>
-                    <h2 class="module-title-main">📄 Facturación por Caja</h2>
-                    <p style="font-size: 0.78rem; color: var(--text-muted); margin-top: 2px;">Facturación individual independiente por caja con formato tabular Excel o Catálogo.</p>
+                    <h2 class="module-title-main">📄 Facturación por Caja (Bimoneda)</h2>
+                    <p style="font-size: 0.78rem; color: var(--text-muted); margin-top: 2px;">Gestión multimoneda (C$/$), conversión dinámica en tiempo real y régimen fiscal de IVA.</p>
                 </div>
                 <div class="module-actions-group">
-                    <!-- BOTÓN DE GUÍA / TOUR INTERACTIVO DE 5 PASOS -->
                     <button class="btn-start-tour" onclick="startTour()">
                         🧭 Iniciar Guía Interactiva (1|5)
                     </button>
@@ -1089,13 +1074,13 @@
                 </div>
             </div>
 
-            <!-- Estructura Principal del Editor y Resumen -->
             <div class="invoice-builder-layout">
-                <!-- Columna Izquierda: Selección de Caja Independiente, Catálogo Estilo Excel/Cuadrícula y Detalle -->
+                <!-- Columna Izquierda: Configuración e Ítems -->
                 <div class="invoice-card-box">
                     <h3 style="font-size: 0.95rem; font-weight: 700; color: var(--text-main);">Configuración de Emisión</h3>
+                    
                     <div class="form-row-grid">
-                        <!-- PASO 1: SELECCIONAR CAJA -->
+                        <!-- SELECCIÓN DE CAJA (PASO 1 DEL TOUR) -->
                         <div class="form-group-item" id="tour-step-1-el">
                             <label class="form-label">Caja Operativa</label>
                             <select class="form-select" id="inv-caja" onchange="onCajaChange()">
@@ -1104,6 +1089,7 @@
                                 <option value="Caja 03 - Sucursal Norte">Caja 03 - Sucursal Norte</option>
                             </select>
                         </div>
+
                         <div class="form-group-item">
                             <label class="form-label">Cliente / Empresa</label>
                             <select class="form-select" id="inv-client">
@@ -1112,60 +1098,87 @@
                                 <option value="Cliente General / Mostrador">Cliente General / Mostrador</option>
                             </select>
                         </div>
+
                         <div class="form-group-item">
-                            <label class="form-label">Fecha de Emisión</label>
+                            <label class="form-label">Fecha Emisión</label>
                             <input type="date" class="form-input" id="inv-date">
                         </div>
                     </div>
 
-                    <!-- Catálogo Estilo Excel / Cuadrícula (PASO 2) -->
-                    <div style="border-top: 1px solid var(--border); padding-top: 12px;" id="tour-step-2-el">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                            <h3 style="font-size: 0.95rem; font-weight: 700; color: var(--text-main);">Catálogo de Productos</h3>
-                            
-                            <div style="display: flex; gap: 10px; align-items: center;">
-                                <span style="font-size: 0.72rem; color: var(--text-muted);">Haz clic para agregar</span>
-                                <!-- Botón para cambiar del modo lista a modo catálogo -->
-                                <button onclick="toggleCatalogMode()" id="btn-toggle-catalog" style="background:var(--surface-card); color:var(--text-main); border:1px solid var(--border); padding:5px 10px; border-radius:6px; font-size:0.75rem; font-weight:600; cursor:pointer; display:flex; gap:5px; align-items:center;">
-                                    🖼️ Modo Catálogo
-                                </button>
-                            </div>
+                    <!-- BIMONEDA Y TRATAMIENTO DE IVA (PASO 2 DEL TOUR) -->
+                    <div class="form-row-grid" id="tour-step-2-el" style="background: var(--surface-card); padding: 10px; border-radius: 8px; border: 1px solid var(--border);">
+                        <div class="form-group-item">
+                            <label class="form-label">Moneda Base Input</label>
+                            <select class="form-select" id="inv-currency" onchange="onCurrencyChange()">
+                                <option value="USD">Dólares ($)</option>
+                                <option value="NIO" selected>Córdobas (C$)</option>
+                            </select>
                         </div>
 
-                        <!-- VISTA 1: LISTA (EXCEL) -->
+                        <div class="form-group-item">
+                            <label class="form-label">Tasa Cambio (1 USD = C$)</label>
+                            <input type="number" class="form-input" id="inv-rate" value="36.60" step="0.01" oninput="calculateTotals()">
+                        </div>
+
+                        <div class="form-group-item">
+                            <label class="form-label">Tratamiento IVA</label>
+                            <select class="form-select" id="inv-tax-status" onchange="toggleExemption(); calculateTotals();">
+                                <option value="APLICA">Aplicar IVA (15%)</option>
+                                <option value="EXONERADO">Exonerado (0%)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group-item" id="group-exemption" style="display: none;">
+                            <label class="form-label">N° Constancia Exención</label>
+                            <input type="text" class="form-input" id="inv-exemption-no" placeholder="Ej: EXO-2026-990">
+                        </div>
+                    </div>
+
+                    <!-- Catálogo de Productos (PASO 3 DEL TOUR) -->
+                    <div style="border-top: 1px solid var(--border); padding-top: 12px;" id="tour-step-3-el">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <h3 style="font-size: 0.95rem; font-weight: 700; color: var(--text-main);">Catálogo de Productos</h3>
+                            <button onclick="toggleCatalogMode()" id="btn-toggle-catalog" style="background:var(--surface-card); color:var(--text-main); border:1px solid var(--border); padding:5px 10px; border-radius:6px; font-size:0.75rem; font-weight:600; cursor:pointer; display:flex; gap:5px; align-items:center;">
+                                🖼️ Modo Catálogo
+                            </button>
+                        </div>
+
+                        <!-- VISTA 1: LISTA EXCEL -->
                         <div class="table-responsive-wrapper" id="catalog-list-view" style="max-height: 160px; overflow-y: auto;">
                             <table class="excel-catalog-table">
                                 <thead>
                                     <tr>
                                         <th>Código</th>
                                         <th>Descripción del Producto</th>
-                                        <th>Precio Unit. (C$)</th>
+                                        <th>Precio Unit. (<span class="symbol-active-currency">C$</span>)</th>
                                         <th>Acción</th>
                                     </tr>
                                 </thead>
                                 <tbody id="excel-catalog-body">
-                                    <!-- Generado dinámicamente -->
+                                    <!-- Dinámico -->
                                 </tbody>
                             </table>
                         </div>
 
-                        <!-- VISTA 2: CUADRÍCULA (CATÁLOGO) -->
+                        <!-- VISTA 2: CUADRÍCULA -->
                         <div id="catalog-grid-view" style="display: none; max-height: 160px; overflow-y: auto; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; padding: 2px;">
-                            <!-- Generado dinámicamente -->
+                            <!-- Dinámico -->
                         </div>
                     </div>
 
-                    <!-- Detalle Factura (PASO 3) -->
-                    <div style="border-top: 1px solid var(--border); padding-top: 12px;" id="tour-step-3-el">
-                        <h3 style="font-size: 0.95rem; font-weight: 700; color: var(--text-main); margin-bottom: 6px;">Detalle Factura (<span id="label-active-caja" style="color:var(--primary);">Caja 01 - Principal</span>)</h3>
+                    <!-- Detalle de Factura (PASO 4 DEL TOUR) -->
+                    <div style="border-top: 1px solid var(--border); padding-top: 12px;" id="tour-step-4-el">
+                        <h3 style="font-size: 0.95rem; font-weight: 700; color: var(--text-main); margin-bottom: 6px;">
+                            Detalle Factura (<span id="label-active-caja" style="color:var(--primary);">Caja 01 - Principal</span>)
+                        </h3>
                         <div class="table-responsive-wrapper">
                             <table class="invoice-items-table">
                                 <thead>
                                     <tr>
                                         <th>Descripción</th>
                                         <th>Cant</th>
-                                        <th>Precio Unit.</th>
-                                        <th>Subtotal</th>
+                                        <th>Precio (<span class="symbol-active-currency">C$</span>)</th>
+                                        <th>Subtotal (<span class="symbol-active-currency">C$</span>)</th>
                                         <th>Acción</th>
                                     </tr>
                                 </thead>
@@ -1179,38 +1192,60 @@
                     </div>
                 </div>
 
-                <!-- Columna Derecha: Totales y Botón de Pago -->
+                <!-- Columna Derecha: Totales Bimoneda & Emisión (PASO 5 DEL TOUR) -->
                 <div style="display: flex; flex-direction: column; gap: 14px;">
-                    <div class="invoice-summary-card">
-                        <h3 style="font-size: 0.95rem; font-weight: 700; color: var(--text-main);">Resumen Financiero</h3>
-                        
-                        <!-- PASO 4: APLICAR DESCUENTO -->
-                        <div class="form-group-item" style="margin-top: 2px;" id="tour-step-4-el">
+                    <div class="invoice-summary-card" id="tour-step-5-el">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <h3 style="font-size: 0.95rem; font-weight: 700; color: var(--text-main);">Resumen Bimoneda</h3>
+                            <span id="badge-tax-status" style="font-size: 0.65rem; padding: 2px 6px; border-radius: 4px; background: rgba(14, 165, 233, 0.2); color: var(--primary); font-weight: bold;">IVA 15%</span>
+                        </div>
+
+                        <div class="form-group-item">
                             <label class="form-label">Aplicar Descuento (%)</label>
                             <input type="number" class="form-input" id="inv-discount" value="0" min="0" max="100" oninput="calculateTotals()">
                         </div>
 
-                        <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 8px;">
-                            <div class="summary-row-item">
-                                <span>Subtotal Bruto:</span>
-                                <span id="summary-subtotal">C$ 0.00</span>
+                        <!-- TOTALES EN CÓRDOBAS (C$) -->
+                        <div class="currency-resumen-box">
+                            <div class="currency-title">
+                                <span>🇳🇮 Córdobas</span>
+                                <span>NIO (C$)</span>
                             </div>
                             <div class="summary-row-item">
-                                <span>Descuento aplicado:</span>
-                                <span id="summary-discount-val">C$ 0.00</span>
+                                <span>Subtotal:</span>
+                                <span id="summary-subtotal-nio">C$ 0.00</span>
                             </div>
                             <div class="summary-row-item">
-                                <span>IVA (15%):</span>
-                                <span id="summary-tax">C$ 0.00</span>
+                                <span>IVA:</span>
+                                <span id="summary-tax-nio">C$ 0.00</span>
                             </div>
                             <div class="summary-row-item total-final">
-                                <span>Total a Pagar:</span>
-                                <span id="summary-grandtotal" style="color: var(--accent-orange);">C$ 0.00</span>
+                                <span>TOTAL:</span>
+                                <span id="summary-grandtotal-nio" style="color: var(--primary);">C$ 0.00</span>
                             </div>
                         </div>
 
-                        <!-- PASO 5: BOTÓN PAGAR Y EMITIR FACTURA -->
-                        <div style="position: relative;" id="tour-step-5-el">
+                        <!-- TOTALES EN DÓLARES ($) -->
+                        <div class="currency-resumen-box">
+                            <div class="currency-title">
+                                <span>🇺🇸 Dólares</span>
+                                <span>USD ($)</span>
+                            </div>
+                            <div class="summary-row-item">
+                                <span>Subtotal:</span>
+                                <span id="summary-subtotal-usd">$ 0.00</span>
+                            </div>
+                            <div class="summary-row-item">
+                                <span>IVA:</span>
+                                <span id="summary-tax-usd">$ 0.00</span>
+                            </div>
+                            <div class="summary-row-item total-final">
+                                <span>TOTAL:</span>
+                                <span id="summary-grandtotal-usd" style="color: var(--accent-orange);">$ 0.00</span>
+                            </div>
+                        </div>
+
+                        <div style="position: relative;">
                             <div class="cart-empty-tooltip" id="cart-empty-msg">
                                 ⚠️ No hay artículo en el carrito
                             </div>
@@ -1230,7 +1265,7 @@
             </div>
         </div>
 
-        <!-- ================= VISTAS RESTANTES ================= -->
+        <!-- VISTAS RESTANTES -->
         <div id="view-clientes" class="workspace-scroll"><div class="generic-module-content"><h2 class="module-title-main">👥 Clientes</h2></div></div>
         <div id="view-estimaciones" class="workspace-scroll"><div class="generic-module-content"><h2 class="module-title-main">📑 Estimaciones</h2></div></div>
         <div id="view-ordenes" class="workspace-scroll"><div class="generic-module-content"><h2 class="module-title-main">📦 Órdenes de Venta</h2></div></div>
@@ -1243,17 +1278,18 @@
         <div id="view-financiamiento" class="workspace-scroll"><div class="generic-module-content"><h2 class="module-title-main">🏛️ Financiamiento PYME</h2></div></div>
     </main>
 
-    <!-- Script de Funcionalidad Integral, Cambio de Vista, Tour e Impresión -->
+    <!-- SCRIPT DE INTEGRACIÓN BIMONEDA, IVA Y TOUR GUIADO -->
     <script>
         document.getElementById('inv-date').valueAsDate = new Date();
 
+        // Catálogo base con precio en Córdobas (NIO)
         const catalogProducts = [
-            { code: "PRD-001", name: "Caja Registradora Pro", price: 5490.00 },
-            { code: "PRD-002", name: "Caja Registradora Mini", price: 3660.00 },
-            { code: "PRD-003", name: "Lector Láser Código", price: 1464.00 },
-            { code: "PRD-004", name: "Licencia Sistema POS", price: 3660.00 },
-            { code: "PRD-005", name: "Soporte Técnico Anual", price: 7320.00 },
-            { code: "PRD-006", name: "Rollo de Papel Térmico (Caja)", price: 450.00 }
+            { code: "PRD-001", name: "Caja Registradora Pro", priceNIO: 5490.00 },
+            { code: "PRD-002", name: "Caja Registradora Mini", priceNIO: 3660.00 },
+            { code: "PRD-003", name: "Lector Láser Código", priceNIO: 1464.00 },
+            { code: "PRD-004", name: "Licencia Sistema POS", priceNIO: 3660.00 },
+            { code: "PRD-005", name: "Soporte Técnico Anual", priceNIO: 7320.00 },
+            { code: "PRD-006", name: "Rollo de Papel Térmico (Caja)", priceNIO: 450.00 }
         ];
 
         let cashRegistersData = {
@@ -1266,7 +1302,40 @@
         let emittedInvoicesLog = [];
         let isCatalogGridMode = false;
 
-        /* ================= CAMBIO DE MODO LISTA / CATÁLOGO ================= */
+        // --- LÓGICA DE TRATAMIENTO DE IVA ---
+        function toggleExemption() {
+            const status = document.getElementById('inv-tax-status').value;
+            const exemptionGroup = document.getElementById('group-exemption');
+            const badge = document.getElementById('badge-tax-status');
+
+            if (status === 'EXONERADO') {
+                exemptionGroup.style.display = 'flex';
+                badge.textContent = 'EXONERADO (0%)';
+                badge.style.background = 'rgba(239, 68, 68, 0.2)';
+                badge.style.color = '#ef4444';
+            } else {
+                exemptionGroup.style.display = 'none';
+                badge.textContent = 'IVA 15%';
+                badge.style.background = 'rgba(14, 165, 233, 0.2)';
+                badge.style.color = 'var(--primary)';
+            }
+        }
+
+        // --- MODO CATÁLOGO Y CAMBIO DE MONEDA ---
+        function onCurrencyChange() {
+            const currency = document.getElementById('inv-currency').value;
+            const symbol = currency === 'USD' ? '$' : 'C$';
+            document.querySelectorAll('.symbol-active-currency').forEach(el => el.textContent = symbol);
+            renderExcelCatalog();
+            renderInvoiceTable();
+        }
+
+        function getConvertedPrice(priceNIO) {
+            const currency = document.getElementById('inv-currency').value;
+            const rate = parseFloat(document.getElementById('inv-rate').value) || 36.60;
+            return currency === 'USD' ? (priceNIO / rate) : priceNIO;
+        }
+
         function toggleCatalogMode() {
             isCatalogGridMode = !isCatalogGridMode;
             const listView = document.getElementById('catalog-list-view');
@@ -1288,8 +1357,11 @@
         function renderGridCatalog() {
             const grid = document.getElementById('catalog-grid-view');
             grid.innerHTML = '';
-            
+            const currency = document.getElementById('inv-currency').value;
+            const symbol = currency === 'USD' ? '$' : 'C$';
+
             catalogProducts.forEach(prod => {
+                const price = getConvertedPrice(prod.priceNIO);
                 const card = document.createElement('div');
                 card.className = 'catalog-card';
                 card.onclick = () => addCatalogItem(prod);
@@ -1300,7 +1372,7 @@
                         <div class="catalog-card-title">${prod.name}</div>
                     </div>
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px;">
-                        <div class="catalog-card-price">C$ ${prod.price.toFixed(2)}</div>
+                        <div class="catalog-card-price">${symbol} ${price.toFixed(2)}</div>
                         <button style="background:var(--primary); color:white; border:none; width: 26px; height: 26px; border-radius:6px; font-size:1.1rem; cursor:pointer; display:flex; align-items:center; justify-content:center; font-weight:bold;">
                             +
                         </button>
@@ -1310,32 +1382,246 @@
             });
         }
 
-        /* ================= CONFIGURACIÓN DEL TOUR GUIADO DE 5 PASOS ================= */
+        function renderExcelCatalog() {
+            const tbody = document.getElementById('excel-catalog-body');
+            tbody.innerHTML = '';
+            const currency = document.getElementById('inv-currency').value;
+            const symbol = currency === 'USD' ? '$' : 'C$';
+
+            catalogProducts.forEach(prod => {
+                const price = getConvertedPrice(prod.priceNIO);
+                const tr = document.createElement('tr');
+                tr.onclick = () => addCatalogItem(prod);
+                tr.innerHTML = `
+                    <td style="font-weight: 600; color: var(--primary);">${prod.code}</td>
+                    <td>${prod.name}</td>
+                    <td>${symbol} ${price.toFixed(2)}</td>
+                    <td><button style="background:var(--primary); color:white; border:none; padding:3px 6px; border-radius:4px; font-size:0.7rem; cursor:pointer;">+ Agregar</button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+            renderGridCatalog();
+        }
+
+        function addCatalogItem(product) {
+            let activeItems = cashRegistersData[currentCaja].items;
+            const existing = activeItems.find(i => i.code === product.code);
+            if (existing) {
+                existing.qty += 1;
+            } else {
+                activeItems.push({ ...product, qty: 1 });
+            }
+            renderInvoiceTable();
+        }
+
+        function updateItemQty(code, delta) {
+            let activeItems = cashRegistersData[currentCaja].items;
+            const item = activeItems.find(i => i.code === code);
+            if (item) {
+                item.qty += delta;
+                if (item.qty <= 0) {
+                    cashRegistersData[currentCaja].items = activeItems.filter(i => i.code !== code);
+                }
+            }
+            renderInvoiceTable();
+        }
+
+        function removeInvoiceItem(code) {
+            cashRegistersData[currentCaja].items = cashRegistersData[currentCaja].items.filter(i => i.code !== code);
+            renderInvoiceTable();
+        }
+
+        function onCajaChange() {
+            currentCaja = document.getElementById('inv-caja').value;
+            document.getElementById('label-active-caja').textContent = currentCaja;
+            document.getElementById('inv-discount').value = cashRegistersData[currentCaja].discount;
+            renderInvoiceTable();
+        }
+
+        function renderInvoiceTable() {
+            const tbody = document.getElementById('invoice-items-body');
+            tbody.innerHTML = '';
+            const currency = document.getElementById('inv-currency').value;
+            const symbol = currency === 'USD' ? '$' : 'C$';
+
+            let activeItems = cashRegistersData[currentCaja].items;
+
+            if (activeItems.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 16px;">No hay ítems agregados en esta caja (${currentCaja}).</td></tr>`;
+                calculateTotals();
+                return;
+            }
+
+            activeItems.forEach(item => {
+                const unitPrice = getConvertedPrice(item.priceNIO);
+                const subtotal = unitPrice * item.qty;
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="font-weight: 600; color: var(--text-main);">${item.name}</td>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 4px;">
+                            <button onclick="updateItemQty('${item.code}', -1)" style="background:var(--bg-main); border:1px solid var(--border); color:var(--text-main); width:20px; height:20px; border-radius:3px; cursor:pointer;">-</button>
+                            <span>${item.qty}</span>
+                            <button onclick="updateItemQty('${item.code}', 1)" style="background:var(--bg-main); border:1px solid var(--border); color:var(--text-main); width:20px; height:20px; border-radius:3px; cursor:pointer;">+</button>
+                        </div>
+                    </td>
+                    <td>${symbol} ${unitPrice.toFixed(2)}</td>
+                    <td style="font-weight: bold; color: var(--primary);">${symbol} ${subtotal.toFixed(2)}</td>
+                    <td><button onclick="removeInvoiceItem('${item.code}')" style="background: rgba(239, 68, 68, 0.15); color: #ef4444; border: none; padding: 3px 6px; border-radius: 3px; cursor: pointer; font-size: 0.7rem;">Eliminar</button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            calculateTotals();
+        }
+
+        // --- CÁLCULO DE TOTALES BIMONEDA E IVA ---
+        function calculateTotals() {
+            const currencyBase = document.getElementById('inv-currency').value;
+            const rate = parseFloat(document.getElementById('inv-rate').value) || 36.60;
+            const taxStatus = document.getElementById('inv-tax-status').value;
+            const discountPercent = parseFloat(document.getElementById('inv-discount').value) || 0;
+
+            cashRegistersData[currentCaja].discount = discountPercent;
+
+            let activeItems = cashRegistersData[currentCaja].items;
+
+            // Calcular Subtotal Base según moneda actual seleccionada
+            let subtotalInput = activeItems.reduce((acc, item) => {
+                return acc + (getConvertedPrice(item.priceNIO) * item.qty);
+            }, 0);
+
+            let discountAmount = subtotalInput * (discountPercent / 100);
+            let taxableBase = subtotalInput - discountAmount;
+
+            let taxAmount = 0;
+            if (taxStatus === 'APLICA') {
+                taxAmount = taxableBase * 0.15;
+            }
+
+            let totalInput = taxableBase + taxAmount;
+
+            // Variables para conversión paralela en C$ y $
+            let subtotalNIO, taxNIO, totalNIO;
+            let subtotalUSD, taxUSD, totalUSD;
+
+            if (currencyBase === 'USD') {
+                subtotalUSD = subtotalInput;
+                taxUSD = taxAmount;
+                totalUSD = totalInput;
+
+                subtotalNIO = subtotalInput * rate;
+                taxNIO = taxAmount * rate;
+                totalNIO = totalInput * rate;
+            } else {
+                subtotalNIO = subtotalInput;
+                taxNIO = taxAmount;
+                totalNIO = totalInput;
+
+                subtotalUSD = subtotalInput / rate;
+                taxUSD = taxAmount / rate;
+                totalUSD = totalInput / rate;
+            }
+
+            // Renderizar resumen en ambas monedas
+            document.getElementById('summary-subtotal-nio').textContent = `C$ ${subtotalNIO.toFixed(2)}`;
+            document.getElementById('summary-tax-nio').textContent = `C$ ${taxNIO.toFixed(2)}`;
+            document.getElementById('summary-grandtotal-nio').textContent = `C$ ${totalNIO.toFixed(2)}`;
+
+            document.getElementById('summary-subtotal-usd').textContent = `$ ${subtotalUSD.toFixed(2)}`;
+            document.getElementById('summary-tax-usd').textContent = `$ ${taxUSD.toFixed(2)}`;
+            document.getElementById('summary-grandtotal-usd').textContent = `$ ${totalUSD.toFixed(2)}`;
+
+            return { totalNIO, totalUSD, taxStatus };
+        }
+
+        function resetInvoice() {
+            cashRegistersData[currentCaja].items = [];
+            cashRegistersData[currentCaja].discount = 0;
+            document.getElementById('inv-discount').value = 0;
+            renderInvoiceTable();
+        }
+
+        function emitInvoice() {
+            let activeItems = cashRegistersData[currentCaja].items;
+            const tooltip = document.getElementById('cart-empty-msg');
+
+            if (activeItems.length === 0) {
+                tooltip.classList.add('active');
+                setTimeout(() => tooltip.classList.remove('active'), 3000);
+                return;
+            }
+
+            const totals = calculateTotals();
+            const clientName = document.getElementById('inv-client').value;
+            const invoiceCode = 'FAC-2026-' + (emittedInvoicesLog.length + 101);
+            const exNo = document.getElementById('inv-exemption-no').value;
+
+            emittedInvoicesLog.push({
+                code: invoiceCode,
+                caja: currentCaja,
+                client: clientName,
+                totalNIO: totals.totalNIO,
+                totalUSD: totals.totalUSD,
+                status: totals.taxStatus
+            });
+
+            let totalGeneralIngresosNIO = emittedInvoicesLog.reduce((acc, curr) => acc + curr.totalNIO, 0);
+            document.getElementById('dash-ingresos').textContent = `C$ ${totalGeneralIngresosNIO.toFixed(2)}`;
+            document.getElementById('dash-ordenes').textContent = emittedInvoicesLog.length;
+
+            const historyBox = document.getElementById('recent-invoices-list');
+            historyBox.innerHTML = '';
+            emittedInvoicesLog.slice(-3).reverse().forEach(inv => {
+                const div = document.createElement('div');
+                div.style.cssText = "display: flex; justify-content: space-between; background: var(--bg-main); padding: 5px 8px; border-radius: 5px; border: 1px solid var(--border); font-size: 0.75rem;";
+                div.innerHTML = `<span style="font-weight:600; color:var(--text-main);">${inv.code} (${inv.caja})</span> <span style="color:var(--primary); font-weight:bold;">C$ ${inv.totalNIO.toFixed(2)} | $ ${inv.totalUSD.toFixed(2)}</span>`;
+                historyBox.appendChild(div);
+            });
+
+            let msg = `✅ Factura Emitida con Éxito!\nFactura: ${invoiceCode}\nCaja: ${currentCaja}\nTratamiento IVA: ${totals.taxStatus}`;
+            if(totals.taxStatus === 'EXONERADO' && exNo) msg += `\nN° Constancia: ${exNo}`;
+            msg += `\nTotal C$: C$ ${totals.totalNIO.toFixed(2)}\nTotal USD: $ ${totals.totalUSD.toFixed(2)}`;
+
+            alert(msg);
+            resetInvoice();
+        }
+
+        function printInvoicePDF() {
+            let activeItems = cashRegistersData[currentCaja].items;
+            if (activeItems.length === 0) {
+                alert(`⚠️ No hay datos en la caja actual (${currentCaja}) para exportar.`);
+                return;
+            }
+            window.print();
+        }
+
+        // --- TOUR GUIADO AJUSTADO (5 PASOS) ---
         const tourSteps = [
             {
                 elementId: 'tour-step-1-el',
-                title: 'Seleccionar Caja',
-                desc: 'Este botón o selector es para elegir la caja operativa. Cada caja mantiene su propia lista de artículos de manera independiente.'
+                title: '1. Seleccionar Caja',
+                desc: 'Selecciona la caja operativa donde estás facturando. Las cajas son totalmente independientes.'
             },
             {
                 elementId: 'tour-step-2-el',
-                title: 'Catálogo de Artículos',
-                desc: 'Puedes alternar entre la vista de lista Excel y la vista de catálogo (tarjetas). Al hacer clic en cualquier producto, se agregará a la factura.'
+                title: '2. Moneda e IVA',
+                desc: 'Define si emites en Córdobas o Dólares, ingresa la Tasa de Cambio y elige si Aplica el 15% de IVA o si la factura es Exonerada.'
             },
             {
                 elementId: 'tour-step-3-el',
-                title: 'Detalle de Factura',
-                desc: 'Aquí visualizas los productos seleccionados en la caja actual, pudiendo sumar cantidades o eliminarlos.'
+                title: '3. Catálogo de Artículos',
+                desc: 'Haz clic en cualquier producto del catálogo para agregarlo al carrito. Puedes alternar entre lista Excel y tarjetas.'
             },
             {
                 elementId: 'tour-step-4-el',
-                title: 'Aplicar Descuento (%)',
-                desc: 'Este campo permite ingresar un porcentaje de rebaja opcional que se calcula automáticamente sobre el subtotal.'
+                title: '4. Detalle de Factura',
+                desc: 'Ajusta cantidades o remueve ítems directamente en la tabla de facturación.'
             },
             {
                 elementId: 'tour-step-5-el',
-                title: 'Botón Pagar y Emitir',
-                desc: 'Este botón procesa el cobro final. Si el carrito está vacío, te notificará inmediatamente que no hay artículos.'
+                title: '5. Totales Bimoneda y Cobro',
+                desc: 'Revisa los totales convertidos automáticamente en Córdobas (C$) y Dólares ($) y presiona "Pagar y Emitir Factura".'
             }
         ];
 
@@ -1394,14 +1680,9 @@
             let left = rect.right + 16;
             let top = rect.top;
 
-            if (left + popupWidth > window.innerWidth) {
-                left = rect.left - popupWidth - 16;
-            }
+            if (left + popupWidth > window.innerWidth) left = rect.left - popupWidth - 16;
             if (left < 10) left = 10;
-
-            if (top + popupHeight > window.innerHeight) {
-                top = window.innerHeight - popupHeight - 20;
-            }
+            if (top + popupHeight > window.innerHeight) top = window.innerHeight - popupHeight - 20;
             if (top < 10) top = 10;
 
             popup.style.left = `${left}px`;
@@ -1424,174 +1705,11 @@
             }
         }
 
-        /* ================= LÓGICA DEL SISTEMA POS ================= */
-        function renderExcelCatalog() {
-            const tbody = document.getElementById('excel-catalog-body');
-            tbody.innerHTML = '';
-            catalogProducts.forEach(prod => {
-                const tr = document.createElement('tr');
-                tr.onclick = () => addCatalogItem(prod);
-                tr.innerHTML = `
-                    <td style="font-weight: 600; color: var(--primary);">${prod.code}</td>
-                    <td>${prod.name}</td>
-                    <td>C$ ${prod.price.toFixed(2)}</td>
-                    <td><button style="background:var(--primary); color:white; border:none; padding:3px 6px; border-radius:4px; font-size:0.7rem; cursor:pointer;">+ Agregar</button></td>
-                `;
-                tbody.appendChild(tr);
-            });
-            renderGridCatalog();
-        }
-
-        function addCatalogItem(product) {
-            let activeItems = cashRegistersData[currentCaja].items;
-            const existing = activeItems.find(i => i.code === product.code);
-            if (existing) {
-                existing.qty += 1;
-            } else {
-                activeItems.push({ ...product, qty: 1 });
-            }
-            renderInvoiceTable();
-        }
-
-        function updateItemQty(code, delta) {
-            let activeItems = cashRegistersData[currentCaja].items;
-            const item = activeItems.find(i => i.code === code);
-            if (item) {
-                item.qty += delta;
-                if (item.qty <= 0) {
-                    cashRegistersData[currentCaja].items = activeItems.filter(i => i.code !== code);
-                }
-            }
-            renderInvoiceTable();
-        }
-
-        function removeInvoiceItem(code) {
-            cashRegistersData[currentCaja].items = cashRegistersData[currentCaja].items.filter(i => i.code !== code);
-            renderInvoiceTable();
-        }
-
-        function onCajaChange() {
-            currentCaja = document.getElementById('inv-caja').value;
-            document.getElementById('label-active-caja').textContent = currentCaja;
-            document.getElementById('inv-discount').value = cashRegistersData[currentCaja].discount;
-            renderInvoiceTable();
-        }
-
-        function renderInvoiceTable() {
-            const tbody = document.getElementById('invoice-items-body');
-            tbody.innerHTML = '';
-
-            let activeItems = cashRegistersData[currentCaja].items;
-
-            if (activeItems.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 16px;">No hay ítems agregados en esta caja (${currentCaja}).</td></tr>`;
-                calculateTotals();
-                return;
-            }
-
-            activeItems.forEach(item => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td style="font-weight: 600; color: var(--text-main);">${item.name}</td>
-                    <td>
-                        <div style="display: flex; align-items: center; gap: 4px;">
-                            <button onclick="updateItemQty('${item.code}', -1)" style="background:var(--bg-main); border:1px solid var(--border); color:var(--text-main); width:20px; height:20px; border-radius:3px; cursor:pointer;">-</button>
-                            <span>${item.qty}</span>
-                            <button onclick="updateItemQty('${item.code}', 1)" style="background:var(--bg-main); border:1px solid var(--border); color:var(--text-main); width:20px; height:20px; border-radius:3px; cursor:pointer;">+</button>
-                        </div>
-                    </td>
-                    <td>C$ ${item.price.toFixed(2)}</td>
-                    <td style="font-weight: bold; color: var(--primary);">C$ ${(item.price * item.qty).toFixed(2)}</td>
-                    <td><button onclick="removeInvoiceItem('${item.code}')" style="background: rgba(239, 68, 68, 0.15); color: #ef4444; border: none; padding: 3px 6px; border-radius: 3px; cursor: pointer; font-size: 0.7rem;">Eliminar</button></td>
-                `;
-                tbody.appendChild(tr);
-            });
-
-            calculateTotals();
-        }
-
-        function calculateTotals() {
-            let discountInput = parseFloat(document.getElementById('inv-discount').value) || 0;
-            cashRegistersData[currentCaja].discount = discountInput;
-
-            let activeItems = cashRegistersData[currentCaja].items;
-            let subtotal = activeItems.reduce((acc, item) => acc + (item.price * item.qty), 0);
-            let discountVal = subtotal * (discountInput / 100);
-            let taxableBase = subtotal - discountVal;
-            let tax = taxableBase * 0.15;
-            let grandTotal = taxableBase + tax;
-
-            document.getElementById('summary-subtotal').textContent = `C$ ${subtotal.toFixed(2)}`;
-            document.getElementById('summary-discount-val').textContent = `- C$ ${discountVal.toFixed(2)}`;
-            document.getElementById('summary-tax').textContent = `C$ ${tax.toFixed(2)}`;
-            document.getElementById('summary-grandtotal').textContent = `C$ ${grandTotal.toFixed(2)}`;
-
-            return { subtotal, discountVal, tax, grandTotal };
-        }
-
-        function resetInvoice() {
-            cashRegistersData[currentCaja].items = [];
-            cashRegistersData[currentCaja].discount = 0;
-            document.getElementById('inv-discount').value = 0;
-            renderInvoiceTable();
-        }
-
-        function emitInvoice() {
-            let activeItems = cashRegistersData[currentCaja].items;
-            const tooltip = document.getElementById('cart-empty-msg');
-
-            if (activeItems.length === 0) {
-                tooltip.classList.add('active');
-                setTimeout(() => {
-                    tooltip.classList.remove('active');
-                }, 3000);
-                return;
-            }
-
-            const totals = calculateTotals();
-            const clientName = document.getElementById('inv-client').value;
-            const invoiceCode = 'FAC-2026-' + (emittedInvoicesLog.length + 101);
-
-            emittedInvoicesLog.push({
-                code: invoiceCode,
-                caja: currentCaja,
-                client: clientName,
-                total: totals.grandTotal
-            });
-
-            let totalGeneralIngresos = emittedInvoicesLog.reduce((acc, curr) => acc + curr.total, 0);
-            let totalGeneralOrdenes = emittedInvoicesLog.length;
-            document.getElementById('dash-ingresos').textContent = `C$ ${totalGeneralIngresos.toFixed(2)}`;
-            document.getElementById('dash-ordenes').textContent = totalGeneralOrdenes;
-
-            const historyBox = document.getElementById('recent-invoices-list');
-            historyBox.innerHTML = '';
-            emittedInvoicesLog.slice(-3).reverse().forEach(inv => {
-                const div = document.createElement('div');
-                div.style.cssText = "display: flex; justify-content: space-between; background: var(--bg-main); padding: 5px 8px; border-radius: 5px; border: 1px solid var(--border); font-size: 0.75rem;";
-                div.innerHTML = `<span style="font-weight:600; color:var(--text-main);">${inv.code} (${inv.caja})</span> <span style="color:var(--primary); font-weight:bold;">C$ ${inv.total.toFixed(2)}</span>`;
-                historyBox.appendChild(div);
-            });
-
-            alert(`✅ ¡Pago procesado con éxito!\nFactura: ${invoiceCode}\nCaja: ${currentCaja}\nTotal Pagado: C$ ${totals.grandTotal.toFixed(2)}`);
-            resetInvoice();
-        }
-
-        function printInvoicePDF() {
-            let activeItems = cashRegistersData[currentCaja].items;
-            if (activeItems.length === 0) {
-                alert(`⚠️ No hay datos en la caja actual (${currentCaja}) para exportar.`);
-                return;
-            }
-            window.print();
-        }
-
+        // --- NAVEGACIÓN Y TEMA ---
         function switchView(viewName, element) {
             document.querySelectorAll('.workspace-scroll').forEach(el => el.classList.remove('active-view'));
             const target = document.getElementById('view-' + viewName);
-            if (target) {
-                target.classList.add('active-view');
-            }
+            if (target) target.classList.add('active-view');
 
             if (element && element.classList.contains('submenu-item')) {
                 document.querySelectorAll('.submenu-item').forEach(el => el.classList.remove('active'));
@@ -1601,24 +1719,18 @@
                 element.classList.add('active');
             }
 
-            if (window.innerWidth <= 1024) {
-                toggleMobileSidebar();
-            }
+            if (window.innerWidth <= 1024) toggleMobileSidebar();
         }
 
         function toggleSubmenu(submenuId, event) {
             event.stopPropagation();
             const submenu = document.getElementById(submenuId);
-            if (submenu) {
-                submenu.classList.toggle('open');
-            }
+            if (submenu) submenu.classList.toggle('open');
         }
 
         function toggleMobileSidebar() {
-            const sidebar = document.getElementById('sidebar-panel');
-            const overlay = document.getElementById('sidebar-overlay');
-            sidebar.classList.toggle('mobile-open');
-            overlay.classList.toggle('active');
+            document.getElementById('sidebar-panel').classList.toggle('mobile-open');
+            document.getElementById('sidebar-overlay').classList.toggle('active');
         }
 
         function toggleTheme() {
@@ -1635,6 +1747,7 @@
             }
         }
 
+        // Inicialización
         renderExcelCatalog();
         renderInvoiceTable();
     </script>
