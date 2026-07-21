@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NovaHub - POS & Panel Ejecutivo (Responsive)</title>
+    <title>NovaHub - POS & Panel Ejecutivo (Responsive & Tour Interactivo)</title>
     <style>
         /* Sistema de Temas: Claro y Oscuro */
         :root[data-theme="dark"] {
@@ -50,7 +50,7 @@
             height: 100vh;
             display: flex;
             overflow: hidden;
-            font-size: 14px; /* Tamaño base optimizado para evitar elementos gigantes */
+            font-size: 14px;
         }
 
         /* Overlay para móvil cuando el sidebar está abierto */
@@ -69,7 +69,7 @@
             display: block;
         }
 
-        /* Sidebar Estilo NovaHub (Responsive y Compacto) */
+        /* Sidebar Estilo NovaHub */
         .sidebar {
             width: 250px;
             background-color: var(--bg-sidebar);
@@ -383,7 +383,7 @@
             .workspace-scroll { padding: 12px; gap: 12px; }
         }
 
-        /* Estilos específicos para la vista Dashboard */
+        /* Hero Welcome Section */
         .hero-welcome-section {
             display: flex;
             flex-direction: column;
@@ -490,7 +490,7 @@
         }
 
         /* ---------------------------------------------------- */
-        /* MÓDULO FACTURAS (Adaptado, Compacto y Responsive) */
+        /* MÓDULO FACTURAS */
         /* ---------------------------------------------------- */
         .module-header-flex {
             display: flex;
@@ -510,6 +510,7 @@
             display: flex;
             gap: 8px;
             flex-wrap: wrap;
+            align-items: center;
         }
 
         .btn-action-primary {
@@ -543,31 +544,23 @@
 
         .btn-action-secondary:hover { border-color: var(--primary); }
 
-        /* Guía Interactiva Dinámica con Mensaje Descriptivo */
-        .guide-banner {
-            background: linear-gradient(135deg, rgba(14, 165, 233, 0.12) 0%, rgba(37, 99, 235, 0.08) 100%);
-            border: 1px solid var(--primary);
-            border-radius: 10px;
-            padding: 12px 16px;
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
-        }
-
-        .guide-icon { font-size: 1.2rem; }
-
-        .guide-content h4 {
-            font-size: 0.85rem;
+        /* Botón de Tour Interactivo */
+        .btn-start-tour {
+            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 6px;
             font-weight: 700;
-            color: var(--primary);
-            margin-bottom: 2px;
+            font-size: 0.82rem;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(249, 115, 22, 0.4);
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
-        .guide-content p {
-            font-size: 0.78rem;
-            color: var(--text-muted);
-            line-height: 1.35;
-        }
+        .btn-start-tour:hover { filter: brightness(1.1); }
 
         /* Contenedor del Editor de Facturas */
         .invoice-builder-layout {
@@ -632,7 +625,7 @@
 
         .form-input:focus, .form-select:focus { border-color: var(--primary); }
 
-        /* Formato de Selección Estilo Excel (Tabla Interactiva Scrollable en Móvil) */
+        /* Tablas responsivas */
         .table-responsive-wrapper {
             width: 100%;
             overflow-x: auto;
@@ -669,7 +662,7 @@
             cursor: pointer;
         }
 
-        /* Resumen de Totales y Panel de Acciones de Facturación */
+        /* Resumen de Totales y Panel */
         .invoice-summary-card {
             background: var(--surface-card);
             border: 1px solid var(--border);
@@ -678,6 +671,7 @@
             display: flex;
             flex-direction: column;
             gap: 12px;
+            position: relative;
         }
 
         .summary-row-item {
@@ -707,6 +701,7 @@
             box-shadow: 0 4px 12px rgba(249, 115, 22, 0.4);
             text-align: center;
             width: 100%;
+            position: relative;
         }
 
         .btn-checkout-emit:hover { filter: brightness(1.1); }
@@ -720,9 +715,181 @@
             box-shadow: var(--shadow);
             text-align: center;
         }
+
+        /* ---------------------------------------------------- */
+        /* SISTEMA DE TOUR GUIADO (MODO ENFOQUE / SPOTLIGHT) */
+        /* ---------------------------------------------------- */
+        .tour-backdrop {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 999;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+
+        .tour-backdrop.active {
+            display: block;
+        }
+
+        /* Elemento iluminado durante el tour */
+        .tour-highlighted {
+            position: relative !important;
+            z-index: 1000 !important;
+            box-shadow: 0 0 0 4px var(--primary), 0 0 25px rgba(14, 165, 233, 0.6) !important;
+            background-color: var(--surface) !important;
+            border-radius: 8px;
+        }
+
+        /* Pop-up flotante de guía al lado del elemento */
+        .tour-popup-card {
+            display: none;
+            position: fixed;
+            width: 300px;
+            background: var(--surface-card);
+            border: 1px solid var(--primary);
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5);
+            z-index: 1001;
+            animation: fadeInPopup 0.3s ease;
+        }
+
+        .tour-popup-card.active {
+            display: block;
+        }
+
+        @keyframes fadeInPopup {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .tour-popup-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .tour-step-counter {
+            background: var(--primary);
+            color: white;
+            font-size: 0.68rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .tour-popup-title {
+            font-size: 0.9rem;
+            font-weight: 800;
+            color: var(--text-main);
+            margin-bottom: 4px;
+        }
+
+        .tour-popup-desc {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+            margin-bottom: 12px;
+        }
+
+        .tour-popup-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .tour-btn-nav {
+            background: var(--bg-main);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .tour-btn-nav:hover { border-color: var(--primary); }
+
+        .tour-btn-next {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .tour-btn-next:hover { filter: brightness(1.1); }
+
+        /* Mensaje emergente sobre el botón Pagar cuando está vacío */
+        .cart-empty-tooltip {
+            display: none;
+            position: absolute;
+            bottom: calc(100% + 10px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: #ef4444;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            box-shadow: 0 6px 16px rgba(239, 68, 68, 0.4);
+            white-space: nowrap;
+            z-index: 30;
+            animation: bounceTooltip 0.4s ease;
+        }
+
+        .cart-empty-tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 6px;
+            border-style: solid;
+            border-color: #ef4444 transparent transparent transparent;
+        }
+
+        .cart-empty-tooltip.active {
+            display: block;
+        }
+
+        @keyframes bounceTooltip {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(-4px); }
+        }
     </style>
 </head>
 <body>
+
+    <!-- Backdrop con desenfoque para el Tour Interactivo -->
+    <div class="tour-backdrop" id="tour-backdrop" onclick="endTour()"></div>
+
+    <!-- Pop-up Dinámico del Tour Interactivo -->
+    <div class="tour-popup-card" id="tour-popup">
+        <div class="tour-popup-header">
+            <span class="tour-step-counter" id="tour-counter">1 | 5</span>
+            <button onclick="endTour()" style="background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:0.9rem;">✕</button>
+        </div>
+        <div class="tour-popup-title" id="tour-title">Título del Tour</div>
+        <div class="tour-popup-desc" id="tour-desc">Descripción detallada del elemento seleccionado.</div>
+        <div class="tour-popup-actions">
+            <button class="tour-btn-nav" id="tour-prev-btn" onclick="prevTourStep()">Anterior</button>
+            <button class="tour-btn-next" id="tour-next-btn" onclick="nextTourStep()">Siguiente</button>
+        </div>
+    </div>
 
     <!-- Overlay para dispositivos móviles -->
     <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleMobileSidebar()"></div>
@@ -742,15 +909,11 @@
                 <div>
                     <div class="menu-section-title">General</div>
                     <div class="menu-items">
-                        <div class="menu-item active" onmouseover="showHelp('dashboard')" onclick="switchView('dashboard', this)">
-                            <div class="menu-item-left">
-                                <span>📊</span> Dashboard
-                            </div>
+                        <div class="menu-item active" onclick="switchView('dashboard', this)">
+                            <div class="menu-item-left"><span>📊</span> Dashboard</div>
                         </div>
-                        <div class="menu-item" onmouseover="showHelp('financiamiento')" onclick="switchView('financiamiento', this)">
-                            <div class="menu-item-left">
-                                <span>🏛️</span> Financiamiento PYME
-                            </div>
+                        <div class="menu-item" onclick="switchView('financiamiento', this)">
+                            <div class="menu-item-left"><span>🏛️</span> Financiamiento PYME</div>
                         </div>
                     </div>
                 </div>
@@ -758,34 +921,28 @@
                 <div>
                     <div class="menu-section-title">Operaciones</div>
                     <div class="menu-items">
-                        <!-- Menú Desplegable de Ventas / Facturación -->
-                        <div class="menu-item" onmouseover="showHelp('ventas-menu')" onclick="toggleSubmenu('submenu-ventas', event)">
-                            <div class="menu-item-left">
-                                <span>🛒</span> Ventas
-                            </div>
+                        <div class="menu-item" onclick="toggleSubmenu('submenu-ventas', event)">
+                            <div class="menu-item-left"><span>🛒</span> Ventas</div>
                             <span id="arrow-ventas">▾</span>
                         </div>
                         <div class="submenu-container open" id="submenu-ventas">
-                            <div class="submenu-item" onmouseover="showHelp('clientes')" onclick="switchView('clientes', this)">👥 Clientes</div>
-                            <div class="submenu-item" onmouseover="showHelp('estimaciones')" onclick="switchView('estimaciones', this)">📑 Estimaciones</div>
-                            <div class="submenu-item" onmouseover="showHelp('ordenes')" onclick="switchView('ordenes', this)">📦 Órdenes de venta</div>
-                            <div class="submenu-item active" onmouseover="showHelp('facturas')" onclick="switchView('facturas', this)">📄 Facturas</div>
-                            <div class="submenu-item" onmouseover="showHelp('facturas-rec')" onclick="switchView('facturas-rec', this)">🔄 Facturas recurrentes</div>
-                            <div class="submenu-item" onmouseover="showHelp('pagos')" onclick="switchView('pagos', this)">💳 Pagos recibidos</div>
-                            <div class="submenu-item" onmouseover="showHelp('devoluciones')" onclick="switchView('devoluciones', this)">↩️ Devoluciones de venta</div>
-                            <div class="submenu-item" onmouseover="showHelp('notas')" onclick="switchView('notas', this)">📝 Notas de credito</div>
+                            <div class="submenu-item" onclick="switchView('clientes', this)">👥 Clientes</div>
+                            <div class="submenu-item" onclick="switchView('estimaciones', this)">📑 Estimaciones</div>
+                            <div class="submenu-item" onclick="switchView('ordenes', this)">📦 Órdenes de venta</div>
+                            <div class="submenu-item active" onclick="switchView('facturas', this)">📄 Facturas</div>
+                            <div class="submenu-item" onclick="switchView('facturas-rec', this)">🔄 Facturas recurrentes</div>
+                            <div class="submenu-item" onclick="switchView('pagos', this)">💳 Pagos recibidos</div>
+                            <div class="submenu-item" onclick="switchView('devoluciones', this)">↩️ Devoluciones de venta</div>
+                            <div class="submenu-item" onclick="switchView('notas', this)">📝 Notas de credito</div>
                         </div>
 
-                        <!-- Menú Desplegable de Compras -->
-                        <div class="menu-item" onmouseover="showHelp('compras-menu')" onclick="toggleSubmenu('submenu-compras', event)">
-                            <div class="menu-item-left">
-                                <span>🛍️</span> Compras
-                            </div>
+                        <div class="menu-item" onclick="toggleSubmenu('submenu-compras', event)">
+                            <div class="menu-item-left"><span>🛍️</span> Compras</div>
                             <span id="arrow-compras">▾</span>
                         </div>
                         <div class="submenu-container" id="submenu-compras">
-                            <div class="submenu-item" onmouseover="showHelp('proveedores')" onclick="switchView('proveedores', this)">🚚 Proveedores</div>
-                            <div class="submenu-item" onmouseover="showHelp('gastos')" onclick="switchView('gastos', this)">💸 Gastos y Costos</div>
+                            <div class="submenu-item" onclick="switchView('proveedores', this)">🚚 Proveedores</div>
+                            <div class="submenu-item" onclick="switchView('gastos', this)">💸 Gastos y Costos</div>
                         </div>
                     </div>
                 </div>
@@ -812,12 +969,12 @@
                 </div>
                 <div class="top-search-box">
                     <span class="top-search-icon">🔍</span>
-                    <input type="text" class="top-search-input" placeholder="Buscar..." onmouseover="showHelp('search-box')">
+                    <input type="text" class="top-search-input" placeholder="Buscar...">
                 </div>
             </div>
 
             <div style="display: flex; gap: 8px; align-items: center;">
-                <button class="theme-toggle-btn" onmouseover="showHelp('theme-btn')" onclick="toggleTheme()" id="theme-btn">
+                <button class="theme-toggle-btn" onclick="toggleTheme()" id="theme-btn">
                     <span>🌙</span> Oscuro
                 </button>
             </div>
@@ -835,7 +992,7 @@
             </section>
 
             <section class="dashboard-cards-grid">
-                <div class="stat-card featured-blue" onmouseover="showHelp('dash-ingresos-card')" onclick="switchView('facturas', document.querySelectorAll('.submenu-item')[3])">
+                <div class="stat-card featured-blue" onclick="switchView('facturas', document.querySelectorAll('.submenu-item')[3])">
                     <div>
                         <div class="stat-icon-badge bg-icon-blue">💵</div>
                         <div class="stat-label">Ingresos Totales (Facturados)</div>
@@ -843,7 +1000,7 @@
                     <div class="stat-amount" id="dash-ingresos">C$ 0.00</div>
                 </div>
 
-                <div class="stat-card" onmouseover="showHelp('dash-gastos-card')" onclick="switchView('gastos', null)">
+                <div class="stat-card" onclick="switchView('gastos', null)">
                     <div>
                         <div class="stat-icon-badge bg-icon-dark">📉</div>
                         <div class="stat-label">Gastos Totales</div>
@@ -851,7 +1008,7 @@
                     <div class="stat-amount">C$ 0.00</div>
                 </div>
 
-                <div class="stat-card" onmouseover="showHelp('dash-ordenes-card')" onclick="switchView('ordenes', null)">
+                <div class="stat-card" onclick="switchView('ordenes', null)">
                     <div>
                         <div class="stat-icon-badge bg-icon-orange">🛒</div>
                         <div class="stat-label">Órdenes Activas</div>
@@ -861,26 +1018,21 @@
             </section>
         </div>
 
-        <!-- ================= VISTA: MÓDULO FACTURAS (FORMATO EXCEL, CAJAS INDEPENDIENTES Y GUÍA) ================= -->
+        <!-- ================= VISTA: MÓDULO FACTURAS ================= -->
         <div id="view-facturas" class="workspace-scroll active-view">
-            <!-- Cabecera del Módulo -->
+            <!-- Cabecera del Módulo con el Botón de Guía (Tour Interactivo) -->
             <div class="module-header-flex">
                 <div>
                     <h2 class="module-title-main">📄 Facturación por Caja</h2>
                     <p style="font-size: 0.78rem; color: var(--text-muted); margin-top: 2px;">Facturación individual independiente por caja con formato tabular Excel.</p>
                 </div>
                 <div class="module-actions-group">
-                    <button class="btn-action-secondary" onmouseover="showHelp('btn-clean')" onclick="resetInvoice()">🧹 Limpiar</button>
-                    <button class="btn-action-primary" onmouseover="showHelp('btn-print')" onclick="printInvoicePDF()">🖨️ PDF</button>
-                </div>
-            </div>
-
-            <!-- Guía Interactiva Dinámica con Mensaje Descriptivo -->
-            <div class="guide-banner">
-                <div class="guide-icon">💡</div>
-                <div class="guide-content">
-                    <h4 id="guide-title">Guía Interactiva NovaHub</h4>
-                    <p id="guide-desc">Coloca el cursor sobre cualquier elemento para ver su descripción detallada en tiempo real.</p>
+                    <!-- BOTÓN DE GUÍA / TOUR INTERACTIVO DE 5 PASOS -->
+                    <button class="btn-start-tour" onclick="startTour()">
+                        🧭 Iniciar Guía Interactiva (1|5)
+                    </button>
+                    <button class="btn-action-secondary" onclick="resetInvoice()">🧹 Limpiar</button>
+                    <button class="btn-action-primary" onclick="printInvoicePDF()">🖨️ PDF</button>
                 </div>
             </div>
 
@@ -890,9 +1042,10 @@
                 <div class="invoice-card-box">
                     <h3 style="font-size: 0.95rem; font-weight: 700; color: var(--text-main);">Configuración de Emisión</h3>
                     <div class="form-row-grid">
-                        <div class="form-group-item">
+                        <!-- PASO 1: SELECCIONAR CAJA -->
+                        <div class="form-group-item" id="tour-step-1-el">
                             <label class="form-label">Caja Operativa</label>
-                            <select class="form-select" id="inv-caja" onchange="onCajaChange()" onmouseover="showHelp('select-caja')">
+                            <select class="form-select" id="inv-caja" onchange="onCajaChange()">
                                 <option value="Caja 01 - Principal">Caja 01 - Principal</option>
                                 <option value="Caja 02 - Express">Caja 02 - Express</option>
                                 <option value="Caja 03 - Sucursal Norte">Caja 03 - Sucursal Norte</option>
@@ -900,7 +1053,7 @@
                         </div>
                         <div class="form-group-item">
                             <label class="form-label">Cliente / Empresa</label>
-                            <select class="form-select" id="inv-client" onmouseover="showHelp('select-client')">
+                            <select class="form-select" id="inv-client">
                                 <option value="Corporación del Norte S.A.">Corporación del Norte S.A.</option>
                                 <option value="Inversiones San Carlos">Inversiones San Carlos</option>
                                 <option value="Cliente General / Mostrador">Cliente General / Mostrador</option>
@@ -908,17 +1061,17 @@
                         </div>
                         <div class="form-group-item">
                             <label class="form-label">Fecha de Emisión</label>
-                            <input type="date" class="form-input" id="inv-date" onmouseover="showHelp('input-date')">
+                            <input type="date" class="form-input" id="inv-date">
                         </div>
                     </div>
 
-                    <!-- Catálogo Estilo Excel para Seleccionar Artículos -->
-                    <div style="border-top: 1px solid var(--border); padding-top: 12px;">
+                    <!-- Catálogo Estilo Excel para Seleccionar Artículos (PASO 2) -->
+                    <div style="border-top: 1px solid var(--border); padding-top: 12px;" id="tour-step-2-el">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
                             <h3 style="font-size: 0.95rem; font-weight: 700; color: var(--text-main);">Catálogo (Estilo Excel)</h3>
                             <span style="font-size: 0.72rem; color: var(--primary);">Haz clic para agregar</span>
                         </div>
-                        <div class="table-responsive-wrapper" style="max-height: 160px; overflow-y: auto;" onmouseover="showHelp('excel-catalog')">
+                        <div class="table-responsive-wrapper" style="max-height: 160px; overflow-y: auto;">
                             <table class="excel-catalog-table">
                                 <thead>
                                     <tr>
@@ -935,9 +1088,10 @@
                         </div>
                     </div>
 
-                    <div style="border-top: 1px solid var(--border); padding-top: 12px;">
+                    <!-- Detalle Factura (PASO 3) -->
+                    <div style="border-top: 1px solid var(--border); padding-top: 12px;" id="tour-step-3-el">
                         <h3 style="font-size: 0.95rem; font-weight: 700; color: var(--text-main); margin-bottom: 6px;">Detalle Factura (<span id="label-active-caja" style="color:var(--primary);">Caja 01 - Principal</span>)</h3>
-                        <div class="table-responsive-wrapper" onmouseover="showHelp('table-items')">
+                        <div class="table-responsive-wrapper">
                             <table class="invoice-items-table">
                                 <thead>
                                     <tr>
@@ -958,14 +1112,15 @@
                     </div>
                 </div>
 
-                <!-- Columna Derecha: Totales y Botón de Pago con Alerta si está vacío -->
+                <!-- Columna Derecha: Totales y Botón de Pago -->
                 <div style="display: flex; flex-direction: column; gap: 14px;">
                     <div class="invoice-summary-card">
                         <h3 style="font-size: 0.95rem; font-weight: 700; color: var(--text-main);">Resumen Financiero</h3>
                         
-                        <div class="form-group-item" style="margin-top: 2px;">
+                        <!-- PASO 4: APLICAR DESCUENTO -->
+                        <div class="form-group-item" style="margin-top: 2px;" id="tour-step-4-el">
                             <label class="form-label">Aplicar Descuento (%)</label>
-                            <input type="number" class="form-input" id="inv-discount" value="0" min="0" max="100" oninput="calculateTotals()" onmouseover="showHelp('input-discount')">
+                            <input type="number" class="form-input" id="inv-discount" value="0" min="0" max="100" oninput="calculateTotals()">
                         </div>
 
                         <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 8px;">
@@ -987,15 +1142,21 @@
                             </div>
                         </div>
 
-                        <!-- Botón Pagar con Validación de Ítems Vacíos -->
-                        <button class="btn-checkout-emit" onmouseover="showHelp('btn-pay')" onclick="emitInvoice()">
-                            💳 Pagar y Emitir Factura
-                        </button>
+                        <!-- PASO 5: BOTÓN PAGAR Y EMITIR FACTURA (CON MENSAJE EMERGENTE ARRIBA SI NO HAY ARTÍCULOS) -->
+                        <div style="position: relative;" id="tour-step-5-el">
+                            <!-- Tooltip emergente que sale ARRIBA del botón cuando está vacío -->
+                            <div class="cart-empty-tooltip" id="cart-empty-msg">
+                                ⚠️ No hay artículo en el carrito
+                            </div>
+                            <button class="btn-checkout-emit" onclick="emitInvoice()">
+                                💳 Pagar y Emitir Factura
+                            </button>
+                        </div>
                     </div>
 
                     <div class="invoice-summary-card" style="background: var(--surface);">
                         <h4 style="font-size: 0.85rem; font-weight: 700; color: var(--text-main); margin-bottom: 4px;">📋 Historial Reciente por Caja</h4>
-                        <div id="recent-invoices-list" style="font-size: 0.78rem; color: var(--text-muted); display: flex; flex-direction: column; gap: 5px;" onmouseover="showHelp('history-list')">
+                        <div id="recent-invoices-list" style="font-size: 0.78rem; color: var(--text-muted); display: flex; flex-direction: column; gap: 5px;">
                             <div>No hay facturas emitidas en esta sesión.</div>
                         </div>
                     </div>
@@ -1016,7 +1177,7 @@
         <div id="view-financiamiento" class="workspace-scroll"><div class="generic-module-content"><h2 class="module-title-main">🏛️ Financiamiento PYME</h2></div></div>
     </main>
 
-    <!-- Script de Funcionalidad Integral e Interactiva -->
+    <!-- Script de Funcionalidad Integral, Tour Interactivo y Validaciones -->
     <script>
         document.getElementById('inv-date').valueAsDate = new Date();
 
@@ -1038,45 +1199,127 @@
         let currentCaja = "Caja 01 - Principal";
         let emittedInvoicesLog = [];
 
-        const helpTexts = {
-            'dashboard': { title: "Panel Dashboard General", desc: "Muestra métricas globales en tiempo real de ingresos totales, gastos y órdenes activas." },
-            'financiamiento': { title: "Módulo Financiamiento PYME", desc: "Sección para consultar opciones de apalancamiento bancario y empresarial." },
-            'ventas-menu': { title: "Menú Desplegable Ventas", desc: "Agrupa operaciones comerciales: clientes, cotizaciones, órdenes y facturas." },
-            'clientes': { title: "Submenú Clientes", desc: "Administra la cartera de clientes corporativos y particulares." },
-            'estimaciones': { title: "Submenú Estimaciones", desc: "Genera propuestas comerciales y cotizaciones formales." },
-            'ordenes': { title: "Submenú Órdenes de Venta", desc: "Monitorea los pedidos activos y estatus de despacho." },
-            'facturas': { title: "Módulo de Facturación Activo", desc: "Espacio de trabajo para crear comprobantes fiscales y procesar pagos por caja individual." },
-            'facturas-rec': { title: "Submenú Facturas Recurrentes", desc: "Automatiza cobros periódicos para contratos de servicios." },
-            'pagos': { title: "Submenú Pagos Recibidos", desc: "Consulta el historial de transacciones acreditadas." },
-            'devoluciones': { title: "Submenú Devoluciones de Venta", desc: "Controla devoluciones de mercancía y reembolsos." },
-            'notas': { title: "Submenú Notas de Crédito", desc: "Emite saldos a favor aplicables a futuras compras." },
-            'compras-menu': { title: "Menú Desplegable Compras", desc: "Gestiona egresos operativos y proveedores." },
-            'proveedores': { title: "Submenú Proveedores", desc: "Directorio de aliados estratégicos y suministros." },
-            'gastos': { title: "Submenú Gastos y Costos", desc: "Registro financiero de gastos operativos." },
-            'search-box': { title: "Barra de Búsqueda Global", desc: "Permite localizar rápidamente clientes, facturas o productos." },
-            'theme-btn': { title: "Botón de Tema", desc: "Alterna entre Modo Oscuro y Modo Claro instantáneamente." },
-            'dash-ingresos-card': { title: "Tarjeta de Ingresos Totales", desc: "Suma acumulada de todas las facturas procesadas y pagadas exitosamente." },
-            'dash-gastos-card': { title: "Tarjeta de Gastos Totales", desc: "Control general de egresos operativos." },
-            'dash-ordenes-card': { title: "Tarjeta de Órdenes Activas", desc: "Cantidad de ítems y pedidos en proceso." },
-            'select-caja': { title: "Selector de Caja Registradora", desc: "CRÍTICO: Cada caja mantiene su propia lista de artículos de manera 100% independiente y nunca se combinan." },
-            'select-client': { title: "Selector de Cliente", desc: "Asigna el comprobante fiscal al cliente corporativo o consumidor final." },
-            'input-date': { title: "Fecha de Emisión", desc: "Establece la fecha oficial de generación del comprobante." },
-            'excel-catalog': { title: "Catálogo de Artículos (Estilo Excel)", desc: "Tabla interactiva. Haz clic en cualquier artículo para agregarlo a la caja activa." },
-            'table-items': { title: "Detalle de Ítems en Caja", desc: "Muestra los productos seleccionados, permite ajustar cantidades o eliminar." },
-            'input-discount': { title: "Campo de Descuento (%)", desc: "Aplica un porcentaje de rebaja opcional calculado automáticamente." },
-            'btn-pay': { title: "Botón Pagar y Emitir Factura", desc: "Procesa el cobro de la caja actual. Si está vacío, emitirá una alerta obligatoria." },
-            'btn-clean': { title: "Botón Limpiar Formulario", desc: "Borra los artículos de la caja seleccionada." },
-            'btn-print': { title: "Botón Imprimir / Exportar", desc: "Genera una vista previa o PDF del comprobante actual." },
-            'history-list': { title: "Historial de Facturas Emitidas", desc: "Registro cronológico de comprobantes recientes por caja." }
-        };
+        /* ================= CONFIGURACIÓN DEL TOUR GUIADO DE 5 PASOS ================= */
+        const tourSteps = [
+            {
+                elementId: 'tour-step-1-el',
+                title: 'Seleccionar Caja',
+                desc: 'Este botón o selector es para elegir la caja operativa. Cada caja mantiene su propia lista de artículos de manera independiente.'
+            },
+            {
+                elementId: 'tour-step-2-el',
+                title: 'Catálogo de Artículos',
+                desc: 'Esta tabla interactiva estilo Excel permite hacer clic en cualquier producto para agregarlo instantáneamente al carrito.'
+            },
+            {
+                elementId: 'tour-step-3-el',
+                title: 'Detalle de Factura',
+                desc: 'Aquí visualizas los productos seleccionados en la caja actual, pudiendo sumar cantidades o eliminarlos.'
+            },
+            {
+                elementId: 'tour-step-4-el',
+                title: 'Aplicar Descuento (%)',
+                desc: 'Este campo permite ingresar un porcentaje de rebaja opcional que se calcula automáticamente sobre el subtotal.'
+            },
+            {
+                elementId: 'tour-step-5-el',
+                title: 'Botón Pagar y Emitir',
+                desc: 'Este botón procesa el cobro final. Si el carrito está vacío, te notificará inmediatamente que no hay artículos.'
+            }
+        ];
 
-        function showHelp(key) {
-            if (helpTexts[key]) {
-                document.getElementById('guide-title').textContent = helpTexts[key].title;
-                document.getElementById('guide-desc').textContent = helpTexts[key].desc;
+        let currentTourStepIndex = 0;
+
+        function startTour() {
+            // Asegurarse de estar en la vista de facturas
+            switchView('facturas', document.querySelectorAll('.submenu-item')[3]);
+            currentTourStepIndex = 0;
+            document.getElementById('tour-backdrop').classList.add('active');
+            document.getElementById('tour-popup').classList.add('active');
+            renderTourStep();
+        }
+
+        function endTour() {
+            document.getElementById('tour-backdrop').classList.remove('active');
+            document.getElementById('tour-popup').classList.remove('active');
+            removeTourHighlights();
+        }
+
+        function removeTourHighlights() {
+            tourSteps.forEach(step => {
+                const el = document.getElementById(step.elementId);
+                if (el) el.classList.remove('tour-highlighted');
+            });
+        }
+
+        function renderTourStep() {
+            removeTourHighlights();
+            const step = tourSteps[currentTourStepIndex];
+            const targetEl = document.getElementById(step.elementId);
+
+            if (!targetEl) return;
+
+            targetEl.classList.add('tour-highlighted');
+            targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+            // Actualizar contenidos del Pop-up
+            document.getElementById('tour-counter').textContent = `${currentTourStepIndex + 1} | ${tourSteps.length}`;
+            document.getElementById('tour-title').textContent = step.title;
+            document.getElementById('tour-desc').textContent = step.desc;
+
+            // Control de botones Anterior / Siguiente
+            const prevBtn = document.getElementById('tour-prev-btn');
+            const nextBtn = document.getElementById('tour-next-btn');
+
+            prevBtn.style.display = currentTourStepIndex === 0 ? 'none' : 'block';
+            nextBtn.textContent = currentTourStepIndex === tourSteps.length - 1 ? 'Finalizar' : 'Siguiente';
+
+            // Posicionar el Pop-up flotante al lado del elemento destacado
+            positionTourPopup(targetEl);
+        }
+
+        function positionTourPopup(targetEl) {
+            const popup = document.getElementById('tour-popup');
+            const rect = targetEl.getBoundingClientRect();
+            const popupWidth = 300;
+            const popupHeight = 200;
+
+            let left = rect.right + 16;
+            let top = rect.top;
+
+            // Si se sale por la derecha de la pantalla, colocarlo a la izquierda
+            if (left + popupWidth > window.innerWidth) {
+                left = rect.left - popupWidth - 16;
+            }
+            if (left < 10) left = 10;
+
+            // Si se sale por abajo, ajustar hacia arriba
+            if (top + popupHeight > window.innerHeight) {
+                top = window.innerHeight - popupHeight - 20;
+            }
+            if (top < 10) top = 10;
+
+            popup.style.left = `${left}px`;
+            popup.style.top = `${top}px`;
+        }
+
+        function nextTourStep() {
+            if (currentTourStepIndex < tourSteps.length - 1) {
+                currentTourStepIndex++;
+                renderTourStep();
+            } else {
+                endTour();
             }
         }
 
+        function prevTourStep() {
+            if (currentTourStepIndex > 0) {
+                currentTourStepIndex--;
+                renderTourStep();
+            }
+        }
+
+        /* ================= LÓGICA DEL SISTEMA POS ================= */
         function renderExcelCatalog() {
             const tbody = document.getElementById('excel-catalog-body');
             tbody.innerHTML = '';
@@ -1189,8 +1432,14 @@
 
         function emitInvoice() {
             let activeItems = cashRegistersData[currentCaja].items;
+            const tooltip = document.getElementById('cart-empty-msg');
+
             if (activeItems.length === 0) {
-                alert(`⚠️ ATENCIÓN: No hay ningún artículo agregado en la caja "${currentCaja}". Debe seleccionar al menos un producto del catálogo para poder procesar el pago.`);
+                // Mostrar mensaje flotante ARRIBA del botón de pago
+                tooltip.classList.add('active');
+                setTimeout(() => {
+                    tooltip.classList.remove('active');
+                }, 3000);
                 return;
             }
 
@@ -1247,7 +1496,6 @@
                 element.classList.add('active');
             }
 
-            // Ocultar menú en móvil al hacer clic en opción
             if (window.innerWidth <= 1024) {
                 toggleMobileSidebar();
             }
