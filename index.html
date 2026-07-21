@@ -406,50 +406,75 @@
         .product-image-container { height: 110px; background: #f1f5f9; display: flex; align-items: center; justify-content: center; font-size: 2rem; }
         .product-title { padding: 10px; font-size: 0.85rem; text-align: center; font-weight: 500; color: var(--text-main); flex: 1; display: flex; align-items: center; justify-content: center; }
 
-        /* Tutorial Tooltip Flotante sobre elementos */
+        /* Sistema de Spotlight y Tutorial Guiado Dinámico */
+        .tutorial-backdrop {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 9000;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .tutorial-backdrop.active {
+            display: block;
+            opacity: 1;
+        }
+
+        /* Elemento Destacado (Spotlight) en el Tutorial */
+        .tutorial-highlight {
+            position: relative !important;
+            z-index: 9995 !important;
+            box-shadow: 0 0 0 4px #3b82f6, 0 0 25px rgba(59, 130, 246, 0.6) !important;
+            border-radius: 8px;
+            animation: pulseHighlight 1.5s infinite;
+            background: #ffffff !important;
+        }
+
+        @keyframes pulseHighlight {
+            0% { box-shadow: 0 0 0 4px #3b82f6, 0 0 15px rgba(59, 130, 246, 0.4); }
+            50% { box-shadow: 0 0 0 8px rgba(59, 130, 246, 0.6), 0 0 25px rgba(59, 130, 246, 0.8); }
+            100% { box-shadow: 0 0 0 4px #3b82f6, 0 0 15px rgba(59, 130, 246, 0.4); }
+        }
+
+        /* Tooltip Animado del Tutorial */
         .tutorial-tooltip {
             position: absolute;
             background: #0f172a;
             color: #ffffff;
-            padding: 10px 14px;
-            border-radius: 8px;
-            font-size: 0.85rem;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4);
             z-index: 9999;
             display: none;
-            max-width: 280px;
+            max-width: 300px;
             border: 2px solid #3b82f6;
-            animation: popTooltip 0.2s ease-out;
+            opacity: 0;
+            transform: translateY(10px) scale(0.95);
+            transition: opacity 0.25s ease, transform 0.25s ease;
+        }
+
+        .tutorial-tooltip.show {
+            opacity: 1;
+            transform: translateY(0) scale(1);
         }
 
         .tutorial-tooltip .tooltip-counter {
             font-size: 0.75rem;
             background: #3b82f6;
             color: white;
-            padding: 2px 6px;
+            padding: 2px 8px;
             border-radius: 4px;
             font-weight: bold;
             display: inline-block;
-            margin-bottom: 4px;
+            margin-bottom: 6px;
         }
 
         .tutorial-tooltip .tooltip-text {
-            line-height: 1.3;
-        }
-
-        @keyframes popTooltip {
-            0% { transform: scale(0.9); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-
-        /* Overlay semi-transparente para el tutorial guiado */
-        .tutorial-backdrop {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(15, 23, 42, 0.4);
-            backdrop-filter: blur(2px);
-            z-index: 9000;
-            display: none;
+            line-height: 1.4;
         }
 
         /* Modal de Pago / Checkout */
@@ -592,11 +617,11 @@
     <!-- Backdrop y Tooltip del Tutorial Guiado -->
     <div class="tutorial-backdrop" id="tutorial-backdrop" onclick="nextTutorialStep()"></div>
     <div class="tutorial-tooltip" id="tutorial-tooltip">
-        <div class="tooltip-counter" id="tooltip-counter-badge">1 | 5</div>
+        <div class="tooltip-counter" id="tooltip-counter-badge">1 | 4</div>
         <div class="tooltip-text" id="tooltip-text-content">Mensaje de guía...</div>
-        <div style="margin-top: 8px; display: flex; justify-content: space-between; font-size: 0.75rem; color: #94a3b8;">
+        <div style="margin-top: 10px; display: flex; justify-content: space-between; font-size: 0.75rem; color: #94a3b8; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 6px;">
             <span>Haz clic en cualquier parte para continuar</span>
-            <span style="color: #60a5fa; cursor: pointer;" onclick="stopTutorial()">Salir [X]</span>
+            <span style="color: #60a5fa; cursor: pointer; font-weight: bold;" onclick="stopTutorial()">Salir [X]</span>
         </div>
     </div>
 
@@ -630,7 +655,7 @@
             <button class="tool-btn tb-blue" title="Pantalla Principal">🏠</button>
         </div>
         <div class="system-info-group">
-            <span class="badge-pill" id="live-clock">20/07/2026 07:07 PM</span>
+            <span class="badge-pill" id="live-clock">20/07/2026 08:09 PM</span>
             <span class="badge-bank">Ficohsa</span>
             <span class="badge-status">🟢 Online</span>
         </div>
@@ -801,7 +826,7 @@
         let selectedPaymentMethod = 'Efectivo';
         let alertTimeout = null;
 
-        // Pasos del Tutorial Guiado
+        // Pasos del Tutorial Guiado con Destacados (Spotlight)
         let currentTutorialStep = 0;
         const tutorialSteps = [
             {
@@ -949,14 +974,21 @@
             grandTotalNio.textContent = `C$ ${(subtotal * tasaCambio).toFixed(2)}`;
         }
 
-        // Lógica del Tutorial Guiado
+        // Lógica del Tutorial con Destacado (Spotlight) y Animación Fluida
         function startTutorial() {
             currentTutorialStep = 0;
-            tutorialBackdrop.style.display = 'block';
+            tutorialBackdrop.classList.add('active');
             showTutorialStep();
         }
 
         function nextTutorialStep() {
+            // Limpiar la clase de resaltado anterior
+            const prevStep = tutorialSteps[currentTutorialStep];
+            if (prevStep) {
+                const prevEl = document.getElementById(prevStep.elementId);
+                if (prevEl) prevEl.classList.remove('tutorial-highlight');
+            }
+
             currentTutorialStep++;
             if (currentTutorialStep >= tutorialSteps.length) {
                 stopTutorial();
@@ -971,33 +1003,53 @@
             
             if (!targetEl) return;
 
-            // Actualizar textos y contador exacto solicitados (ej: 1 | 4)
+            // Añadir clase de resaltado nítido al botón/elemento actual
+            targetEl.classList.add('tutorial-highlight');
+            targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+            // Actualizar contador y texto del tooltip (ej: 1 | 4)
             document.getElementById('tooltip-counter-badge').textContent = `${currentTutorialStep + 1} | ${tutorialSteps.length}`;
             document.getElementById('tooltip-text-content').textContent = step.text;
 
-            // Posicionar el tooltip justo arriba del elemento objetivo
+            // Calcular posición del tooltip sobre el elemento enfocado
             const rect = targetEl.getBoundingClientRect();
             tutorialTooltip.style.display = 'block';
             
-            let topPos = rect.top - tutorialTooltip.offsetHeight - 12;
+            let topPos = rect.top - tutorialTooltip.offsetHeight - 14;
             let leftPos = rect.left + (rect.width / 2) - (tutorialTooltip.offsetWidth / 2);
 
-            // Asegurar que no se salga de la pantalla por la izquierda o derecha
-            if (leftPos < 10) leftPos = 10;
-            if (leftPos + tutorialTooltip.offsetWidth > window.innerWidth - 10) {
-                leftPos = window.innerWidth - tutorialTooltip.offsetWidth - 10;
+            // Ajustes de límites para que no rebase la pantalla
+            if (leftPos < 12) leftPos = 12;
+            if (leftPos + tutorialTooltip.offsetWidth > window.innerWidth - 12) {
+                leftPos = window.innerWidth - tutorialTooltip.offsetWidth - 12;
             }
-            if (topPos < 10) {
-                topPos = rect.bottom + 12; // Mostrar abajo si arriba no hay espacio
+            if (topPos < 12) {
+                topPos = rect.bottom + 14; // Si arriba no cabe, mostrar abajo
             }
 
             tutorialTooltip.style.top = `${topPos}px`;
             tutorialTooltip.style.left = `${leftPos}px`;
+
+            // Activar animación de aparición del tooltip
+            setTimeout(() => {
+                tutorialTooltip.classList.add('show');
+            }, 50);
         }
 
         function stopTutorial() {
-            tutorialBackdrop.style.display = 'none';
-            tutorialTooltip.style.display = 'none';
+            // Remover resaltados de todos los pasos posibles
+            tutorialSteps.forEach(step => {
+                const el = document.getElementById(step.elementId);
+                if (el) el.classList.remove('tutorial-highlight');
+            });
+
+            tutorialTooltip.classList.remove('show');
+            tutorialBackdrop.classList.remove('active');
+            
+            setTimeout(() => {
+                tutorialTooltip.style.display = 'none';
+                tutorialBackdrop.style.display = 'none';
+            }, 250);
         }
 
         // Funciones del Modal de Pago
