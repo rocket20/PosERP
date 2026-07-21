@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POS NOVA - Terminal de Venta Avanzada</title>
+    <style>
+        :root {
+            --bg-main: #f0f4f8;
+            --surface: #ffffff;
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --radius: 12px;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Top Bar */
+        .top-bar {
+            background: #ffffff;
+            padding: 8px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+            min-height: 56px;
+        }
+
+        .location-badge {
+            font-weight: 600;
+            color: var(--text-main);
+            font-size: 0.95rem;
+        }
+
+        .top-toolbar-actions {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .tool-btn {
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: white;
+            font-size: 0.9rem;
+            transition: filter 0.2s, transform 0.1s;
+        }
+
+        .tool-btn:hover {
+            filter: brightness(1.1);
+            transform: translateY(-1px);
+        }
+
+        /* Colores específicos de los botones superiores */
+        .tb-orange { background-color: #ea580c; }
+        .tb-red { background-color: #dc2626; }
+        .tb-blue { background-color: #0284c7; }
+        .tb-amber { background-color: #d97706; }
+        .tb-green { background-color: #16a34a; }
+        .tb-purple { background-color: #7c3aed; }
+        .tb-teal { background-color: #0d9488; }
+        .tb-indigo { background-color: #4f46e5; }
+        .tb-pink { background-color: #db2777; }
+
+        .system-info-group {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .badge-pill {
+            background: #e0f2fe;
+            color: #0369a1;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .badge-bank {
+            background: #dbeafe;
+            color: #1e40af;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .badge-status {
+            background: #dcfce7;
+            color: #15803d;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Main Workspace Layout */
+        .workspace {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            padding: 16px;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .panel {
+            background: var(--surface);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        /* Left Panel - Cart & Controls */
+        .cart-header-actions {
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            background: #fafafa;
+        }
+
+        .client-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .select-custom, .input-custom {
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            outline: none;
+            font-size: 0.9rem;
+            background: white;
+        }
+
+        .select-custom { flex: 1; }
+
+        .search-product-input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            outline: none;
+            font-size: 0.95rem;
+        }
+
+        .cart-table-container {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .cart-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+
+        .cart-table th {
+            background: #3b82f6;
+            color: white;
+            padding: 10px 16px;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .cart-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-main);
+        }
+
+        .cart-table tr:hover {
+            background-color: #f8fafc;
+        }
+
+        .cart-summary-bar {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            background: #f8fafc;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            padding: 10px;
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .cart-summary-bar div span {
+            display: block;
+            font-size: 1rem;
+            font-weight: bold;
+            color: var(--text-main);
+        }
+
+        .cart-bottom-actions {
+            padding: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #ffffff;
+            gap: 10px;
+        }
+
+        .action-tool-row {
+            display: flex;
+            gap: 6px;
+        }
+
+        .checkout-totals {
+            display: flex;
+            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+            border-radius: 10px;
+            color: white;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(234, 88, 12, 0.2);
+        }
+
+        .total-box {
+            padding: 10px 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .total-box:first-child {
+            border-right: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .total-box span:first-child {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            opacity: 0.9;
+        }
+
+        .total-box span:last-child {
+            font-size: 1.15rem;
+            font-weight: bold;
+        }
+
+        /* Right Panel - Product Catalog */
+        .catalog-filters {
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
+            background: #fafafa;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .filters-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px;
+        }
+
+        .products-grid {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 16px;
+            align-content: start;
+        }
+
+        .product-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .product-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
+            border-color: #cbd5e1;
+        }
+
+        .product-tag-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px;
+            background: #f8fafc;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        .price-badge {
+            background: #22c55e;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .stock-badge {
+            background: #0284c7;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .product-image-container {
+            height: 110px;
+            background: #f1f5f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-size: 2rem;
+        }
+
+        .product-image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .product-title {
+            padding: 10px;
+            font-size: 0.85rem;
+            text-align: center;
+            font-weight: 500;
+            color: var(--text-main);
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Advanced Toolbar -->
+    <header class="top-bar">
+        <div class="location-badge">Ubicación: Software Nicaragua</div>
+        <div class="top-toolbar-actions">
+            <button class="tool-btn tb-orange" title="Pausar Venta">⏸</button>
+            <button class="tool-btn tb-red" title="Caja Registradora">🖩</button>
+            <button class="tool-btn tb-blue" title="Facturas Pendientes">📑</button>
+            <button class="tool-btn tb-orange" title="Retiros de Caja">📥</button>
+            <button class="tool-btn tb-green" title="Cambio de Moneda">⇄</button>
+            <button class="tool-btn tb-teal" title="Corte de Caja">📊</button>
+            <button class="tool-btn tb-indigo" title="Cotizaciones">🏷️</button>
+            <button class="tool-btn tb-purple" title="Créditos y Cobros">💳</button>
+            <button class="tool-btn tb-green" title="Ventas Rápidas">🛒</button>
+            <button class="tool-btn tb-red" title="Anular Documento">🗑</button>
+            <button class="tool-btn tb-blue" title="Reportes">📈</button>
+            <button class="tool-btn tb-pink" title="Promociones">🎁</button>
+            <button class="tool-btn tb-indigo" title="Calendario">📅</button>
+            <button class="tool-btn tb-teal" title="Inventario Global">📦</button>
+            <button class="tool-btn tb-blue" title="Pantalla Principal">🏠</button>
+        </div>
+        <div class="system-info-group">
+            <span class="badge-pill" id="live-clock">20/07/2026 07:07 PM</span>
+            <span class="badge-bank">Lafise</span>
+            <span class="badge-status">🟢 Online</span>
+        </div>
+    </header>
+
+    <!-- Main Workspace Container -->
+    <div class="workspace">
+        
+        <!-- Left Panel: Cart & Transaction Management -->
+        <section class="panel">
+            <div class="cart-header-actions">
+                <div class="client-row">
+                    <select class="select-custom" id="client-select">
+                        <option value="1">Cliente Eventual</option>
+                        <option value="2">Corporativo IncoEx S.A.</option>
+                        <option value="3">Mayorista VIP</option>
+                    </select>
+                    <button class="tool-btn tb-blue" style="width: 38px; height: 38px;" title="Nuevo Cliente">👥</button>
+                    <button class="tool-btn tb-green" style="width: 38px; height: 38px;" title="Añadir Cliente Rápido">➕</button>
+                </div>
+                <div style="display: flex; gap: 8px;">
+                    <select class="select-custom" style="max-width: 160px;">
+                        <option>Precio de venta</option>
+                        <option>Precio Mayorista</option>
+                    </select>
+                    <input type="text" class="search-product-input" id="search-input" placeholder="Buscar productos por código o nombre...">
+                </div>
+            </div>
+
+            <!-- Cart Table Items -->
+            <div class="cart-table-container">
+                <table class="cart-table">
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th style="width: 100px; text-align: center;">Cantidad</th>
+                            <th style="width: 110px; text-align: right;">Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cart-items-body">
+                        <!-- Inyección dinámica de filas de carrito -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Summary Bar -->
+            <div class="cart-summary-bar">
+                <div>ARTÍCULOS: <span id="summary-art">0.00</span></div>
+                <div>SUBTOTAL: <span id="summary-sub">0.00</span></div>
+                <div>DESCUENTO: <span style="color:#dc2626;" id="summary-desc">0.00</span></div>
+                <div>DELIVERY: <span id="summary-del">0.00</span></div>
+            </div>
+
+            <!-- Bottom Actions & Checkout Totals -->
+            <div class="cart-bottom-actions">
+                <div class="action-tool-row">
+                    <button class="tool-btn tb-amber" title="Editar Línea">✏️</button>
+                    <button class="tool-btn tb-orange" title="Pausar Carrito">⏸</button>
+                    <button class="tool-btn tb-green" title="Lectura de Código">📷</button>
+                    <button class="tool-btn tb-indigo" title="Métodos de Pago">💳</button>
+                    <button class="tool-btn tb-purple" title="Monedero Electrónico">🗂️</button>
+                    <button class="tool-btn tb-blue" title="Historial">⏱️</button>
+                    <button class="tool-btn tb-red" title="Cancelar Orden">❌</button>
+                </div>
+
+                <div class="checkout-totals">
+                    <div class="total-box">
+                        <span>Total a pagar</span>
+                        <span id="grand-total-usd">$ 0.00</span>
+                    </div>
+                    <div class="total-box">
+                        <span>Total Córdobas</span>
+                        <span id="grand-total-nio">C$ 0.00</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Right Panel: Catalog Explorer -->
+        <section class="panel">
+            <div class="catalog-filters">
+                <div class="filters-row">
+                    <select class="select-custom">
+                        <option>Todas las categorías</option>
+                        <option>Cajas Registradoras</option>
+                        <option>Accesorios POS</option>
+                    </select>
+                    <select class="select-custom">
+                        <option>Todas las marcas</option>
+                        <option>Royal</option>
+                        <option>Casio</option>
+                    </select>
+                    <select class="select-custom">
+                        <option>Con stock</option>
+                        <option>Todos</option>
+                    </select>
+                </div>
+                <input type="text" class="search-product-input" placeholder="Introduzca el nombre del producto / SKU">
+            </div>
+
+            <!-- Product Cards Catalog Grid -->
+            <div class="products-grid" id="catalog-grid">
+                <!-- Tarjetas generadas dinámicamente -->
+            </div>
+        </section>
+    </div>
+
+    <!-- Application Script Logic -->
+    <script>
+        // Catálogo de Productos Base
+        const products = [
+            { id: 101, name: "Caja Registradora Grande CRGD", price: 150.00, stock: -1.00, icon: "🗄️" },
+            { id: 102, name: "Caja Registradora Pequeña CRPQ", price: 100.00, stock: 2.00, icon: "📦" },
+            { id: 103, name: "Capacitación Sub Agencias CSAG", price: 100.00, stock: 0.00, icon: "🖥️" },
+            { id: 104, name: "Lector de Código Láser Pro", price: 39.99, stock: 0.00, icon: "📷" },
+            { id: 105, name: "Impresora Térmica 80mm", price: 100.00, stock: 5.00, icon: "🖨️" }
+        ];
+
+        let cart = [];
+        const tasaCambio = 36.62; // Tasa de cambio Córdoba / Dólar estimada
+
+        const catalogGrid = document.getElementById('catalog-grid');
+        const cartItemsBody = document.getElementById('cart-items-body');
+        const summaryArt = document.getElementById('summary-art');
+        const summarySub = document.getElementById('summary-sub');
+        const grandTotalUsd = document.getElementById('grand-total-usd');
+        const grandTotalNio = document.getElementById('grand-total-nio');
+
+        // Renderizar Catálogo
+        function renderCatalog() {
+            catalogGrid.innerHTML = '';
+            products.forEach(prod => {
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                card.onclick = () => addToCart(prod);
+                card.innerHTML = `
+                    <div class="product-tag-row">
+                        <span class="price-badge">$ ${prod.price.toFixed(2)}</span>
+                        <span class="stock-badge">${prod.stock.toFixed(2)} UND</span>
+                    </div>
+                    <div class="product-image-container">
+                        ${prod.icon}
+                    </div>
+                    <div class="product-title">${prod.name}</div>
+                `;
+                catalogGrid.appendChild(card);
+            });
+        }
+
+        // Agregar al Carrito
+        function addToCart(product) {
+            const existingItem = cart.find(item => item.id === product.id);
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({ ...product, quantity: 1 });
+            }
+            updateCartUI();
+        }
+
+        // Actualizar Interfaz del Carrito
+        function updateCartUI() {
+            cartItemsBody.innerHTML = '';
+            let totalArt = 0;
+            let subtotal = 0;
+
+            if (cart.length === 0) {
+                cartItemsBody.innerHTML = `<tr><td colspan="3" style="text-align: center; color: var(--text-muted); padding: 30px;">El carrito está vacío. Seleccione un producto del catálogo.</td></tr>`;
+            }
+
+            cart.forEach(item => {
+                totalArt += item.quantity;
+                subtotal += item.price * item.quantity;
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${item.name}</td>
+                    <td style="text-align: center;">
+                        <input type="number" value="${item.quantity}" min="1" style="width: 60px; text-align: center; border: 1px solid var(--border); border-radius: 4px; padding: 4px;" onchange="updateQuantity(${item.id}, this.value)">
+                    </td>
+                    <td style="text-align: right; font-weight: 600;">$ ${(item.price * item.quantity).toFixed(2)}</td>
+                `;
+                cartItemsBody.appendChild(tr);
+            });
+
+            summaryArt.textContent = totalArt.toFixed(2);
+            summarySub.textContent = subtotal.toFixed(2);
+            grandTotalUsd.textContent = `$ ${subtotal.toFixed(2)}`;
+            grandTotalNio.textContent = `C$ ${(subtotal * tasaCambio).toFixed(2)}`;
+        }
+
+        // Modificar Cantidad
+        window.updateQuantity = function(id, qty) {
+            const item = cart.find(i => i.id === id);
+            if (item) {
+                item.quantity = parseInt(qty) || 1;
+                if (item.quantity <= 0) item.quantity = 1;
+                updateCartUI();
+            }
+        }
+
+        // Reloj en tiempo real
+        setInterval(() => {
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('es-ES');
+            const timeStr = now.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+            document.getElementById('live-clock').textContent = `${dateStr} ${timeStr}`;
+        }, 1000);
+
+        // Inicializar
+        renderCatalog();
+        updateCartUI();
+    </script>
+</body>
+</html>
