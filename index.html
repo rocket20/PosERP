@@ -1,19 +1,39 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>POS IncoEx - Terminal de Venta Avanzada Multi-Caja</title>
+    <title>NovaHub - POS & Panel Ejecutivo</title>
     <style>
-        :root {
-            --bg-main: #f0f4f8;
+        /* Sistema de Temas: Claro y Oscuro */
+        :root[data-theme="dark"] {
+            --bg-sidebar: #0f172a;
+            --bg-main: #0b0f19;
+            --surface: #141b2d;
+            --surface-card: #182238;
+            --border: #23304a;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --primary: #0ea5e9;
+            --primary-glow: rgba(14, 165, 233, 0.4);
+            --accent-blue: #0284c7;
+            --accent-orange: #f97316;
+            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+        }
+
+        :root[data-theme="light"] {
+            --bg-sidebar: #1e293b;
+            --bg-main: #f1f5f9;
             --surface: #ffffff;
-            --primary: #2563eb;
+            --surface-card: #f8fafc;
+            --border: #e2e8f0;
             --text-main: #1e293b;
             --text-muted: #64748b;
-            --border: #e2e8f0;
-            --radius: 12px;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            --primary: #0284c7;
+            --primary-glow: rgba(2, 132, 199, 0.2);
+            --accent-blue: #0284c7;
+            --accent-orange: #ea580c;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
         }
 
         * {
@@ -21,6 +41,7 @@
             margin: 0;
             padding: 0;
             font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
         }
 
         body {
@@ -28,1291 +49,1244 @@
             color: var(--text-main);
             height: 100vh;
             display: flex;
-            flex-direction: column;
             overflow: hidden;
         }
 
-        /* Top Bar */
-        .top-bar {
-            background: #ffffff;
-            padding: 8px 16px;
+        /* Sidebar Estilo NovaHub */
+        .sidebar {
+            width: 270px;
+            background-color: var(--bg-sidebar);
+            border-right: 1px solid var(--border);
             display: flex;
+            flex-direction: column;
             justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--border);
-            min-height: 56px;
+            padding: 16px;
+            z-index: 20;
         }
 
-        .location-group {
+        .brand-header {
             display: flex;
             align-items: center;
             gap: 12px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border);
         }
 
-        .location-badge {
-            font-weight: 600;
-            color: var(--text-main);
-            font-size: 0.95rem;
-        }
-
-        /* Selector de Caja */
-        .register-selector {
-            background: #eff6ff;
-            border: 1px solid #bfdbfe;
-            color: #1e40af;
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-weight: 600;
-            font-size: 0.85rem;
-            outline: none;
-            cursor: pointer;
-        }
-
-        .top-toolbar-actions {
-            display: flex;
-            gap: 6px;
-            align-items: center;
-        }
-
-        .tool-btn {
-            border: none;
+        .brand-logo {
             width: 36px;
             height: 36px;
+            background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%);
             border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            cursor: pointer;
             color: white;
-            font-size: 0.9rem;
-            transition: filter 0.2s, transform 0.1s;
+            font-weight: bold;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 10px rgba(14, 165, 233, 0.3);
         }
 
-        .tool-btn:hover { filter: brightness(1.1); transform: translateY(-1px); }
-
-        .tb-orange { background-color: #ea580c; }
-        .tb-red { background-color: #dc2626; }
-        .tb-blue { background-color: #0284c7; }
-        .tb-amber { background-color: #d97706; }
-        .tb-green { background-color: #16a34a; }
-        .tb-purple { background-color: #7c3aed; }
-        .tb-teal { background-color: #0d9488; }
-        .tb-indigo { background-color: #4f46e5; }
-        .tb-pink { background-color: #db2777; }
-
-        .system-info-group {
-            display: flex;
-            gap: 8px;
-            align-items: center;
+        .brand-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #ffffff;
+            letter-spacing: 0.5px;
         }
 
-        .badge-pill, .badge-bank, .badge-status {
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-        }
-        .badge-pill { background: #e0f2fe; color: #0369a1; }
-        .badge-bank { background: #dbeafe; color: #1e40af; }
-        .badge-status { background: #dcfce7; color: #15803d; }
-
-        /* Workspace Layout */
-        .workspace {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-            padding: 16px;
-            flex: 1;
-            overflow: hidden;
+        .brand-sub {
+            font-size: 0.7rem;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
-        .panel {
-            background: var(--surface);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            border: 1px solid var(--border);
-        }
-
-        .cart-header-actions {
-            padding: 12px;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            background: #fafafa;
-        }
-
-        .client-row {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-        }
-
-        .select-custom, .input-custom {
-            padding: 8px 12px;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            outline: none;
-            font-size: 0.9rem;
-            background: white;
-        }
-
-        .select-custom { flex: 1; }
-
-        .search-product-input {
-            width: 100%;
-            padding: 10px 12px;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            outline: none;
-            font-size: 0.95rem;
-        }
-
-        /* Cart Table Area */
-        .cart-table-container {
+        .sidebar-menu {
             flex: 1;
             overflow-y: auto;
-        }
-
-        .cart-table-header {
-            display: grid;
-            grid-template-columns: 1fr 140px 100px;
-            background: #3b82f6;
-            color: white;
-            padding: 10px 16px;
-            font-weight: 600;
-            font-size: 0.9rem;
-            position: sticky;
-            top: 0;
-            z-index: 10;
-        }
-
-        .cart-item-row {
-            padding: 16px;
-            border-bottom: 1px solid var(--border);
-            display: grid;
-            grid-template-columns: 1fr 180px 100px 50px;
+            margin-top: 16px;
+            display: flex;
+            flex-direction: column;
             gap: 16px;
-            align-items: center;
-            background: #ffffff;
-            transition: background 0.15s;
+            padding-right: 4px;
         }
 
-        .cart-item-row:hover { background-color: #f8fafc; }
+        .menu-section-title {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            color: #64748b;
+            font-weight: bold;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+            padding-left: 8px;
+        }
 
-        .item-details .item-number { font-size: 0.85rem; color: var(--text-muted); font-weight: 600; }
-        .item-details .item-name { font-size: 0.95rem; color: #0284c7; font-weight: bold; margin: 2px 0; }
-        .item-details .item-sku { font-size: 0.8rem; color: var(--text-muted); }
-        .item-price-select { margin-top: 8px; }
-
-        .quantity-control-group {
+        .menu-items {
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 4px;
         }
 
-        .qty-input-wrapper {
+        .menu-item {
             display: flex;
             align-items: center;
-            border: 1px solid var(--border);
+            justify-content: space-between;
+            padding: 10px 12px;
+            border-radius: 8px;
+            color: #94a3b8;
+            text-decoration: none;
+            font-size: 0.88rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+
+        .menu-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: #ffffff;
+        }
+
+        .menu-item.active {
+            background: #1e3a8a;
+            color: #ffffff;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(30, 58, 138, 0.4);
+            border-color: #3b82f6;
+        }
+
+        .menu-item-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .submenu-container {
+            display: none;
+            flex-direction: column;
+            gap: 3px;
+            padding-left: 28px;
+            margin-top: 4px;
+        }
+
+        .submenu-container.open {
+            display: flex;
+        }
+
+        .submenu-item {
+            padding: 7px 10px;
             border-radius: 6px;
-            overflow: hidden;
-            background: white;
-        }
-
-        .qty-btn {
-            background: #334155;
-            color: white;
-            border: none;
-            width: 32px;
-            height: 36px;
-            font-weight: bold;
+            color: #94a3b8;
+            font-size: 0.82rem;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            text-decoration: none;
+            transition: all 0.2s;
         }
 
-        .qty-btn.plus { background: #16a34a; }
-        .qty-btn.minus { background: #dc2626; }
-        .qty-btn:hover { filter: brightness(1.1); }
-
-        .qty-field {
-            flex: 1;
-            border: none;
-            text-align: center;
-            font-weight: bold;
-            font-size: 0.95rem;
-            outline: none;
-            padding: 4px;
+        .submenu-item:hover {
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.04);
         }
 
-        .stock-info { font-size: 0.75rem; color: var(--text-muted); }
-        .item-subtotal { font-size: 1.05rem; font-weight: bold; color: var(--text-main); text-align: right; }
-
-        .delete-item-btn {
-            background: #dc2626;
-            color: white;
-            border: none;
-            width: 40px;
-            height: 40px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 1.1rem;
-        }
-        .delete-item-btn:hover { filter: brightness(1.1); transform: scale(1.05); }
-
-        /* Summary Bar Actualizada con Botones de Info y Edición */
-        .cart-summary-bar {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            background: #f8fafc;
-            border-top: 1px solid var(--border);
-            border-bottom: 1px solid var(--border);
-            padding: 8px 10px;
-            text-align: center;
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            gap: 4px;
+        .submenu-item.active {
+            color: #0ea5e9;
+            font-weight: 600;
+            background: rgba(14, 165, 233, 0.1);
         }
 
-        .summary-card {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 4px;
-        }
-
-        .summary-card.interactive {
-            background: #ffffff;
+        .user-profile-box {
+            background: #1e293b;
             border: 1px solid var(--border);
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
-        }
-
-        .summary-header-row {
+            padding: 10px 12px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
-            gap: 6px;
-            font-weight: 700;
-            color: var(--text-muted);
-            margin-bottom: 2px;
+            gap: 10px;
         }
 
-        .summary-actions-inline {
-            display: flex;
-            gap: 4px;
-            align-items: center;
-        }
-
-        .sum-action-btn {
-            background: #e0f2fe;
-            border: none;
-            color: #0284c7;
-            width: 24px;
-            height: 24px;
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            background: #0ea5e9;
+            color: white;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.75rem;
-            cursor: pointer;
-            transition: all 0.15s;
-        }
-
-        .sum-action-btn.edit {
-            background: #e0f2fe;
-            color: #0284c7;
-        }
-
-        .sum-action-btn:hover {
-            transform: scale(1.1);
-            filter: brightness(0.95);
-        }
-
-        .summary-card span.val-display {
-            display: block;
-            font-size: 0.95rem;
             font-weight: bold;
-            color: var(--text-main);
-            margin-top: 2px;
+            font-size: 0.85rem;
         }
 
-        .cart-bottom-actions {
-            padding: 12px;
+        /* Main App Area */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Top Header Bar */
+        .top-header {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 12px 24px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: #ffffff;
-            gap: 10px;
-            position: relative;
+            min-height: 64px;
         }
 
-        .action-tool-row { display: flex; gap: 6px; }
+        .top-header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
 
-        /* Alerta Emergente Flotante sobre el botón de Pagar */
-        .cart-alert-popup {
-            position: absolute;
-            bottom: calc(100% + 8px);
-            right: 12px;
+        .agency-badge-pill {
             background: #1e293b;
+            border: 1px solid var(--border);
             color: #ffffff;
-            padding: 8px 14px;
-            border-radius: 8px;
+            padding: 6px 14px;
+            border-radius: 20px;
             font-size: 0.85rem;
             font-weight: 600;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
-            display: none;
+            display: flex;
             align-items: center;
             gap: 8px;
-            z-index: 50;
-            animation: fadeInPopup 0.2s ease-out;
-            white-space: nowrap;
         }
 
-        .cart-alert-popup::after {
-            content: '';
-            position: absolute;
-            top: 100%;
-            right: 40px;
-            border-width: 6px;
-            border-style: solid;
-            border-color: #1e293b transparent transparent transparent;
-        }
-
-        @keyframes fadeInPopup {
-            0% { opacity: 0; transform: translateY(4px); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Checkout Totals Clickable */
-        .checkout-totals {
-            display: flex;
-            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
-            border-radius: 10px;
+        .agency-badge-pill span {
+            background: #0ea5e9;
             color: white;
-            overflow: hidden;
-            box-shadow: 0 4px 10px rgba(234, 88, 12, 0.3);
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            text-transform: uppercase;
+        }
+
+        .top-search-box {
+            position: relative;
+            width: 300px;
+        }
+
+        .top-search-input {
+            width: 100%;
+            background: var(--bg-main);
+            border: 1px solid var(--border);
+            padding: 8px 12px 8px 36px;
+            border-radius: 8px;
+            color: var(--text-main);
+            outline: none;
+            font-size: 0.9rem;
+        }
+
+        .top-search-input:focus { border-color: var(--primary); }
+
+        .top-search-icon {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .theme-toggle-btn {
+            background: var(--bg-main);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            padding: 8px 14px;
+            border-radius: 8px;
             cursor: pointer;
-            transition: transform 0.15s, filter 0.15s;
-        }
-
-        .checkout-totals:hover {
-            transform: scale(1.02);
-            filter: brightness(1.05);
-        }
-
-        .total-box {
-            padding: 10px 16px;
+            font-weight: 600;
+            font-size: 0.85rem;
             display: flex;
-            flex-direction: column;
             align-items: center;
-            justify-content: center;
+            gap: 6px;
         }
 
-        .total-box:first-child { border-right: 1px solid rgba(255, 255, 255, 0.2); }
-        .total-box span:first-child { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.9; }
-        .total-box span:last-child { font-size: 1.15rem; font-weight: bold; }
+        .theme-toggle-btn:hover { border-color: var(--primary); }
 
-        /* Right Panel: Catalog Explorer */
-        .catalog-filters {
-            padding: 12px;
-            border-bottom: 1px solid var(--border);
-            background: #fafafa;
+        /* Workspace Scrollable Views */
+        .workspace-scroll {
+            flex: 1;
+            padding: 24px;
+            overflow-y: auto;
+            display: none;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .workspace-scroll.active-view {
+            display: flex;
+        }
+
+        /* Estilos específicos para la vista Dashboard */
+        .hero-welcome-section {
             display: flex;
             flex-direction: column;
+            gap: 8px;
+        }
+
+        .hero-title-row {
+            font-size: 2.1rem;
+            font-weight: 800;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
             gap: 10px;
         }
 
-        .filters-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+        .highlight-escalar {
+            background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%);
+            color: white;
+            padding: 2px 16px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px var(--primary-glow);
+        }
 
-        .products-grid {
-            flex: 1;
-            padding: 16px;
-            overflow-y: auto;
+        .highlight-necesita {
+            border-bottom: 3px solid var(--primary);
+            padding-bottom: 2px;
+        }
+
+        .hero-subtitle {
+            color: var(--text-muted);
+            font-size: 1rem;
+            max-width: 800px;
+            line-height: 1.5;
+        }
+
+        .dashboard-cards-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-            gap: 16px;
-            align-content: start;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
         }
 
-        .product-card {
-            background: white;
+        .stat-card {
+            background: var(--surface-card);
             border: 1px solid var(--border);
-            border-radius: 10px;
-            overflow: hidden;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .product-card:hover { transform: translateY(-3px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08); border-color: #cbd5e1; }
-
-        .product-tag-row { display: flex; justify-content: space-between; padding: 8px; background: #f8fafc; border-bottom: 1px solid var(--border); font-size: 0.75rem; font-weight: bold; }
-        .price-badge { background: #22c55e; color: white; padding: 2px 6px; border-radius: 4px; }
-        .stock-badge { background: #0284c7; color: white; padding: 2px 6px; border-radius: 4px; }
-
-        .product-image-container { height: 110px; background: #f1f5f9; display: flex; align-items: center; justify-content: center; font-size: 2rem; }
-        .product-title { padding: 10px; font-size: 0.85rem; text-align: center; font-weight: 500; color: var(--text-main); flex: 1; display: flex; align-items: center; justify-content: center; }
-
-        /* Sistema de Spotlight y Tutorial Guiado Dinámico */
-        .tutorial-backdrop {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(15, 23, 42, 0.6);
-            backdrop-filter: blur(4px);
-            z-index: 9000;
-            display: none;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .tutorial-backdrop.active {
-            display: block;
-            opacity: 1;
-        }
-
-        /* Elemento Destacado (Spotlight) en el Tutorial */
-        .tutorial-highlight {
-            position: relative !important;
-            z-index: 9995 !important;
-            box-shadow: 0 0 0 4px #3b82f6, 0 0 25px rgba(59, 130, 246, 0.6) !important;
-            border-radius: 8px;
-            animation: pulseHighlight 1.5s infinite;
-            background: #ffffff !important;
-        }
-
-        @keyframes pulseHighlight {
-            0% { box-shadow: 0 0 0 4px #3b82f6, 0 0 15px rgba(59, 130, 246, 0.4); }
-            50% { box-shadow: 0 0 0 8px rgba(59, 130, 246, 0.6), 0 0 25px rgba(59, 130, 246, 0.8); }
-            100% { box-shadow: 0 0 0 4px #3b82f6, 0 0 15px rgba(59, 130, 246, 0.4); }
-        }
-
-        /* Tooltip Animado del Tutorial */
-        .tutorial-tooltip {
-            position: absolute;
-            background: #0f172a;
-            color: #ffffff;
-            padding: 12px 16px;
-            border-radius: 10px;
-            font-size: 0.9rem;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4);
-            z-index: 9999;
-            display: none;
-            max-width: 300px;
-            border: 2px solid #3b82f6;
-            opacity: 0;
-            transform: translateY(10px) scale(0.95);
-            transition: opacity 0.25s ease, transform 0.25s ease;
-        }
-
-        .tutorial-tooltip.show {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-        }
-
-        .tutorial-tooltip .tooltip-counter {
-            font-size: 0.75rem;
-            background: #3b82f6;
-            color: white;
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-weight: bold;
-            display: inline-block;
-            margin-bottom: 6px;
-        }
-
-        .tutorial-tooltip .tooltip-text {
-            line-height: 1.4;
-        }
-
-        /* Modal genérico o de Modificación (Descuento / Delivery) */
-        .modal-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(15, 23, 42, 0.6);
-            backdrop-filter: blur(4px);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-
-        .modal-container {
-            background: white;
-            width: 420px;
             border-radius: 16px;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-            animation: modalPop 0.2s ease-out;
-        }
-
-        @keyframes modalPop {
-            0% { transform: scale(0.95); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-
-        .modal-header {
-            background: #0284c7;
-            color: white;
-            padding: 16px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 1.1rem;
-            font-weight: bold;
-        }
-
-        .modal-close {
-            background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer;
-        }
-
-        .modal-body {
             padding: 24px;
             display: flex;
             flex-direction: column;
-            gap: 16px;
-        }
-
-        .payment-methods-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-        }
-
-        .pay-method-btn {
-            padding: 12px;
-            border: 2px solid var(--border);
-            border-radius: 10px;
-            background: white;
-            font-weight: 600;
+            justify-content: space-between;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
             cursor: pointer;
-            text-align: center;
-            transition: all 0.2s;
+            transition: transform 0.2s, border-color 0.2s;
         }
 
-        .pay-method-btn.active {
-            border-color: #ea580c;
-            background: #fff7ed;
-            color: #ea580c;
+        .stat-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--primary);
         }
 
-        .payment-summary-box {
-            background: #f8fafc;
-            border-radius: 10px;
-            padding: 16px;
+        .stat-card.featured-blue {
+            background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+            color: white;
+            border: none;
+            box-shadow: 0 10px 25px rgba(2, 132, 199, 0.3);
+        }
+
+        .stat-card.featured-blue .stat-label,
+        .stat-card.featured-blue .stat-amount {
+            color: white;
+        }
+
+        .stat-icon-badge {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
             display: flex;
-            flex-direction: column;
-            gap: 8px;
-            border: 1px solid var(--border);
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            margin-bottom: 16px;
         }
 
-        .pay-row {
+        .bg-icon-blue { background: rgba(255, 255, 255, 0.2); color: white; }
+        .bg-icon-dark { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
+        .bg-icon-orange { background: rgba(249, 115, 22, 0.15); color: #f97316; }
+
+        .stat-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .stat-amount {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        /* ---------------------------------------------------- */
+        /* MÓDULO FACTURAS (Adaptado con Guía Interactiva y Formato Excel) */
+        /* ---------------------------------------------------- */
+        .module-header-flex {
             display: flex;
             justify-content: space-between;
-            font-size: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
         }
 
-        .pay-row.total {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: #ea580c;
-            border-top: 1px dashed var(--border);
-            padding-top: 8px;
+        .module-title-main {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--text-main);
         }
 
-        .cash-input-group {
+        .module-actions-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn-action-primary {
+            background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%);
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 12px var(--primary-glow);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-action-secondary {
+            background: var(--surface-card);
+            color: var(--text-main);
+            border: 1px solid var(--border);
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-action-secondary:hover { border-color: var(--primary); }
+
+        /* Guía Interactiva Dinámica con Mensaje Descriptivo */
+        .guide-banner {
+            background: linear-gradient(135deg, rgba(14, 165, 233, 0.12) 0%, rgba(37, 99, 235, 0.08) 100%);
+            border: 1px solid var(--primary);
+            border-radius: 12px;
+            padding: 16px 20px;
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+        }
+
+        .guide-icon { font-size: 1.4rem; }
+
+        .guide-content h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .guide-content p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        /* Contenedor del Editor de Facturas */
+        .invoice-builder-layout {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 20px;
+        }
+
+        @media(max-width: 1024px) {
+            .invoice-builder-layout { grid-template-columns: 1fr; }
+        }
+
+        .invoice-card-box {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-row-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+        }
+
+        @media(max-width: 768px) {
+            .form-row-grid { grid-template-columns: 1fr; }
+        }
+
+        .form-group-item {
             display: flex;
             flex-direction: column;
             gap: 6px;
         }
 
-        .cash-input {
-            padding: 12px;
-            border: 2px solid var(--border);
+        .form-group-item.full {
+            grid-column: span 3;
+        }
+
+        .form-label {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-input, .form-select {
+            background: var(--bg-main);
+            border: 1px solid var(--border);
+            padding: 10px 12px;
             border-radius: 8px;
-            font-size: 1.1rem;
-            font-weight: bold;
+            color: var(--text-main);
+            font-size: 0.9rem;
             outline: none;
         }
 
-        .cash-input:focus { border-color: #2563eb; }
+        .form-input:focus, .form-select:focus { border-color: var(--primary); }
 
-        .modal-footer {
-            padding: 16px 24px;
-            background: #f8fafc;
-            border-top: 1px solid var(--border);
-            display: flex;
-            justify-content: flex-end;
-            gap: 12px;
-        }
-
-        .btn-modal {
-            padding: 10px 20px;
+        /* Formato de Selección Estilo Excel (Tabla Interactiva) */
+        .excel-catalog-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--bg-main);
+            border: 1px solid var(--border);
             border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            border: none;
-            font-size: 0.95rem;
+            overflow: hidden;
         }
 
-        .btn-cancel { background: #e2e8f0; color: var(--text-main); }
-        .btn-confirm { background: #16a34a; color: white; }
-        .btn-confirm:hover { background: #15803d; }
+        .excel-catalog-table th {
+            background: #1e293b;
+            color: #94a3b8;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            padding: 10px 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .excel-catalog-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.85rem;
+            color: var(--text-main);
+        }
+
+        .excel-catalog-table tr:hover {
+            background: rgba(14, 165, 233, 0.05);
+            cursor: pointer;
+        }
+
+        /* Tabla de Ítems de la Factura */
+        .invoice-items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .invoice-items-table th {
+            background: var(--bg-main);
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .invoice-items-table td {
+            padding: 10px;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.88rem;
+        }
+
+        /* Resumen de Totales y Panel de Acciones de Facturación */
+        .invoice-summary-card {
+            background: var(--surface-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .summary-row-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .summary-row-item.total-final {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--text-main);
+            border-top: 1px solid var(--border);
+            padding-top: 12px;
+        }
+
+        .btn-checkout-emit {
+            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(249, 115, 22, 0.4);
+            text-align: center;
+        }
+
+        .btn-checkout-emit:hover { filter: brightness(1.1); }
+
+        /* Estilos generales para otros módulos */
+        .generic-module-content {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
     </style>
 </head>
 <body>
 
-    <!-- Backdrop y Tooltip del Tutorial Guiado -->
-    <div class="tutorial-backdrop" id="tutorial-backdrop" onclick="nextTutorialStep()"></div>
-    <div class="tutorial-tooltip" id="tutorial-tooltip">
-        <div class="tooltip-counter" id="tooltip-counter-badge">1 | 4</div>
-        <div class="tooltip-text" id="tooltip-text-content">Mensaje de guía...</div>
-        <div style="margin-top: 10px; display: flex; justify-content: space-between; font-size: 0.75rem; color: #94a3b8; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 6px;">
-            <span>Haz clic en cualquier parte para continuar</span>
-            <span style="color: #60a5fa; cursor: pointer; font-weight: bold;" onclick="stopTutorial()">Salir [X]</span>
-        </div>
-    </div>
-
-    <!-- Top Advanced Toolbar -->
-    <header class="top-bar">
-        <div class="location-group">
-            <div class="location-badge">IncoEx Logistics</div>
-            <!-- Módulo Selector de Caja -->
-            <select class="register-selector" id="step-register" onchange="switchRegister(this.value)">
-                <option value="caja-01">🖩 Caja Principal #01</option>
-                <option value="caja-02">⚡ Caja Rápida #02</option>
-                <option value="caja-03">🏢 Caja Sucursal Corporativa #03</option>
-            </select>
-        </div>
-
-        <div class="top-toolbar-actions">
-            <!-- Botón de Tutorial Esencial -->
-            <button class="tool-btn tb-pink" onclick="startTutorial()" title="Guía / Tutorial Interactivo" style="font-weight: bold;">❓ Guía</button>
-            <button class="tool-btn tb-orange" title="Pausar Venta">⏸</button>
-            <button class="tool-btn tb-red" title="Caja Registradora">🖩</button>
-            <button class="tool-btn tb-blue" title="Facturas Pendientes">📑</button>
-            <button class="tool-btn tb-green" title="Cambio de Moneda">⇄</button>
-            <button class="tool-btn tb-teal" title="Corte de Caja">📊</button>
-            <button class="tool-btn tb-indigo" title="Cotizaciones">🏷️</button>
-            <button class="tool-btn tb-purple" title="Créditos y Cobros">💳</button>
-            <button class="tool-btn tb-green" title="Ventas Rápidas">🛒</button>
-            <button class="tool-btn tb-red" title="Anular Documento">🗑</button>
-            <button class="tool-btn tb-blue" title="Reportes">📈</button>
-            <button class="tool-btn tb-pink" title="Promociones">🎁</button>
-            <button class="tool-btn tb-teal" title="Inventario Global">📦</button>
-            <button class="tool-btn tb-blue" title="Pantalla Principal">🏠</button>
-        </div>
-        <div class="system-info-group">
-            <span class="badge-pill" id="live-clock">20/07/2026 09:06 PM</span>
-            <span class="badge-bank">Ficohsa</span>
-            <span class="badge-status">🟢 Online</span>
-        </div>
-    </header>
-
-    <!-- Main Workspace Container -->
-    <div class="workspace">
-        
-        <!-- Left Panel: Cart & Transaction Management -->
-        <section class="panel">
-            <div class="cart-header-actions">
-                <div class="client-row">
-                    <select class="select-custom" id="step-client">
-                        <option value="1">Cliente Eventual</option>
-                        <option value="2">Corporativo IncoEx S.A.</option>
-                        <option value="3">Mayorista VIP</option>
-                    </select>
-                    <button class="tool-btn tb-blue" style="width: 38px; height: 38px;" title="Nuevo Cliente">👥</button>
-                    <button class="tool-btn tb-green" style="width: 38px; height: 38px;" title="Añadir Cliente Rápido">➕</button>
-                </div>
-                <div style="display: flex; gap: 8px;">
-                    <select class="select-custom" style="max-width: 160px;">
-                        <option>Precio de venta</option>
-                        <option>Precio Mayorista</option>
-                    </select>
-                    <input type="text" class="search-product-input" id="search-input" placeholder="Buscar productos por código o nombre...">
-                </div>
-            </div>
-
-            <!-- Cart Table Items -->
-            <div class="cart-table-container">
-                <div class="cart-table-header">
-                    <div>Producto</div>
-                    <div style="text-align: center;">Cantidad</div>
-                    <div style="text-align: right;">Subtotal</div>
-                </div>
-                <div id="cart-items-body"></div>
-            </div>
-
-            <!-- Summary Bar Actualizada con Diseño Exacto Solicitado -->
-            <div class="cart-summary-bar">
-                <div class="summary-card">
-                    ARTÍCULOS: <span class="val-display" id="summary-art">0.00</span>
-                </div>
-                <div class="summary-card">
-                    SUBTOTAL: <span class="val-display" id="summary-sub">0.00</span>
-                </div>
-                
-                <!-- Descuento Interactivo con Botones de Info y Edición -->
-                <div class="summary-card interactive">
-                    <div class="summary-header-row">
-                        <span>DESCUENTO</span>
-                        <div class="summary-actions-inline">
-                            <button class="sum-action-btn" onclick="showInfoModal('Descuento', 'Aplica reducciones porcentuales o montos fijos directos al total de la factura actual.')" title="Información">ℹ️</button>
-                            <button class="sum-action-btn edit" onclick="openAdjustmentModal('discount')" title="Editar Descuento">✏️</button>
-                        </div>
-                    </div>
-                    <span class="val-display" style="color: #dc2626;" id="summary-desc">(-): 0.00</span>
-                </div>
-
-                <!-- Delivery Interactivo con Botones de Info y Edición -->
-                <div class="summary-card interactive">
-                    <div class="summary-header-row">
-                        <span>DELIVERY</span>
-                        <div class="summary-actions-inline">
-                            <button class="sum-action-btn" onclick="showInfoModal('Delivery', 'Agrega cargos adicionales por servicio de envío a domicilio o transporte de carga.')" title="Información">ℹ️</button>
-                            <button class="sum-action-btn edit" onclick="openAdjustmentModal('delivery')" title="Editar Delivery">✏️</button>
-                        </div>
-                    </div>
-                    <span class="val-display" id="summary-del">(+): 0.00</span>
-                </div>
-            </div>
-
-            <!-- Bottom Actions & Checkout Totals -->
-            <div class="cart-bottom-actions">
-                <!-- Ventana emergente flotante sobre el botón de pagar -->
-                <div class="cart-alert-popup" id="cart-alert-popup">
-                    ⚠️ No tienes ningún artículo en el carrito
-                </div>
-
-                <div class="action-tool-row">
-                    <button class="tool-btn tb-amber" title="Editar Línea">✏️</button>
-                    <button class="tool-btn tb-orange" title="Pausar Carrito">⏸</button>
-                    <button class="tool-btn tb-green" title="Lectura de Código">📷</button>
-                    <button class="tool-btn tb-indigo" title="Métodos de Pago">💳</button>
-                    <button class="tool-btn tb-purple" title="Monedero Electrónico">🗂️</button>
-                    <button class="tool-btn tb-red" title="Cancelar Orden">❌</button>
-                </div>
-
-                <!-- Botón de Estado / Ir a Pagar Factura -->
-                <div class="checkout-totals" id="step-checkout" onclick="openCheckoutModal()" title="Hacer clic para procesar pago y facturar">
-                    <div class="total-box">
-                        <span>Total a pagar</span>
-                        <span id="grand-total-usd">$ 0.00</span>
-                    </div>
-                    <div class="total-box">
-                        <span>Total Córdobas</span>
-                        <span id="grand-total-nio">C$ 0.00</span>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Right Panel: Catalog Explorer -->
-        <section class="panel">
-            <div class="catalog-filters">
-                <div class="filters-row">
-                    <select class="select-custom">
-                        <option>Todas las categorías</option>
-                        <option>Cajas Registradoras</option>
-                    </select>
-                    <select class="select-custom">
-                        <option>Todas las marcas</option>
-                        <option>Royal</option>
-                    </select>
-                    <select class="select-custom">
-                        <option>Con stock</option>
-                        <option>Todos</option>
-                    </select>
-                </div>
-                <input type="text" class="search-product-input" id="step-catalog" placeholder="Introduzca el nombre del producto / SKU">
-            </div>
-
-            <div class="products-grid" id="catalog-grid"></div>
-        </section>
-    </div>
-
-    <!-- Modal de Ajuste (Descuento o Delivery) -->
-    <div class="modal-overlay" id="adjustment-modal">
-        <div class="modal-container">
-            <div class="modal-header">
-                <span id="modal-adj-title">Modificar Valor</span>
-                <button class="modal-close" onclick="closeAdjustmentModal()">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="cash-input-group">
-                    <label style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted);" id="modal-adj-label">NUEVO MONTO (USD)</label>
-                    <input type="number" id="adjustment-input-val" class="cash-input" placeholder="0.00">
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn-modal btn-cancel" onclick="closeAdjustmentModal()">Cancelar</button>
-                <button class="btn-modal btn-confirm" onclick="saveAdjustmentVal()">Guardar Cambios</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal de Información Rápida (Info Descuento / Delivery) -->
-    <div class="modal-overlay" id="info-modal">
-        <div class="modal-container">
-            <div class="modal-header" style="background: #0284c7;">
-                <span id="info-modal-title">Información</span>
-                <button class="modal-close" onclick="closeInfoModal()">&times;</button>
-            </div>
-            <div class="modal-body">
-                <p id="info-modal-text" style="font-size: 1rem; color: var(--text-main); line-height: 1.5;"></p>
-            </div>
-            <div class="modal-footer">
-                <button class="btn-modal btn-confirm" onclick="closeInfoModal()">Entendido</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal de Procesamiento de Pago y Facturación -->
-    <div class="modal-overlay" id="checkout-modal">
-        <div class="modal-container">
-            <div class="modal-header" style="background: #ea580c;">
-                <span id="modal-title-register">Procesar Factura - Caja Principal #01</span>
-                <button class="modal-close" onclick="closeCheckoutModal()">&times;</button>
-            </div>
-            <div class="modal-body">
+    <!-- Sidebar Estilo NovaHub -->
+    <aside class="sidebar">
+        <div>
+            <div class="brand-header">
+                <div class="brand-logo">N</div>
                 <div>
-                    <label style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 6px;">MÉTODO DE PAGO</label>
-                    <div class="payment-methods-grid">
-                        <button class="pay-method-btn active" onclick="selectPaymentMethod('Efectivo', this)">💵 Efectivo</button>
-                        <button class="pay-method-btn" onclick="selectPaymentMethod('Tarjeta', this)">💳 Tarjeta</button>
-                        <button class="pay-method-btn" onclick="selectPaymentMethod('Transferencia', this)">🏦 Ficohsa</button>
-                    </div>
-                </div>
-
-                <div class="payment-summary-box">
-                    <div class="pay-row">
-                        <span>Total a Pagar (USD):</span>
-                        <span id="modal-pay-usd" style="font-weight: bold;">$ 0.00</span>
-                    </div>
-                    <div class="pay-row">
-                        <span>Total a Pagar (NIO):</span>
-                        <span id="modal-pay-nio" style="font-weight: bold;">C$ 0.00</span>
-                    </div>
-                    <div class="pay-row total">
-                        <span>Factura Generada para:</span>
-                        <span id="modal-client-label">Cliente Eventual</span>
-                    </div>
-                </div>
-
-                <div class="cash-input-group" id="cash-payment-section">
-                    <label style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted);">MONTO RECIBIDO (USD)</label>
-                    <input type="number" id="cash-received-input" class="cash-input" placeholder="0.00" oninput="calculateChange()">
-                    <div style="display: flex; justify-content: space-between; margin-top: 4px; font-weight: 600;">
-                        <span style="color: var(--text-muted);">Cambio / Vuelto:</span>
-                        <span id="change-due-output" style="color: #16a34a;">$ 0.00</span>
-                    </div>
+                    <div class="brand-title">NovaHub</div>
+                    <div class="brand-sub">Agency DevJair, S.A.</div>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button class="btn-modal btn-cancel" onclick="closeCheckoutModal()">Cancelar</button>
-                <button class="btn-modal btn-confirm" onclick="confirmAndPrintInvoice()">Confirmar y Emitir Factura</button>
+
+            <div class="sidebar-menu">
+                <div>
+                    <div class="menu-section-title">General</div>
+                    <div class="menu-items">
+                        <div class="menu-item active" onmouseover="showHelp('dashboard')" onclick="switchView('dashboard', this)">
+                            <div class="menu-item-left">
+                                <span>📊</span> Dashboard
+                            </div>
+                        </div>
+                        <div class="menu-item" onmouseover="showHelp('financiamiento')" onclick="switchView('financiamiento', this)">
+                            <div class="menu-item-left">
+                                <span>🏛️</span> Financiamiento PYME
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="menu-section-title">Operaciones</div>
+                    <div class="menu-items">
+                        <!-- Menú Desplegable de Ventas / Facturación -->
+                        <div class="menu-item" onmouseover="showHelp('ventas-menu')" onclick="toggleSubmenu('submenu-ventas', event)">
+                            <div class="menu-item-left">
+                                <span>🛒</span> Ventas
+                            </div>
+                            <span id="arrow-ventas">▾</span>
+                        </div>
+                        <div class="submenu-container open" id="submenu-ventas">
+                            <div class="submenu-item" onmouseover="showHelp('clientes')" onclick="switchView('clientes', this)">👥 Clientes</div>
+                            <div class="submenu-item" onmouseover="showHelp('estimaciones')" onclick="switchView('estimaciones', this)">📑 Estimaciones</div>
+                            <div class="submenu-item" onmouseover="showHelp('ordenes')" onclick="switchView('ordenes', this)">📦 Órdenes de venta</div>
+                            <div class="submenu-item active" onmouseover="showHelp('facturas')" onclick="switchView('facturas', this)">📄 Facturas</div>
+                            <div class="submenu-item" onmouseover="showHelp('facturas-rec')" onclick="switchView('facturas-rec', this)">🔄 Facturas recurrentes</div>
+                            <div class="submenu-item" onmouseover="showHelp('pagos')" onclick="switchView('pagos', this)">💳 Pagos recibidos</div>
+                            <div class="submenu-item" onmouseover="showHelp('devoluciones')" onclick="switchView('devoluciones', this)">↩️ Devoluciones de venta</div>
+                            <div class="submenu-item" onmouseover="showHelp('notas')" onclick="switchView('notas', this)">📝 Notas de credito</div>
+                        </div>
+
+                        <!-- Menú Desplegable de Compras -->
+                        <div class="menu-item" onmouseover="showHelp('compras-menu')" onclick="toggleSubmenu('submenu-compras', event)">
+                            <div class="menu-item-left">
+                                <span>🛍️</span> Compras
+                            </div>
+                            <span id="arrow-compras">▾</span>
+                        </div>
+                        <div class="submenu-container" id="submenu-compras">
+                            <div class="submenu-item" onmouseover="showHelp('proveedores')" onclick="switchView('proveedores', this)">🚚 Proveedores</div>
+                            <div class="submenu-item" onmouseover="showHelp('gastos')" onclick="switchView('gastos', this)">💸 Gastos y Costos</div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- Script Logic -->
-    <script>
-        const products = [
-            { id: 101, name: "Caja Registradora Grande", sku: "CRGD", price: 150.00, stock: -1.00, icon: "🗄️" },
-            { id: 102, name: "Caja Registradora Pequeña", sku: "CRPQ", price: 100.00, stock: 2.00, icon: "📦" },
-            { id: 103, name: "Capacitación Sub Agencias", sku: "CSAG", price: 100.00, stock: 0.00, icon: "🖥️" },
-            { id: 104, name: "Lector de Código Láser Pro", sku: "LCLP", price: 39.99, stock: 0.00, icon: "📷" }
-        ];
+        <div class="user-profile-box">
+            <div class="user-avatar">J</div>
+            <div style="overflow: hidden;">
+                <div style="font-size: 0.85rem; font-weight: bold; color: var(--text-main); white-space: nowrap; text-overflow: ellipsis;">Jair González</div>
+                <div style="font-size: 0.75rem; color: var(--text-muted);">Administrador</div>
+            </div>
+        </div>
+    </aside>
 
-        const tasaCambio = 36.62;
+    <!-- Main Content Panel -->
+    <main class="main-content">
+        <!-- Top Header Bar -->
+        <header class="top-header">
+            <div class="top-header-left">
+                <div class="agency-badge-pill">
+                    🏢 Agency DevJair, S.A. <span>Administrador</span>
+                </div>
+                <div class="top-search-box">
+                    <span class="top-search-icon">🔍</span>
+                    <input type="text" class="top-search-input" placeholder="Buscar clientes, facturas, productos..." onmouseover="showHelp('search-box')">
+                </div>
+            </div>
 
-        let activeRegister = 'caja-01';
-        let cartsByRegister = {
-            'caja-01': [ { ...products[0], quantity: 1 } ],
-            'caja-02': [],
-            'caja-03': []
-        };
+            <div style="display: flex; gap: 12px; align-items: center;">
+                <button class="theme-toggle-btn" onmouseover="showHelp('theme-btn')" onclick="toggleTheme()" id="theme-btn">
+                    <span>🌙</span> Modo Oscuro
+                </button>
+            </div>
+        </header>
 
-        // Valores globales para Descuento y Delivery por caja
-        let adjustmentsByRegister = {
-            'caja-01': { discount: 0.00, delivery: 0.00 },
-            'caja-02': { discount: 0.00, delivery: 0.00 },
-            'caja-03': { discount: 0.00, delivery: 0.00 }
-        };
+        <!-- ================= VISTA: DASHBOARD ================= -->
+        <div id="view-dashboard" class="workspace-scroll">
+            <section class="hero-welcome-section">
+                <h1 class="hero-title-row">
+                    Centraliza, optimiza y <span class="highlight-escalar">escala</span>, la solución integral que tu crecimiento <span class="highlight-necesita">necesita.</span>
+                </h1>
+                <p class="hero-subtitle">
+                    Supervisa el rendimiento en tiempo real, descubre nuevas oportunidades y toma decisiones estratégicas con nuestra visión analítica de 360°.
+                </p>
+            </section>
 
-        let currentEditingType = '';
-        let selectedPaymentMethod = 'Efectivo';
-        let alertTimeout = null;
-
-        // Pasos del Tutorial Guiado con Destacados (Spotlight)
-        let currentTutorialStep = 0;
-        const tutorialSteps = [
-            {
-                elementId: 'step-register',
-                text: 'Aquí puedes alternar entre distintas cajas registradoras físicas. Cada caja mantiene su propia sesión e historial de facturación independiente.'
-            },
-            {
-                elementId: 'step-client',
-                text: 'Selecciona el cliente al que se le emitirá la factura fiscal (Cliente eventual, corporativos o mayoristas VIP).'
-            },
-            {
-                elementId: 'step-catalog',
-                text: 'Explora y haz clic en los productos del catálogo de la derecha para agregarlos de forma inmediata al carrito de compras.'
-            },
-            {
-                elementId: 'step-checkout',
-                text: 'Haz clic en el total a pagar para abrir la terminal de cobro (Efectivo con cálculo de vuelto o tarjetas/transferencias bancarias).'
-            }
-        ];
-
-        const catalogGrid = document.getElementById('catalog-grid');
-        const cartItemsBody = document.getElementById('cart-items-body');
-        const summaryArt = document.getElementById('summary-art');
-        const summarySub = document.getElementById('summary-sub');
-        const summaryDesc = document.getElementById('summary-desc');
-        const summaryDel = document.getElementById('summary-del');
-        const grandTotalUsd = document.getElementById('grand-total-usd');
-        const grandTotalNio = document.getElementById('grand-total-nio');
-        const cartAlertPopup = document.getElementById('cart-alert-popup');
-        const tutorialBackdrop = document.getElementById('tutorial-backdrop');
-        const tutorialTooltip = document.getElementById('tutorial-tooltip');
-
-        function renderCatalog() {
-            catalogGrid.innerHTML = '';
-            products.forEach(prod => {
-                const card = document.createElement('div');
-                card.className = 'product-card';
-                card.onclick = () => addToCart(prod);
-                card.innerHTML = `
-                    <div class="product-tag-row">
-                        <span class="price-badge">$ ${prod.price.toFixed(2)}</span>
-                        <span class="stock-badge">${prod.stock.toFixed(2)} UND</span>
+            <section class="dashboard-cards-grid">
+                <div class="stat-card featured-blue" onmouseover="showHelp('dash-ingresos-card')" onclick="switchView('facturas', document.querySelectorAll('.submenu-item')[3])">
+                    <div>
+                        <div class="stat-icon-badge bg-icon-blue">💵</div>
+                        <div class="stat-label">Ingresos Totales (Facturados)</div>
                     </div>
-                    <div class="product-image-container">${prod.icon}</div>
-                    <div class="product-title">${prod.name}</div>
-                `;
-                catalogGrid.appendChild(card);
-            });
-        }
+                    <div class="stat-amount" id="dash-ingresos">C$ 0.00</div>
+                </div>
 
-        function switchRegister(registerId) {
-            activeRegister = registerId;
-            hideAlertPopup();
-            updateCartUI();
-        }
+                <div class="stat-card" onmouseover="showHelp('dash-gastos-card')" onclick="switchView('gastos', null)">
+                    <div>
+                        <div class="stat-icon-badge bg-icon-dark">📉</div>
+                        <div class="stat-label">Gastos Totales</div>
+                    </div>
+                    <div class="stat-amount">C$ 0.00</div>
+                </div>
 
-        function addToCart(product) {
-            let currentCart = cartsByRegister[activeRegister];
-            const existingItem = currentCart.find(item => item.id === product.id);
-            if (existingItem) {
-                existingItem.quantity += 1;
-            } else {
-                currentCart.push({ ...product, quantity: 1 });
-            }
-            hideAlertPopup();
-            updateCartUI();
-        }
+                <div class="stat-card" onmouseover="showHelp('dash-ordenes-card')" onclick="switchView('ordenes', null)">
+                    <div>
+                        <div class="stat-icon-badge bg-icon-orange">🛒</div>
+                        <div class="stat-label">Órdenes Activas</div>
+                    </div>
+                    <div class="stat-amount" id="dash-ordenes">0</div>
+                </div>
+            </section>
+        </div>
 
-        window.changeQty = function(id, delta) {
-            let currentCart = cartsByRegister[activeRegister];
-            const item = currentCart.find(i => i.id === id);
-            if (item) {
-                item.quantity += delta;
-                if (item.quantity < 1) item.quantity = 1;
-                updateCartUI();
-            }
-        }
+        <!-- ================= VISTA: MÓDULO FACTURAS (FORMATO EXCEL, CAJAS INDEPENDIENTES Y GUÍA) ================= -->
+        <div id="view-facturas" class="workspace-scroll active-view">
+            <!-- Cabecera del Módulo -->
+            <div class="module-header-flex">
+                <div>
+                    <h2 class="module-title-main">📄 Emisión y Gestión de Facturas por Caja</h2>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">Facturación individual independiente por cada caja registradora con formato tabular estilo Excel.</p>
+                </div>
+                <div class="module-actions-group">
+                    <button class="btn-action-secondary" onmouseover="showHelp('btn-clean')" onclick="resetInvoice()">🧹 Limpiar Formulario</button>
+                    <button class="btn-action-primary" onmouseover="showHelp('btn-print')" onclick="printInvoicePDF()">🖨️ Imprimir / Exportar PDF</button>
+                </div>
+            </div>
 
-        window.setQty = function(id, val) {
-            let currentCart = cartsByRegister[activeRegister];
-            const item = currentCart.find(i => i.id === id);
-            if (item) {
-                item.quantity = Math.max(1, parseInt(val) || 1);
-                updateCartUI();
-            }
-        }
+            <!-- Guía Interactiva Dinámica con Mensaje Descriptivo -->
+            <div class="guide-banner">
+                <div class="guide-icon">💡</div>
+                <div class="guide-content">
+                    <h4 id="guide-title">Guía Interactiva NovaHub</h4>
+                    <p id="guide-desc">Coloca el cursor sobre cualquier botón, campo de selección o caja registradora para ver su descripción detallada en tiempo real.</p>
+                </div>
+            </div>
 
-        window.removeItem = function(id) {
-            cartsByRegister[activeRegister] = cartsByRegister[activeRegister].filter(i => i.id !== id);
-            updateCartUI();
-        }
-
-        function hideAlertPopup() {
-            cartAlertPopup.style.display = 'none';
-            if (alertTimeout) clearTimeout(alertTimeout);
-        }
-
-        // Lógica de Modales de Descuento y Delivery
-        window.openAdjustmentModal = function(type) {
-            currentEditingType = type;
-            const titleEl = document.getElementById('modal-adj-title');
-            const labelEl = document.getElementById('modal-adj-label');
-            const inputEl = document.getElementById('adjustment-input-val');
-
-            const currentVal = adjustmentsByRegister[activeRegister][type];
-            inputEl.value = currentVal.toFixed(2);
-
-            if (type === 'discount') {
-                titleEl.textContent = 'Modificar Descuento';
-                labelEl.textContent = 'MONTO DE DESCUENTO (USD)';
-            } else {
-                titleEl.textContent = 'Modificar Delivery';
-                labelEl.textContent = 'MONTO DE DELIVERY (USD)';
-            }
-
-            document.getElementById('adjustment-modal').style.display = 'flex';
-        }
-
-        window.closeAdjustmentModal = function() {
-            document.getElementById('adjustment-modal').style.display = 'none';
-        }
-
-        window.saveAdjustmentVal = function() {
-            const inputVal = parseFloat(document.getElementById('adjustment-input-val').value) || 0;
-            adjustmentsByRegister[activeRegister][currentEditingType] = Math.max(0, inputVal);
-            closeAdjustmentModal();
-            updateCartUI();
-        }
-
-        window.showInfoModal = function(title, text) {
-            document.getElementById('info-modal-title').textContent = title;
-            document.getElementById('info-modal-text').textContent = text;
-            document.getElementById('info-modal').style.display = 'flex';
-        }
-
-        window.closeInfoModal = function() {
-            document.getElementById('info-modal').style.display = 'none';
-        }
-
-        function updateCartUI() {
-            let currentCart = cartsByRegister[activeRegister];
-            let adj = adjustmentsByRegister[activeRegister];
-            
-            cartItemsBody.innerHTML = '';
-            let totalArt = 0;
-            let subtotal = 0;
-
-            if (currentCart.length === 0) {
-                cartItemsBody.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 40px;">Carro vacío en esta caja. Seleccione productos del catálogo.</div>`;
-            }
-
-            currentCart.forEach((item, idx) => {
-                totalArt += item.quantity;
-                subtotal += item.price * item.quantity;
-
-                const row = document.createElement('div');
-                row.className = 'cart-item-row';
-                row.innerHTML = `
-                    <div class="item-details">
-                        <div class="item-number">#${idx + 1}</div>
-                        <div class="item-name">${item.name}</div>
-                        <div class="item-sku">· ${item.sku}</div>
-                        <div class="item-price-select">
-                            <select class="select-custom" style="padding: 4px 8px; font-size: 0.8rem; width: 100%;">
-                                <option>Precio de venta predeterminado</option>
-                                <option>Precio Mayorista</option>
+            <!-- Estructura Principal del Editor y Resumen -->
+            <div class="invoice-builder-layout">
+                <!-- Columna Izquierda: Selección de Caja Independiente, Catálogo Estilo Excel y Detalle -->
+                <div class="invoice-card-box">
+                    <h3 style="font-size: 1.05rem; font-weight: 700; color: var(--text-main);">Configuración de Emisión</h3>
+                    <div class="form-row-grid">
+                        <div class="form-group-item">
+                            <label class="form-label">Caja Operativa (Independiente)</label>
+                            <select class="form-select" id="inv-caja" onchange="onCajaChange()" onmouseover="showHelp('select-caja')">
+                                <option value="Caja 01 - Principal">Caja 01 - Principal</option>
+                                <option value="Caja 02 - Express">Caja 02 - Express</option>
+                                <option value="Caja 03 - Sucursal Norte">Caja 03 - Sucursal Norte</option>
                             </select>
                         </div>
-                    </div>
-                    <div class="quantity-control-group">
-                        <div class="qty-input-wrapper">
-                            <button class="qty-btn minus" onclick="changeQty(${item.id}, -1)">−</button>
-                            <input type="number" class="qty-field" value="${item.quantity}" onchange="setQty(${item.id}, this.value)">
-                            <button class="qty-btn plus" onclick="changeQty(${item.id}, 1)">+</button>
+                        <div class="form-group-item">
+                            <label class="form-label">Cliente / Empresa</label>
+                            <select class="form-select" id="inv-client" onmouseover="showHelp('select-client')">
+                                <option value="Corporación del Norte S.A.">Corporación del Norte S.A.</option>
+                                <option value="Inversiones San Carlos">Inversiones San Carlos</option>
+                                <option value="Cliente General / Mostrador">Cliente General / Mostrador</option>
+                            </select>
                         </div>
-                        <div class="stock-info">Stock: ${item.stock.toFixed(2)} UND</div>
+                        <div class="form-group-item">
+                            <label class="form-label">Fecha de Emisión</label>
+                            <input type="date" class="form-input" id="inv-date" onmouseover="showHelp('input-date')">
+                        </div>
                     </div>
-                    <div class="item-subtotal">
-                        $ ${(item.price * item.quantity).toFixed(2)}
+
+                    <!-- Catálogo Estilo Excel para Seleccionar Artículos -->
+                    <div style="border-top: 1px solid var(--border); padding-top: 16px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <h3 style="font-size: 1.05rem; font-weight: 700; color: var(--text-main);">Catálogo de Artículos (Selección tipo Excel)</h3>
+                            <span style="font-size: 0.8rem; color: var(--primary);">Haz clic en una fila para agregar</span>
+                        </div>
+                        <div style="max-height: 180px; overflow-y: auto;" onmouseover="showHelp('excel-catalog')">
+                            <table class="excel-catalog-table">
+                                <thead>
+                                    <tr>
+                                        <th>Código</th>
+                                        <th>Descripción del Producto</th>
+                                        <th>Precio Unit. (C$)</th>
+                                        <th>Acción Rápida</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="excel-catalog-body">
+                                    <!-- Generado dinámicamente -->
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                    <div>
-                        <button class="delete-item-btn" onclick="removeItem(${item.id})" title="Eliminar artículo">×</button>
+
+                    <div style="border-top: 1px solid var(--border); padding-top: 16px;">
+                        <h3 style="font-size: 1.05rem; font-weight: 700; color: var(--text-main); margin-bottom: 8px;">Detalle de Factura Actual (<span id="label-active-caja" style="color:var(--primary);">Caja 01 - Principal</span>)</h3>
+                        <table class="invoice-items-table" onmouseover="showHelp('table-items')">
+                            <thead>
+                                <tr>
+                                    <th>Descripción</th>
+                                    <th>Cant</th>
+                                    <th>Precio Unit.</th>
+                                    <th>Subtotal</th>
+                                    <th>Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody id="invoice-items-body">
+                                <tr>
+                                    <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 20px;">No hay ítems agregados en esta caja.</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
+                </div>
+
+                <!-- Columna Derecha: Totales y Botón de Pago con Alerta si está vacío -->
+                <div style="display: flex; flex-direction: column; gap: 20px;">
+                    <div class="invoice-summary-card">
+                        <h3 style="font-size: 1.05rem; font-weight: 700; color: var(--text-main);">Resumen Financiero</h3>
+                        
+                        <div class="form-group-item" style="margin-top: 4px;">
+                            <label class="form-label">Aplicar Descuento (%)</label>
+                            <input type="number" class="form-input" id="inv-discount" value="0" min="0" max="100" oninput="calculateTotals()" onmouseover="showHelp('input-discount')">
+                        </div>
+
+                        <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
+                            <div class="summary-row-item">
+                                <span>Subtotal Bruto:</span>
+                                <span id="summary-subtotal">C$ 0.00</span>
+                            </div>
+                            <div class="summary-row-item">
+                                <span>Descuento aplicado:</span>
+                                <span id="summary-discount-val">C$ 0.00</span>
+                            </div>
+                            <div class="summary-row-item">
+                                <span>IVA (15%):</span>
+                                <span id="summary-tax">C$ 0.00</span>
+                            </div>
+                            <div class="summary-row-item total-final">
+                                <span>Total a Pagar:</span>
+                                <span id="summary-grandtotal" style="color: var(--accent-orange);">C$ 0.00</span>
+                            </div>
+                        </div>
+
+                        <!-- Botón Pagar con Validación de Ítems Vacíos -->
+                        <button class="btn-checkout-emit" onmouseover="showHelp('btn-pay')" onclick="emitInvoice()">
+                            💳 Pagar y Emitir Factura
+                        </button>
+                    </div>
+
+                    <div class="invoice-summary-card" style="background: var(--surface);">
+                        <h4 style="font-size: 0.9rem; font-weight: 700; color: var(--text-main); margin-bottom: 6px;">📋 Facturas Emitidas por Caja</h4>
+                        <div id="recent-invoices-list" style="font-size: 0.82rem; color: var(--text-muted); display: flex; flex-direction: column; gap: 6px;" onmouseover="showHelp('history-list')">
+                            <div>No hay facturas emitidas en esta sesión.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= VISTAS RESTANTES DE LOS MÓDULOS ANTERIORES ================= -->
+        <div id="view-clientes" class="workspace-scroll">
+            <div class="generic-module-content">
+                <h2 class="module-title-main">👥 Módulo de Clientes</h2>
+                <p style="color: var(--text-muted); margin-top: 10px;">Gestión de base de datos de clientes corporativos y particulares para Agency DevJair, S.A.</p>
+            </div>
+        </div>
+
+        <div id="view-estimaciones" class="workspace-scroll">
+            <div class="generic-module-content">
+                <h2 class="module-title-main">📑 Módulo de Estimaciones y Cotizaciones</h2>
+                <p style="color: var(--text-muted); margin-top: 10px;">Creación y envío de propuestas comerciales formales.</p>
+            </div>
+        </div>
+
+        <div id="view-ordenes" class="workspace-scroll">
+            <div class="generic-module-content">
+                <h2 class="module-title-main">📦 Órdenes de Venta</h2>
+                <p style="color: var(--text-muted); margin-top: 10px;">Seguimiento de pedidos activos y estado de despacho logístico.</p>
+            </div>
+        </div>
+
+        <div id="view-facturas-rec" class="workspace-scroll">
+            <div class="generic-module-content">
+                <h2 class="module-title-main">🔄 Facturas Recurrentes</h2>
+                <p style="color: var(--text-muted); margin-top: 10px;">Automatización de cobros periódicos para servicios de agencia y mantenimiento.</p>
+            </div>
+        </div>
+
+        <div id="view-pagos" class="workspace-scroll">
+            <div class="generic-module-content">
+                <h2 class="module-title-main">💳 Pagos Recibidos</h2>
+                <p style="color: var(--text-muted); margin-top: 10px;">Conciliación bancaria y registro de transacciones acreditadas.</p>
+            </div>
+        </div>
+
+        <div id="view-devoluciones" class="workspace-scroll">
+            <div class="generic-module-content">
+                <h2 class="module-title-main">↩️ Devoluciones de Venta</h2>
+                <p style="color: var(--text-muted); margin-top: 10px;">Control de mercancía devuelta y notas de reembolso asociadas.</p>
+            </div>
+        </div>
+
+        <div id="view-notas" class="workspace-scroll">
+            <div class="generic-module-content">
+                <h2 class="module-title-main">📝 Notas de Crédito</h2>
+                <p style="color: var(--text-muted); margin-top: 10px;">Emisión de saldos a favor aplicables a futuras compras o facturas.</p>
+            </div>
+        </div>
+
+        <div id="view-proveedores" class="workspace-scroll">
+            <div class="generic-module-content">
+                <h2 class="module-title-main">🚚 Módulo de Proveedores</h2>
+                <p style="color: var(--text-muted); margin-top: 10px;">Directorio de aliados comerciales y suministros de inventario.</p>
+            </div>
+        </div>
+
+        <div id="view-gastos" class="workspace-scroll">
+            <div class="generic-module-content">
+                <h2 class="module-title-main">💸 Registro de Gastos y Costos</h2>
+                <p style="color: var(--text-muted); margin-top: 10px;">Control financiero de egresos operativos de la agencia.</p>
+            </div>
+        </div>
+
+        <div id="view-financiamiento" class="workspace-scroll">
+            <div class="generic-module-content">
+                <h2 class="module-title-main">🏛️ Financiamiento PYME</h2>
+                <p style="color: var(--text-muted); margin-top: 10px;">Opciones de apalancamiento financiero y líneas de crédito empresarial.</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Script de Funcionalidad Integral e Interactiva -->
+    <script>
+        // Establecer fecha actual por defecto en factura
+        document.getElementById('inv-date').valueAsDate = new Date();
+
+        // Catálogo de productos estilo tabla Excel
+        const catalogProducts = [
+            { code: "PRD-001", name: "Caja Registradora Pro", price: 5490.00 },
+            { code: "PRD-002", name: "Caja Registradora Mini", price: 3660.00 },
+            { code: "PRD-003", name: "Lector Láser Código", price: 1464.00 },
+            { code: "PRD-004", name: "Licencia Sistema POS", price: 3660.00 },
+            { code: "PRD-005", name: "Soporte Técnico Anual", price: 7320.00 },
+            { code: "PRD-006", name: "Rollo de Papel Térmico (Caja)", price: 450.00 }
+        ];
+
+        // Almacenamiento independiente por caja para evitar combinaciones
+        let cashRegistersData = {
+            "Caja 01 - Principal": { items: [], discount: 0 },
+            "Caja 02 - Express": { items: [], discount: 0 },
+            "Caja 03 - Sucursal Norte": { items: [], discount: 0 }
+        };
+
+        let currentCaja = "Caja 01 - Principal";
+        let emittedInvoicesLog = [];
+
+        // Mensajes descriptivos para la guía interactiva
+        const helpTexts = {
+            'dashboard': { title: "Panel Dashboard General", desc: "Muestra métricas globales en tiempo real de ingresos totales, gastos y órdenes activas de la agencia." },
+            'financiamiento': { title: "Módulo Financiamiento PYME", desc: "Sección para consultar opciones de apalancamiento bancario y líneas de crédito empresarial." },
+            'ventas-menu': { title: "Menú Desplegable Ventas", desc: "Agrupa todas las operaciones comerciales de salida: clientes, cotizaciones, órdenes y facturas." },
+            'clientes': { title: "Submenú Clientes", desc: "Administra la cartera de clientes corporativos y particulares registrados." },
+            'estimaciones': { title: "Submenú Estimaciones", desc: "Genera propuestas comerciales y cotizaciones formales para clientes." },
+            'ordenes': { title: "Submenú Órdenes de Venta", desc: "Monitorea los pedidos activos y el estatus de despacho de mercancía." },
+            'facturas': { title: "Módulo de Facturación Activo", desc: "Espacio de trabajo principal para crear comprobantes fiscales y procesar pagos por caja individual." },
+            'facturas-rec': { title: "Submenú Facturas Recurrentes", desc: "Automatiza cobros periódicos para contratos de servicios y mantenimiento." },
+            'pagos': { title: "Submenú Pagos Recibidos", desc: "Consulta el historial de transacciones acreditadas y conciliaciones bancarias." },
+            'devoluciones': { title: "Submenú Devoluciones de Venta", desc: "Controla las devoluciones de mercancía y notas de reembolso asociadas." },
+            'notas': { title: "Submenú Notas de Crédito", desc: "Emite saldos a favor aplicables a futuras compras de los clientes." },
+            'compras-menu': { title: "Menú Desplegable Compras", desc: "Gestiona los egresos operativos, proveedores y costos de suministros." },
+            'proveedores': { title: "Submenú Proveedores", desc: "Directorio de aliados estratégicos y proveedores de inventario." },
+            'gastos': { title: "Submenú Gastos y Costos", desc: "Registro financiero de gastos operativos de la empresa." },
+            'search-box': { title: "Barra de Búsqueda Global", desc: "Permite localizar rápidamente clientes, facturas o productos en todo el sistema." },
+            'theme-btn': { title: "Botón de Tema", desc: "Alterna de forma instantánea entre Modo Oscuro y Modo Claro para mayor comodidad visual." },
+            'dash-ingresos-card': { title: "Tarjeta de Ingresos Totales", desc: "Suma acumulada de todas las facturas procesadas y pagadas exitosamente en las cajas." },
+            'dash-gastos-card': { title: "Tarjeta de Gastos Totales", desc: "Control general de egresos operativos registrados en la agencia." },
+            'dash-ordenes-card': { title: "Tarjeta de Órdenes Activas", desc: "Cantidad de ítems y pedidos en proceso de despacho." },
+            'select-caja': { title: "Selector de Caja Registradora", desc: "CRÍTICO: Cambia de caja activa. Cada caja mantiene su propia lista de artículos de manera independiente y nunca se combinan." },
+            'select-client': { title: "Selector de Cliente", desc: "Asigna el comprobante fiscal al cliente corporativo o consumidor final correspondiente." },
+            'input-date': { title: "Fecha de Emisión", desc: "Establece la fecha oficial en la que se genera el comprobante de pago." },
+            'excel-catalog': { title: "Catálogo de Artículos (Estilo Excel)", desc: "Tabla interactiva con código, descripción y precios. Haz clic en cualquier artículo para agregarlo a la caja activa." },
+            'table-items': { title: "Detalle de Ítems en Caja", desc: "Muestra los productos seleccionados, permite ajustar cantidades con botones '+' / '-' o eliminar ítems." },
+            'input-discount': { title: "Campo de Descuento (%)", desc: "Aplica un porcentaje de rebaja opcional que se calcula automáticamente sobre el subtotal." },
+            'btn-pay': { title: "Botón Pagar y Emitir Factura", desc: "Procesa el cobro de la caja actual. Si haces clic y no hay ningún artículo agregado, se mostrará una alerta de advertencia." },
+            'btn-clean': { title: "Botón Limpiar Formulario", desc: "Borra todos los artículos y restablece los valores de la caja seleccionada." },
+            'btn-print': { title: "Botón Imprimir / Exportar", desc: "Genera una vista previa de impresión o exportación en PDF del comprobante actual." },
+            'history-list': { title: "Historial de Facturas Emitidas", desc: "Registro cronológico de los comprobantes generados recientemente por caja." }
+        };
+
+        function showHelp(key) {
+            if (helpTexts[key]) {
+                document.getElementById('guide-title').textContent = helpTexts[key].title;
+                document.getElementById('guide-desc').textContent = helpTexts[key].desc;
+            }
+        }
+
+        // Renderizar el catálogo en formato tabla estilo Excel
+        function renderExcelCatalog() {
+            const tbody = document.getElementById('excel-catalog-body');
+            tbody.innerHTML = '';
+            catalogProducts.forEach(prod => {
+                const tr = document.createElement('tr');
+                tr.onclick = () => addCatalogItem(prod);
+                tr.innerHTML = `
+                    <td style="font-weight: 600; color: var(--primary);">${prod.code}</td>
+                    <td>${prod.name}</td>
+                    <td>C$ ${prod.price.toFixed(2)}</td>
+                    <td><button style="background:var(--primary); color:white; border:none; padding:4px 8px; border-radius:4px; font-size:0.75rem; cursor:pointer;">+ Agregar</button></td>
                 `;
-                cartItemsBody.appendChild(row);
+                tbody.appendChild(tr);
             });
-
-            // Cálculo final incluyendo descuento (-) y delivery (+)
-            let finalTotalUsd = subtotal - adj.discount + adj.delivery;
-            if (finalTotalUsd < 0) finalTotalUsd = 0;
-
-            summaryArt.textContent = totalArt.toFixed(2);
-            summarySub.textContent = subtotal.toFixed(2);
-            summaryDesc.textContent = `(-): ${adj.discount.toFixed(2)}`;
-            summaryDel.textContent = `(+): ${adj.delivery.toFixed(2)}`;
-
-            grandTotalUsd.textContent = `$ ${finalTotalUsd.toFixed(2)}`;
-            grandTotalNio.textContent = `C$ ${(finalTotalUsd * tasaCambio).toFixed(2)}`;
         }
 
-        // Lógica del Tutorial con Destacado (Spotlight) y Animación Fluida
-        function startTutorial() {
-            currentTutorialStep = 0;
-            tutorialBackdrop.classList.add('active');
-            showTutorialStep();
-        }
-
-        function nextTutorialStep() {
-            const prevStep = tutorialSteps[currentTutorialStep];
-            if (prevStep) {
-                const prevEl = document.getElementById(prevStep.elementId);
-                if (prevEl) prevEl.classList.remove('tutorial-highlight');
-            }
-
-            currentTutorialStep++;
-            if (currentTutorialStep >= tutorialSteps.length) {
-                stopTutorial();
+        function addCatalogItem(product) {
+            let activeItems = cashRegistersData[currentCaja].items;
+            const existing = activeItems.find(i => i.code === product.code);
+            if (existing) {
+                existing.qty += 1;
             } else {
-                showTutorialStep();
+                activeItems.push({ ...product, qty: 1 });
             }
+            renderInvoiceTable();
         }
 
-        function showTutorialStep() {
-            const step = tutorialSteps[currentTutorialStep];
-            const targetEl = document.getElementById(step.elementId);
-            
-            if (!targetEl) return;
-
-            targetEl.classList.add('tutorial-highlight');
-            targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-
-            document.getElementById('tooltip-counter-badge').textContent = `${currentTutorialStep + 1} | ${tutorialSteps.length}`;
-            document.getElementById('tooltip-text-content').textContent = step.text;
-
-            const rect = targetEl.getBoundingClientRect();
-            tutorialTooltip.style.display = 'block';
-            
-            let topPos = rect.top - tutorialTooltip.offsetHeight - 14;
-            let leftPos = rect.left + (rect.width / 2) - (tutorialTooltip.offsetWidth / 2);
-
-            if (leftPos < 12) leftPos = 12;
-            if (leftPos + tutorialTooltip.offsetWidth > window.innerWidth - 12) {
-                leftPos = window.innerWidth - tutorialTooltip.offsetWidth - 12;
+        function updateItemQty(code, delta) {
+            let activeItems = cashRegistersData[currentCaja].items;
+            const item = activeItems.find(i => i.code === code);
+            if (item) {
+                item.qty += delta;
+                if (item.qty <= 0) {
+                    cashRegistersData[currentCaja].items = activeItems.filter(i => i.code !== code);
+                }
             }
-            if (topPos < 12) {
-                topPos = rect.bottom + 14;
-            }
-
-            tutorialTooltip.style.top = `${topPos}px`;
-            tutorialTooltip.style.left = `${leftPos}px`;
-
-            setTimeout(() => {
-                tutorialTooltip.classList.add('show');
-            }, 50);
+            renderInvoiceTable();
         }
 
-        function stopTutorial() {
-            tutorialSteps.forEach(step => {
-                const el = document.getElementById(step.elementId);
-                if (el) el.classList.remove('tutorial-highlight');
-            });
-
-            tutorialTooltip.classList.remove('show');
-            tutorialBackdrop.classList.remove('active');
-            
-            setTimeout(() => {
-                tutorialTooltip.style.display = 'none';
-                tutorialBackdrop.style.display = 'none';
-            }, 250);
+        function removeInvoiceItem(code) {
+            cashRegistersData[currentCaja].items = cashRegistersData[currentCaja].items.filter(i => i.code !== code);
+            renderInvoiceTable();
         }
 
-        // Funciones del Modal de Pago
-        function openCheckoutModal() {
-            let currentCart = cartsByRegister[activeRegister];
-            if (currentCart.length === 0) {
-                cartAlertPopup.style.display = 'flex';
-                if (alertTimeout) clearTimeout(alertTimeout);
-                alertTimeout = setTimeout(() => {
-                    cartAlertPopup.style.display = 'none';
-                }, 3500);
+        function onCajaChange() {
+            currentCaja = document.getElementById('inv-caja').value;
+            document.getElementById('label-active-caja').textContent = currentCaja;
+            document.getElementById('inv-discount').value = cashRegistersData[currentCaja].discount;
+            renderInvoiceTable();
+        }
+
+        function renderInvoiceTable() {
+            const tbody = document.getElementById('invoice-items-body');
+            tbody.innerHTML = '';
+
+            let activeItems = cashRegistersData[currentCaja].items;
+
+            if (activeItems.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 20px;">No hay ítems agregados en esta caja (${currentCaja}).</td></tr>`;
+                calculateTotals();
                 return;
             }
 
-            hideAlertPopup();
-            let subtotal = currentCart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
-            let adj = adjustmentsByRegister[activeRegister];
-            let finalTotalUsd = subtotal - adj.discount + adj.delivery;
-            if (finalTotalUsd < 0) finalTotalUsd = 0;
-            
-            document.getElementById('modal-pay-usd').textContent = `$ ${finalTotalUsd.toFixed(2)}`;
-            document.getElementById('modal-pay-nio').textContent = `C$ ${(finalTotalUsd * tasaCambio).toFixed(2)}`;
-            
-            const registerName = document.getElementById('step-register').selectedOptions[0].text;
-            document.getElementById('modal-title-register').textContent = `Procesar Factura - ${registerName}`;
-            
-            const clientName = document.getElementById('step-client').selectedOptions[0].text;
-            document.getElementById('modal-client-label').textContent = clientName;
+            activeItems.forEach(item => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="font-weight: 600; color: var(--text-main);">${item.name}</td>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 6px;">
+                            <button onclick="updateItemQty('${item.code}', -1)" style="background:var(--bg-main); border:1px solid var(--border); color:var(--text-main); width:22px; height:22px; border-radius:4px; cursor:pointer;">-</button>
+                            <span>${item.qty}</span>
+                            <button onclick="updateItemQty('${item.code}', 1)" style="background:var(--bg-main); border:1px solid var(--border); color:var(--text-main); width:22px; height:22px; border-radius:4px; cursor:pointer;">+</button>
+                        </div>
+                    </td>
+                    <td>C$ ${item.price.toFixed(2)}</td>
+                    <td style="font-weight: bold; color: var(--primary);">C$ ${(item.price * item.qty).toFixed(2)}</td>
+                    <td><button onclick="removeInvoiceItem('${item.code}')" style="background: rgba(239, 68, 68, 0.15); color: #ef4444; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.75rem;">Eliminar</button></td>
+                `;
+                tbody.appendChild(tr);
+            });
 
-            document.getElementById('cash-received-input').value = finalTotalUsd.toFixed(2);
-            calculateChange();
-
-            document.getElementById('checkout-modal').style.display = 'flex';
+            calculateTotals();
         }
 
-        function closeCheckoutModal() {
-            document.getElementById('checkout-modal').style.display = 'none';
+        function calculateTotals() {
+            let discountInput = parseFloat(document.getElementById('inv-discount').value) || 0;
+            cashRegistersData[currentCaja].discount = discountInput;
+
+            let activeItems = cashRegistersData[currentCaja].items;
+            let subtotal = activeItems.reduce((acc, item) => acc + (item.price * item.qty), 0);
+            let discountVal = subtotal * (discountInput / 100);
+            let taxableBase = subtotal - discountVal;
+            let tax = taxableBase * 0.15; // 15% IVA Nicaragua
+            let grandTotal = taxableBase + tax;
+
+            document.getElementById('summary-subtotal').textContent = `C$ ${subtotal.toFixed(2)}`;
+            document.getElementById('summary-discount-val').textContent = `- C$ ${discountVal.toFixed(2)}`;
+            document.getElementById('summary-tax').textContent = `C$ ${tax.toFixed(2)}`;
+            document.getElementById('summary-grandtotal').textContent = `C$ ${grandTotal.toFixed(2)}`;
+
+            return { subtotal, discountVal, tax, grandTotal };
         }
 
-        function selectPaymentMethod(method, btnElement) {
-            selectedPaymentMethod = method;
-            document.querySelectorAll('.pay-method-btn').forEach(b => b.classList.remove('active'));
-            btnElement.classList.add('active');
+        function resetInvoice() {
+            cashRegistersData[currentCaja].items = [];
+            cashRegistersData[currentCaja].discount = 0;
+            document.getElementById('inv-discount').value = 0;
+            renderInvoiceTable();
+        }
 
-            const cashSection = document.getElementById('cash-payment-section');
-            if (method === 'Efectivo') {
-                cashSection.style.display = 'flex';
-            } else {
-                cashSection.style.display = 'none';
+        // Botón Pagar con Alerta obligatoria si no hay artículos
+        function emitInvoice() {
+            let activeItems = cashRegistersData[currentCaja].items;
+            if (activeItems.length === 0) {
+                alert(`⚠️ ATENCIÓN: No hay ningún artículo agregado en la caja "${currentCaja}". Debe seleccionar al menos un producto del catálogo para poder procesar el pago.`);
+                return;
+            }
+
+            const totals = calculateTotals();
+            const clientName = document.getElementById('inv-client').value;
+            const invoiceCode = 'FAC-2026-' + (emittedInvoicesLog.length + 101);
+
+            emittedInvoicesLog.push({
+                code: invoiceCode,
+                caja: currentCaja,
+                client: clientName,
+                total: totals.grandTotal
+            });
+
+            // Actualizar métricas del dashboard general
+            let totalGeneralIngresos = emittedInvoicesLog.reduce((acc, curr) => acc + curr.total, 0);
+            let totalGeneralOrdenes = emittedInvoicesLog.length;
+            document.getElementById('dash-ingresos').textContent = `C$ ${totalGeneralIngresos.toFixed(2)}`;
+            document.getElementById('dash-ordenes').textContent = totalGeneralOrdenes;
+
+            // Actualizar historial reciente de facturas por caja
+            const historyBox = document.getElementById('recent-invoices-list');
+            historyBox.innerHTML = '';
+            emittedInvoicesLog.slice(-3).reverse().forEach(inv => {
+                const div = document.createElement('div');
+                div.style.cssText = "display: flex; justify-content: space-between; background: var(--bg-main); padding: 6px 10px; border-radius: 6px; border: 1px solid var(--border); font-size: 0.8rem;";
+                div.innerHTML = `<span style="font-weight:600; color:var(--text-main);">${inv.code} (${inv.caja})</span> <span style="color:var(--primary); font-weight:bold;">C$ ${inv.total.toFixed(2)}</span>`;
+                historyBox.appendChild(div);
+            });
+
+            alert(`✅ ¡Pago procesado con éxito!\nFactura: ${invoiceCode}\nCaja: ${currentCaja}\nTotal Pagado: C$ ${totals.grandTotal.toFixed(2)}`);
+            resetInvoice();
+        }
+
+        function printInvoicePDF() {
+            let activeItems = cashRegistersData[currentCaja].items;
+            if (activeItems.length === 0) {
+                alert(`⚠️ No hay datos en la caja actual (${currentCaja}) para exportar.`);
+                return;
+            }
+            window.print();
+        }
+
+        // Navegación de Vistas y Módulos
+        function switchView(viewName, element) {
+            document.querySelectorAll('.workspace-scroll').forEach(el => el.classList.remove('active-view'));
+            const target = document.getElementById('view-' + viewName);
+            if (target) {
+                target.classList.add('active-view');
+            }
+
+            if (element && element.classList.contains('submenu-item')) {
+                document.querySelectorAll('.submenu-item').forEach(el => el.classList.remove('active'));
+                element.classList.add('active');
+            } else if (element && element.classList.contains('menu-item')) {
+                document.querySelectorAll('.sidebar-menu .menu-item').forEach(el => el.classList.remove('active'));
+                element.classList.add('active');
             }
         }
 
-        function calculateChange() {
-            let currentCart = cartsByRegister[activeRegister];
-            let subtotal = currentCart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
-            let adj = adjustmentsByRegister[activeRegister];
-            let finalTotalUsd = subtotal - adj.discount + adj.delivery;
-            if (finalTotalUsd < 0) finalTotalUsd = 0;
-
-            let received = parseFloat(document.getElementById('cash-received-input').value) || 0;
-            let change = received - finalTotalUsd;
-
-            const changeOutput = document.getElementById('change-due-output');
-            if (change >= 0) {
-                changeOutput.textContent = `$ ${change.toFixed(2)} (C$ ${(change * tasaCambio).toFixed(2)})`;
-                changeOutput.style.color = '#16a34a';
-            } else {
-                changeOutput.textContent = `Faltan $ ${Math.abs(change).toFixed(2)}`;
-                changeOutput.style.color = '#dc2626';
+        // Toggle para Submenús Desplegables del Sidebar
+        function toggleSubmenu(submenuId, event) {
+            event.stopPropagation();
+            const submenu = document.getElementById(submenuId);
+            if (submenu) {
+                submenu.classList.toggle('open');
             }
         }
 
-        function confirmAndPrintInvoice() {
-            const registerName = document.getElementById('step-register').selectedOptions[0].text;
-            alert(`¡Factura emitida exitosamente desde la ${registerName}!\nMétodo: ${selectedPaymentMethod}\nLa venta ha sido registrada e integrada con el sistema de inventario.`);
+        // Toggle Modo Claro / Oscuro
+        function toggleTheme() {
+            const htmlEl = document.documentElement;
+            const themeBtn = document.getElementById('theme-btn');
+            const currentTheme = htmlEl.getAttribute('data-theme');
             
-            cartsByRegister[activeRegister] = [];
-            adjustmentsByRegister[activeRegister] = { discount: 0.00, delivery: 0.00 };
-            updateCartUI();
-            closeCheckoutModal();
+            if (currentTheme === 'dark') {
+                htmlEl.setAttribute('data-theme', 'light');
+                themeBtn.innerHTML = '<span>☀️</span> Modo Claro';
+            } else {
+                htmlEl.setAttribute('data-theme', 'dark');
+                themeBtn.innerHTML = '<span>🌙</span> Modo Oscuro';
+            }
         }
 
-        // Reloj en tiempo real
-        setInterval(() => {
-            const now = new Date();
-            document.getElementById('live-clock').textContent = now.toLocaleDateString('es-ES') + ' ' + now.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
-        }, 1000);
-
-        renderCatalog();
-        updateCartUI();
+        // Inicialización al cargar la aplicación
+        renderExcelCatalog();
+        renderInvoiceTable();
     </script>
 </body>
 </html>
